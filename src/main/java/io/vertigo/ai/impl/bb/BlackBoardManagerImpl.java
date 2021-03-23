@@ -9,16 +9,30 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
+import io.vertigo.commons.transaction.VTransaction;
+import io.vertigo.commons.transaction.VTransactionManager;
+import io.vertigo.commons.transaction.VTransactionResourceId;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardManagerImpl implements BlackBoardManager {
 
+	/**
+	 * Identifiant de ressource SQL par défaut.
+	 */
+	public static final VTransactionResourceId<BBConnection> BB_RESOURCE_ID = new VTransactionResourceId<>(VTransactionResourceId.Priority.NORMAL, "BlackBoard-main");
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
+	//private final ThreadLocal<String> connectedStore = new ThreadLocal<>();
+	private final VTransactionManager transactionManager;
 
 	@Inject
-	public BlackBoardManagerImpl(final List<BlackBoardStorePlugin> blackBoardStorePlugins) {
-		Assertion.check().isNotNull(blackBoardStorePlugins);
+	public BlackBoardManagerImpl(
+			final VTransactionManager transactionManager,
+			final List<BlackBoardStorePlugin> blackBoardStorePlugins) {
+		Assertion.check()
+				.isNotNull(transactionManager)
+				.isNotNull(blackBoardStorePlugins);
 		// ---
+		this.transactionManager = transactionManager;
 		blackBoardStorePlugins.forEach(
 				plugin -> {
 					final var storeName = plugin.getStoreName();
@@ -26,6 +40,24 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 					//---
 					blackBoardPluginByStore.put(storeName, plugin);
 				});
+	}
+
+	//------------------------------------
+	//--- Connection
+	//------------------------------------
+
+	@Override
+	public void useDefaultStore() {
+		useStore(MAIN_STORE_NAME);
+
+	}
+
+	@Override
+	public void useStore(final String storeName) {
+		Assertion.check().isNotBlank(storeName, "A stroreName is mandatory to connect to a blackboard");
+		final VTransaction currentTransaction = transactionManager.getCurrentTransaction();
+		currentTransaction.addResource(BB_RESOURCE_ID, new BBConnection(storeName));
+
 	}
 
 	//------------------------------------
@@ -41,7 +73,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	public boolean exists(final String key) {
 		checkKey(key);
 		//---
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.exists(key);
 	}
 
@@ -54,13 +86,13 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	public Set<String> keys(final String keyPattern) {
 		checkKeyPattern(keyPattern);
 		//---
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.keys(keyPattern);
 	}
 
 	@Override
 	public Set<String> keys() {
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.keys("*");
 	}
 
@@ -72,7 +104,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	@Override
 	public void remove(final String keyPattern) {
 		checkKeyPattern(keyPattern);
-		getPlugin(MAIN_STORE_NAME)
+		getCurrentPlugin()
 				.remove(keyPattern);
 	}
 
@@ -89,7 +121,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	public String get(final String key) {
 		checkKey(key);
 		//---
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.get(key);
 	}
 
@@ -115,7 +147,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 		checkType(key, type);
 		//---
 
-		getPlugin(MAIN_STORE_NAME)
+		getCurrentPlugin()
 				.put(key, type, value);
 	}
 
@@ -136,7 +168,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 				throw new IllegalStateException("An end token '" + END_TOKEN + "+'has been found without a start token " + START_TOKEN);
 			}
 			final var paramName = builder.substring(start + START_TOKEN.length(), end);
-			final var paramVal = Optional.ofNullable(getPlugin(MAIN_STORE_NAME).get(paramName))
+			final var paramVal = Optional.ofNullable(getCurrentPlugin().get(paramName))
 					.orElse("not found:" + paramName);
 			builder.replace(start, end + END_TOKEN.length(), paramVal);
 		}
@@ -170,13 +202,13 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 		checkKey(key);
 		checkType(key, Type.Integer);
 		//---
-		getPlugin(MAIN_STORE_NAME).incrBy(key, value);
+		getCurrentPlugin().incrBy(key, value);
 	}
 
 	private int compare(final String key, final String compare) {
 		checkKey(key);
 		//---
-		final Type type = blackBoardPluginByStore.get(MAIN_STORE_NAME).getType(key);
+		final Type type = getCurrentPlugin().getType(key);
 		final String k = get(key);
 		final String c = format(compare);
 		if (k == null) {
@@ -217,37 +249,52 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 
 	@Override
 	public int len(final String key) {
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.len(key);
 	}
 
 	@Override
 	public void push(final String key, final String value) {
-		getPlugin(MAIN_STORE_NAME)
+		getCurrentPlugin()
 				.push(key, value);
 	}
 
 	@Override
 	public String pop(final String key) {
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.pop(key);
 	}
 
 	@Override
 	public String peek(final String key) {
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.peek(key);
 	}
 
 	@Override
 	public String get(final String key, final int idx) {
-		return getPlugin(MAIN_STORE_NAME)
+		return getCurrentPlugin()
 				.get(key, idx);
 	}
 
 	//------------------------------------
 	//- Utils                             -
 	//------------------------------------
+
+	private BlackBoardStorePlugin getCurrentPlugin() {
+		final String storeName = getCurrentStoreName();
+		// ---
+		Assertion.check()
+				.isTrue(blackBoardPluginByStore.containsKey(storeName), " Store with name '{0}' doesn't exists", storeName);
+		return blackBoardPluginByStore.get(storeName);
+	}
+
+	private String getCurrentStoreName() {
+		Assertion.check()
+				.isTrue(transactionManager.hasCurrentTransaction(), "A transaction is required ");
+		// ---
+		return transactionManager.getCurrentTransaction().getResource(BB_RESOURCE_ID).getStoreName();
+	}
 
 	private static void checkKey(final String key) {
 		Assertion.check()
@@ -260,7 +307,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 				.isNotNull(key)
 				.isNotNull(type);
 		//---
-		final Type t = getPlugin(MAIN_STORE_NAME).getType(key);
+		final Type t = getCurrentPlugin().getType(key);
 		if (t != null && !type.equals(t)) {
 			throw new IllegalStateException("the type of the key " + t + " is not the one expected " + type);
 		}
@@ -284,9 +331,4 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 				: Integer.valueOf(s);
 	}
 
-	private BlackBoardStorePlugin getPlugin(final String storeName) {
-		Assertion.check()
-				.isTrue(blackBoardPluginByStore.containsKey(storeName), " Store with name '{0}' doesn't exists", storeName);
-		return blackBoardPluginByStore.get(storeName);
-	}
 }

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
+import io.vertigo.commons.CommonsFeatures;
+import io.vertigo.commons.transaction.VTransactionManager;
+import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -17,7 +20,10 @@ import io.vertigo.core.node.config.NodeConfig;
 public class BBUtilTest {
 
 	@Inject
-	private BlackBoardManager bb;
+	private BlackBoardManager blackBoardManager;
+	@Inject
+	private VTransactionManager transactionManager;
+
 	private AutoCloseableNode node;
 
 	@BeforeEach
@@ -28,6 +34,7 @@ public class BBUtilTest {
 
 	private NodeConfig buildNodeConfig() {
 		return NodeConfig.builder()
+				.addModule(new CommonsFeatures().build())// for transactions
 				.addModule(
 						ModuleConfig.builder("myModule")
 								.addComponent(BlackBoardManager.class, BlackBoardManagerImpl.class)
@@ -45,32 +52,41 @@ public class BBUtilTest {
 
 	@Test
 	public void testFormatter0() {
-		Assertions.assertEquals("hello world", bb.format("hello world"));
+		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			blackBoardManager.useDefaultStore();
+			Assertions.assertEquals("hello world", blackBoardManager.format("hello world"));
+		}
 	}
 
 	@Test
 	public void testFormatter1() {
-		Assertions.assertEquals("hello world", bb.format("hello world"));
-		bb.put("name", "joe");
-		bb.put("lastname", "diMagio");
-		//---
-		Assertions.assertEquals("joe", bb.format("{{name}}"));
-		Assertions.assertEquals("hello joe", bb.format("hello {{name}}"));
-		Assertions.assertEquals("hello joe...", bb.format("hello {{name}}..."));
-		Assertions.assertEquals("hello joe diMagio", bb.format("hello {{name}} {{lastname}}"));
-		Assertions.assertThrows(IllegalStateException.class,
-				() -> bb.format("hello {{name}"));
-		Assertions.assertThrows(IllegalStateException.class,
-				() -> bb.format("hello {{name"));
-		Assertions.assertThrows(IllegalStateException.class,
-				() -> bb.format("hello name}}"));
+		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			blackBoardManager.useDefaultStore();
+			Assertions.assertEquals("hello world", blackBoardManager.format("hello world"));
+			blackBoardManager.put("name", "joe");
+			blackBoardManager.put("lastname", "diMagio");
+			//---
+			Assertions.assertEquals("joe", blackBoardManager.format("{{name}}"));
+			Assertions.assertEquals("hello joe", blackBoardManager.format("hello {{name}}"));
+			Assertions.assertEquals("hello joe...", blackBoardManager.format("hello {{name}}..."));
+			Assertions.assertEquals("hello joe diMagio", blackBoardManager.format("hello {{name}} {{lastname}}"));
+			Assertions.assertThrows(IllegalStateException.class,
+					() -> blackBoardManager.format("hello {{name}"));
+			Assertions.assertThrows(IllegalStateException.class,
+					() -> blackBoardManager.format("hello {{name"));
+			Assertions.assertThrows(IllegalStateException.class,
+					() -> blackBoardManager.format("hello name}}"));
+		}
 	}
 
 	@Test
 	public void testFormatter2() {
-		bb.put("u/1/name", "alan");
-		bb.put("u/2/name", "ada");
-		bb.put("u/idx", "2");
-		Assertions.assertEquals("hello ada", bb.format("hello {{u/{{u/idx}}/name}}"));
+		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
+			blackBoardManager.useDefaultStore();
+			blackBoardManager.put("u/1/name", "alan");
+			blackBoardManager.put("u/2/name", "ada");
+			blackBoardManager.put("u/idx", "2");
+			Assertions.assertEquals("hello ada", blackBoardManager.format("hello {{u/{{u/idx}}/name}}"));
+		}
 	}
 }

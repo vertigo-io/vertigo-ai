@@ -15,6 +15,14 @@ public interface BlackBoardManager extends Component {
 	}
 
 	//------------------------------------
+	//--- Connection
+	//------------------------------------
+
+	public void useDefaultStore();
+
+	public void useStore(final String storeName);
+
+	//------------------------------------
 	//--- Keys
 	//------------------------------------
 	/**

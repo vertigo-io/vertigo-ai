@@ -19,5 +19,10 @@
 			<artifactId>vertigo-core</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-commons</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
 	</dependencies>
 </project>
