@@ -9,17 +9,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.commons.transaction.VTransaction;
 import io.vertigo.commons.transaction.VTransactionManager;
-import io.vertigo.commons.transaction.VTransactionResourceId;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardManagerImpl implements BlackBoardManager {
 
-	/**
-	 * Identifiant de ressource SQL par défaut.
-	 */
-	public static final VTransactionResourceId<BBConnection> BB_RESOURCE_ID = new VTransactionResourceId<>(VTransactionResourceId.Priority.NORMAL, "BlackBoard-main");
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
 	//private final ThreadLocal<String> connectedStore = new ThreadLocal<>();
 	private final VTransactionManager transactionManager;
@@ -43,24 +37,6 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	}
 
 	//------------------------------------
-	//--- Connection
-	//------------------------------------
-
-	@Override
-	public void useDefaultStore() {
-		useStore(MAIN_STORE_NAME);
-
-	}
-
-	@Override
-	public void useStore(final String storeName) {
-		Assertion.check().isNotBlank(storeName, "A stroreName is mandatory to connect to a blackboard");
-		final VTransaction currentTransaction = transactionManager.getCurrentTransaction();
-		currentTransaction.addResource(BB_RESOURCE_ID, new BBConnection(storeName));
-
-	}
-
-	//------------------------------------
 	//--- Keys
 	//------------------------------------
 	/**
@@ -70,10 +46,10 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	 * @return if the key exists
 	 */
 	@Override
-	public boolean exists(final String key) {
+	public boolean exists(final String storeName, final String key) {
 		checkKey(key);
 		//---
-		return getCurrentPlugin()
+		return getPlugin(storeName)
 				.exists(key);
 	}
 
@@ -83,28 +59,27 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	 * @return A list of keys
 	 */
 	@Override
-	public Set<String> keys(final String keyPattern) {
+	public Set<String> keys(final String storeName, final String keyPattern) {
 		checkKeyPattern(keyPattern);
 		//---
-		return getCurrentPlugin()
+		return getPlugin(storeName)
 				.keys(keyPattern);
 	}
 
 	@Override
-	public Set<String> keys() {
-		return getCurrentPlugin()
-				.keys("*");
+	public Set<String> keys(final String storeName) {
+		return keys(storeName, "*");
 	}
 
 	@Override
-	public void removeAll() {
-		remove("*");
+	public void removeAll(final String storeName) {
+		remove(storeName, "*");
 	}
 
 	@Override
-	public void remove(final String keyPattern) {
+	public void remove(final String storeName, final String keyPattern) {
 		checkKeyPattern(keyPattern);
-		getCurrentPlugin()
+		getPlugin(storeName)
 				.remove(keyPattern);
 	}
 
@@ -118,41 +93,41 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
 	@Override
-	public String get(final String key) {
+	public String get(final String storeName, final String key) {
 		checkKey(key);
 		//---
-		return getCurrentPlugin()
+		return getPlugin(storeName)
 				.get(key);
 	}
 
 	@Override
-	public Integer getInteger(final String key) {
-		final String value = get(key);
-		checkType(key, Type.Integer);
+	public Integer getInteger(final String storeName, final String key) {
+		final String value = get(storeName, key);
+		checkType(storeName, key, Type.Integer);
 		return formatToInteger(value);
 	}
 
 	@Override
-	public void putInteger(final String key, final int value) {
-		doPut(key, Type.Integer, formatToString(value));
+	public void putInteger(final String storeName, final String key, final int value) {
+		doPut(storeName, key, Type.Integer, formatToString(value));
 	}
 
 	@Override
-	public void put(final String key, final String value) {
-		doPut(key, Type.String, value);
+	public void put(final String storeName, final String key, final String value) {
+		doPut(storeName, key, Type.String, value);
 	}
 
-	private void doPut(final String key, final Type type, final String value) {
+	private void doPut(final String storeName, final String key, final Type type, final String value) {
 		checkKey(key);
-		checkType(key, type);
+		checkType(storeName, key, type);
 		//---
 
-		getCurrentPlugin()
+		getPlugin(storeName)
 				.put(key, type, value);
 	}
 
 	@Override
-	public String format(final String msg) {
+	public String format(final String storeName, final String msg) {
 		Assertion.check()
 				.isNotNull(msg);
 		//---
@@ -168,7 +143,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 				throw new IllegalStateException("An end token '" + END_TOKEN + "+'has been found without a start token " + START_TOKEN);
 			}
 			final var paramName = builder.substring(start + START_TOKEN.length(), end);
-			final var paramVal = Optional.ofNullable(getCurrentPlugin().get(paramName))
+			final var paramVal = Optional.ofNullable(getPlugin(storeName).get(paramName))
 					.orElse("not found:" + paramName);
 			builder.replace(start, end + END_TOKEN.length(), paramVal);
 		}
@@ -179,38 +154,38 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	}
 
 	@Override
-	public void append(final String key, final String something) {
-		String value = get(key);
+	public void append(final String storeName, final String key, final String something) {
+		String value = get(storeName, key);
 		if (value == null) {
 			value = "";
 		}
-		put(key, value + something);
+		put(storeName, key, value + something);
 	}
 
 	@Override
-	public void decr(final String key) {
-		incrBy(key, -1);
+	public void decr(final String storeName, final String key) {
+		incrBy(storeName, key, -1);
 	}
 
 	@Override
-	public void incr(final String key) {
-		incrBy(key, 1);
+	public void incr(final String storeName, final String key) {
+		incrBy(storeName, key, 1);
 	}
 
 	@Override
-	public void incrBy(final String key, final int value) {
+	public void incrBy(final String storeName, final String key, final int value) {
 		checkKey(key);
-		checkType(key, Type.Integer);
+		checkType(storeName, key, Type.Integer);
 		//---
-		getCurrentPlugin().incrBy(key, value);
+		getPlugin(storeName).incrBy(key, value);
 	}
 
-	private int compare(final String key, final String compare) {
+	private int compare(final String storeName, final String key, final String compare) {
 		checkKey(key);
 		//---
-		final Type type = getCurrentPlugin().getType(key);
-		final String k = get(key);
-		final String c = format(compare);
+		final Type type = getPlugin(storeName).getType(key);
+		final String k = get(storeName, key);
+		final String c = format(storeName, compare);
 		if (k == null) {
 			return c == null
 					? 0
@@ -228,18 +203,18 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	}
 
 	@Override
-	public boolean lt(final String key, final String compare) {
-		return compare(key, compare) < 0;
+	public boolean lt(final String storeName, final String key, final String compare) {
+		return compare(storeName, key, compare) < 0;
 	}
 
 	@Override
-	public boolean eq(final String key, final String compare) {
-		return compare(key, compare) == 0;
+	public boolean eq(final String storeName, final String key, final String compare) {
+		return compare(storeName, key, compare) == 0;
 	}
 
 	@Override
-	public boolean gt(final String key, final String compare) {
-		return compare(key, compare) > 0;
+	public boolean gt(final String storeName, final String key, final String compare) {
+		return compare(storeName, key, compare) > 0;
 	}
 
 	//------------------------------------
@@ -248,32 +223,32 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	//------------------------------------
 
 	@Override
-	public int len(final String key) {
-		return getCurrentPlugin()
+	public int len(final String storeName, final String key) {
+		return getPlugin(storeName)
 				.len(key);
 	}
 
 	@Override
-	public void push(final String key, final String value) {
-		getCurrentPlugin()
+	public void push(final String storeName, final String key, final String value) {
+		getPlugin(storeName)
 				.push(key, value);
 	}
 
 	@Override
-	public String pop(final String key) {
-		return getCurrentPlugin()
+	public String pop(final String storeName, final String key) {
+		return getPlugin(storeName)
 				.pop(key);
 	}
 
 	@Override
-	public String peek(final String key) {
-		return getCurrentPlugin()
+	public String peek(final String storeName, final String key) {
+		return getPlugin(storeName)
 				.peek(key);
 	}
 
 	@Override
-	public String get(final String key, final int idx) {
-		return getCurrentPlugin()
+	public String get(final String storeName, final String key, final int idx) {
+		return getPlugin(storeName)
 				.get(key, idx);
 	}
 
@@ -281,19 +256,11 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	//- Utils                             -
 	//------------------------------------
 
-	private BlackBoardStorePlugin getCurrentPlugin() {
-		final String storeName = getCurrentStoreName();
+	private BlackBoardStorePlugin getPlugin(final String storeName) {
 		// ---
 		Assertion.check()
 				.isTrue(blackBoardPluginByStore.containsKey(storeName), " Store with name '{0}' doesn't exists", storeName);
 		return blackBoardPluginByStore.get(storeName);
-	}
-
-	private String getCurrentStoreName() {
-		Assertion.check()
-				.isTrue(transactionManager.hasCurrentTransaction(), "A transaction is required ");
-		// ---
-		return transactionManager.getCurrentTransaction().getResource(BB_RESOURCE_ID).getStoreName();
 	}
 
 	private static void checkKey(final String key) {
@@ -302,12 +269,12 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 				.isTrue(key.matches(KEY_REGEX), "the key '{0}' must contain only a-z 1-9 words separated with /", key);
 	}
 
-	private void checkType(final String key, final Type type) {
+	private void checkType(final String storeName, final String key, final Type type) {
 		Assertion.check()
 				.isNotNull(key)
 				.isNotNull(type);
 		//---
-		final Type t = getCurrentPlugin().getType(key);
+		final Type t = getPlugin(storeName).getType(key);
 		if (t != null && !type.equals(t)) {
 			throw new IllegalStateException("the type of the key " + t + " is not the one expected " + type);
 		}

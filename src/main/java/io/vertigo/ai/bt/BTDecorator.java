@@ -8,7 +8,7 @@ import io.vertigo.core.lang.Assertion;
  * A decorator changes the status after evaluation.
  * it can be useful to build nodes that always failed or succeeded.
  * or to inverse the result of a node. (a kind of NOT in the boolean logic)
- *  
+ *
  * @author pchretien
  */
 final class BTDecorator implements BTNode {

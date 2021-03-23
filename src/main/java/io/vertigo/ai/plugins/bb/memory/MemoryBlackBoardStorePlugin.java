@@ -11,7 +11,11 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bb.BlackBoardManager.Type;
+import io.vertigo.ai.impl.bb.BBConnection;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
+import io.vertigo.commons.transaction.VTransaction;
+import io.vertigo.commons.transaction.VTransactionManager;
+import io.vertigo.commons.transaction.VTransactionResourceId;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
 
@@ -20,13 +24,24 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	private final Map<String, Type> keys = Collections.synchronizedMap(new LinkedHashMap<>());
 	private final Map<String, String> values = Collections.synchronizedMap(new LinkedHashMap<>());
 	private final Map<String, BBList> lists = Collections.synchronizedMap(new LinkedHashMap<>());
+
 	private final Optional<String> storeNameOpt;
+	private final VTransactionManager transactionManager;
+
+	/**
+	 * Identifiant de ressource SQL par défaut.
+	 */
+	public static final VTransactionResourceId<BBConnection> MEMORY_BB_MAIN_RESOURCE_ID = new VTransactionResourceId<>(VTransactionResourceId.Priority.NORMAL, "Memory-BlackBoard-main");
 
 	@Inject
 	public MemoryBlackBoardStorePlugin(
+			final VTransactionManager transactionManager,
 			final @ParamValue("storeName") Optional<String> storeNameOpt) {
-		Assertion.check().isNotNull(storeNameOpt);
+		Assertion.check()
+				.isNotNull(transactionManager)
+				.isNotNull(storeNameOpt);
 		// ---
+		this.transactionManager = transactionManager;
 		this.storeNameOpt = storeNameOpt;
 
 	}
@@ -218,5 +233,31 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	@Override
 	public String getStoreName() {
 		return storeNameOpt.orElse(BlackBoardManager.MAIN_STORE_NAME);
+	}
+
+	/**
+	 * Retourne la connexion SQL de cette transaction en la demandant au pool de connexion si nécessaire.
+	 * @return Connexion SQL
+	 */
+	private BBConnection obtainConnection(final String storeName) {
+		final VTransaction transaction = transactionManager.getCurrentTransaction();
+		BBConnection connection = transaction.getResource(getVTransactionResourceId(storeName));
+		if (connection == null) {
+			// On récupère une connexion du pool
+			// Utilise le provider de connexion déclaré sur le Container.
+			connection = new BBConnection(storeName);
+			transaction.addResource(getVTransactionResourceId(storeName), connection);
+		}
+		return connection;
+	}
+
+	/**
+	 * @return Id de la Ressource Connexion SQL dans la transaction
+	 */
+	protected VTransactionResourceId<BBConnection> getVTransactionResourceId(final String storeName) {
+		if (BlackBoardManager.MAIN_STORE_NAME.equals(storeName)) {
+			return MEMORY_BB_MAIN_RESOURCE_ID;
+		}
+		return new VTransactionResourceId<>(VTransactionResourceId.Priority.NORMAL, "Memory-BlackBoard-" + storeName);
 	}
 }

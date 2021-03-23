@@ -13,10 +13,10 @@ public final class BTNodes {
 	}
 
 	/**
-	 * Creates a sequence. 
+	 * Creates a sequence.
 	 * Succeeds when all nodes succeed
 	 * Fails when one node fails, the next nodes are not evaluated
-	 * @param nodes nodes 
+	 * @param nodes nodes
 	 * @return sequence
 	 */
 	public static BTNode sequence(final BTNode... nodes) {
@@ -33,10 +33,10 @@ public final class BTNodes {
 	}
 
 	/**
-	 * Creates a selector. 
+	 * Creates a selector.
 	 * Fails when all node fail
 	 * Succeeds when one node succeeds, the newt nodes are not evaluated
-	 * @param nodes nodes 
+	 * @param nodes nodes
 	 * @return selector
 	 */
 	public static BTNode selector(final BTNode... nodes) {
@@ -120,10 +120,10 @@ public final class BTNodes {
 	}
 
 	/**
-	 * Decorator 
+	 * Decorator
 	 * This method is useful to build a node that returns a different status that its input.
 	 * For example : it can failed when it succeeds !
-	 * 
+	 *
 	 * @param node the node to decorate
 	 * @param transformer the function that changes the status
 	 * @return the decorated node
@@ -133,9 +133,9 @@ public final class BTNodes {
 	}
 
 	/**
-	 * Decorator 
+	 * Decorator
 	 * This method is useful to build an 'always succeed' node for example.
-	 * 
+	 *
 	 * @param node the node to decorate
 	 * @param status the targeted status
 	 * @return the decorated node
