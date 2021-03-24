@@ -4,9 +4,13 @@ import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
 import static io.vertigo.ai.bt.BTNodes.succeed;
 
+import java.util.Optional;
+import java.util.Scanner;
+
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
+import io.vertigo.ai.bot.BotResponse.BotStatus;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.ai.bt.BehaviorTreeManager;
@@ -30,22 +34,47 @@ public class SampleBot {
 	public static void main(final String[] args) {
 		try (AutoCloseableNode node = new AutoCloseableNode(buildNodeConfig())) {
 			final SampleBot sampleBot = InjectorUtil.newInstance(SampleBot.class);
-			sampleBot.run();
+			sampleBot.runInConsole();
 
 		}
 
 	}
 
-	void run() {
+	void runTick() {
 		botEngine = botManager.createBotEngine(BlackBoardManager.MAIN_STORE_NAME);
 		final BTNode rootNode = sequence(
 				botEngine.fulfill("u/name", "Hello I'm Alan what is your name ?"),
 				//intents
 				main(),
 				botEngine.display("bye bye {{u/name}}"));
+		final BotResponse botResponse = botManager.runTick(rootNode, BlackBoardManager.MAIN_STORE_NAME, Optional.empty());
+		System.out.println(botResponse.question);
 
-		botManager.runInConsole(rootNode, BlackBoardManager.MAIN_STORE_NAME);
+	}
 
+	void runInConsole() {
+		// create a botEngine that is bound to a specific context
+		botEngine = botManager.createBotEngine(BlackBoardManager.MAIN_STORE_NAME);
+		// create or parse or retrieve the brain
+		final BTNode rootNode = sequence(
+				botEngine.fulfill("u/name", "Hello I'm Alan what is your name ?"),
+				//intents
+				main(),
+				botEngine.display("bye bye {{u/name}}"));
+
+		final Scanner sc = new Scanner(System.in);
+
+		// init conversation
+		BotResponse botResponse = botManager.runTick(rootNode, BlackBoardManager.MAIN_STORE_NAME, Optional.empty());
+		// run the rest
+		while (botResponse.botStatus == BotStatus.Talking) {
+			System.out.println(">>running *************************");
+			System.out.println(botResponse.question);
+			final var userResponse = Optional.of(sc.nextLine());
+			botResponse = botManager.runTick(rootNode, BlackBoardManager.MAIN_STORE_NAME, userResponse);
+		}
+		sc.close();
+		System.out.println(">> end ***********************");
 	}
 
 	private static NodeConfig buildNodeConfig() {

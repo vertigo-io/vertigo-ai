@@ -1,12 +1,13 @@
 package io.vertigo.ai.impl.bot;
 
-import java.util.Scanner;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bot.BotEngine;
 import io.vertigo.ai.bot.BotManager;
+import io.vertigo.ai.bot.BotResponse;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
@@ -41,32 +42,28 @@ public class BotManagerImpl implements BotManager {
 	}
 
 	@Override
-	public void runInConsole(final BTNode bot, final String storeName) {
-		Assertion.check()
-				.isNotNull(bot);
-		//---
+	public BotResponse runTick(final BTNode bot, final String storeName, final Optional<String> userResponseOpt) {
 		if (transactionManager.hasCurrentTransaction()) {
 			// if we have a transaction we use the current one
-			doRunInConsole(bot, storeName);
+			return doRunTick(bot, storeName, userResponseOpt);
 		}
 		//else we create a new one and commit it if everything went well
 		try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			doRunInConsole(bot, storeName);
+			final BotResponse botResponse = doRunTick(bot, storeName, userResponseOpt);
 			transaction.commit();
+			return botResponse;
 		}
-
 	}
 
-	private void doRunInConsole(final BTNode bot, final String storeName) {
-		final Scanner sc = new Scanner(System.in);
-		while (behaviorTreeManager.run(bot) == BTStatus.Running) {
-			System.out.println(">>running *************************");
-			final var response = sc.nextLine();
+	private BotResponse doRunTick(final BTNode bot, final String storeName, final Optional<String> userResponseOpt) {
+		userResponseOpt.ifPresent(response -> {
 			final var key = blackBoardManager.format(storeName, "{{bot/response}}");
 			blackBoardManager.put(storeName, key, response);
+		});
+		if (behaviorTreeManager.run(bot) == BTStatus.Running) {
+			return BotResponse.talk(blackBoardManager.get(storeName, "bot/question"));
 		}
-		sc.close();
-		System.out.println(">> end ***********************");
+		return BotResponse.BOT_RESPONSE_END;
 	}
 
 }

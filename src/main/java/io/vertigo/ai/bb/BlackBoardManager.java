@@ -6,13 +6,7 @@ import io.vertigo.core.node.component.Component;
 
 public interface BlackBoardManager extends Component {
 
-	public static final String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
-	public static final String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
 	public static final String MAIN_STORE_NAME = "main";
-
-	public enum Type {
-		String, Integer, List
-	}
 
 	//------------------------------------
 	//--- Keys

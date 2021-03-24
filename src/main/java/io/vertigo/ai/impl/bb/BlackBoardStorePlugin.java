@@ -2,7 +2,7 @@ package io.vertigo.ai.impl.bb;
 
 import java.util.Set;
 
-import io.vertigo.ai.bb.BlackBoardManager.Type;
+import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
 import io.vertigo.core.node.component.Plugin;
 
 public interface BlackBoardStorePlugin extends Plugin {

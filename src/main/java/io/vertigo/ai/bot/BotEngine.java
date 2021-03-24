@@ -74,7 +74,7 @@ public class BotEngine {
 
 	private BTNode query(final String keyTemplate, final String question, final Predicate<String> validator) {
 		return () -> {
-			System.out.println(bb.format(storeName, question));
+			bb.put(storeName, "bot/question", bb.format(storeName, question));
 			bb.put(storeName, "bot/response", keyTemplate);
 			return BTStatus.Running;
 		};
@@ -146,8 +146,4 @@ public class BotEngine {
 			};
 		}*/
 
-	@Override
-	public String toString() {
-		return bb.toString();
-	}
 }

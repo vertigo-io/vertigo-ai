@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.ai.bb.BlackBoardManager.Type;
 import io.vertigo.ai.impl.bb.BBConnection;
+import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.commons.transaction.VTransaction;
 import io.vertigo.commons.transaction.VTransactionManager;

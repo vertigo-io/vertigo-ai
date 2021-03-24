@@ -9,24 +9,25 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.commons.transaction.VTransactionManager;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardManagerImpl implements BlackBoardManager {
 
+	public static final String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
+	public static final String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
+
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
-	//private final ThreadLocal<String> connectedStore = new ThreadLocal<>();
-	private final VTransactionManager transactionManager;
+
+	public enum Type {
+		String, Integer, List
+	}
 
 	@Inject
 	public BlackBoardManagerImpl(
-			final VTransactionManager transactionManager,
 			final List<BlackBoardStorePlugin> blackBoardStorePlugins) {
 		Assertion.check()
-				.isNotNull(transactionManager)
 				.isNotNull(blackBoardStorePlugins);
 		// ---
-		this.transactionManager = transactionManager;
 		blackBoardStorePlugins.forEach(
 				plugin -> {
 					final var storeName = plugin.getStoreName();
