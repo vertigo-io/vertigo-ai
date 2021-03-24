@@ -67,7 +67,7 @@ public class SampleBot {
 		// init conversation
 		BotResponse botResponse = botManager.runTick(rootNode, BlackBoardManager.MAIN_STORE_NAME, Optional.empty());
 		// run the rest
-		while (botResponse.botStatus == BotStatus.Talking) {
+		while (botResponse.botStatus != BotStatus.Ended) {
 			System.out.println(">>running *************************");
 			System.out.println(botResponse.question);
 			final var userResponse = Optional.of(sc.nextLine());
