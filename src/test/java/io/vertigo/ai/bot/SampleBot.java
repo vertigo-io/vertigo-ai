@@ -106,8 +106,8 @@ public class SampleBot {
 										//								.when("T", ticket())
 										.build()),
 						rate(),
-						botEngine.clear("i/*"),
-						botEngine.clear("rate/*")));
+						botEngine.remove("i/*"),
+						botEngine.remove("rate/*")));
 	}
 
 	private static BTNode weather() {
@@ -115,7 +115,7 @@ public class SampleBot {
 				botEngine.inputString("w/city", "Please choose a city"),
 				botEngine.display("It's sunny in {{w/city}} !"),
 				botEngine.set("i/done", "ok"),
-				botEngine.clear("w/*"));
+				botEngine.remove("w/*"));
 	}
 
 	//	private BTNode ticket() {
@@ -149,29 +149,29 @@ public class SampleBot {
 						botEngine.eqIntegerByValue("g/target", "g/choice"),
 						sequence(
 								botEngine.inputInteger("g/choice", "What is your choice ?"),
-								botEngine.inc("g/rounds"),
+								botEngine.incr("g/rounds"),
 								selector(
 										sequence(
 												botEngine.gtByValue("g/target", "g/choice"),
 												botEngine.display("select up !"),
-												botEngine.clear("g/choice"),
+												botEngine.remove("g/choice"),
 												BTNodes.running()),
 										sequence(
 												botEngine.ltByValue("g/target", "g/choice"),
 												botEngine.display("select down !"),
-												botEngine.clear("g/choice"),
+												botEngine.remove("g/choice"),
 												BTNodes.running()),
 										succeed()))),
 				//The right number has been found
 				botEngine.display("Bravo {{u/name}} you have found the right number {{g/target}} in {{g/rounds}} rounds"),
 				botEngine.set("i/done", "ok"),
-				botEngine.clear("g/*"));
+				botEngine.remove("g/*"));
 	}
 
 	private static BTNode rate() {
 		return sequence(
 				botEngine.inputString("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
 				botEngine.display("You have rated {{rate/rating}}"),
-				botEngine.clear("rate/*"));
+				botEngine.remove("rate/*"));
 	}
 }

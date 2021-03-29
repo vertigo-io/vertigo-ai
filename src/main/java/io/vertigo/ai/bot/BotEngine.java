@@ -45,21 +45,42 @@ public class BotEngine {
 		};
 	}
 
-	public BTNode inc(final String keyTemplate) {
+	public BTNode incr(final String keyTemplate) {
 		return () -> {
 			bb.incr(bb.format(keyTemplate));
 			return BTStatus.Succeeded;
 		};
 	}
 
-	public BTNode clear(final String keyPattern) {
+	public BTNode incrBy(final String keyTemplate, final int value) {
+		return () -> {
+			bb.incrBy(bb.format(keyTemplate), value);
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public BTNode decr(final String keyTemplate) {
+		return () -> {
+			bb.decr(bb.format(keyTemplate));
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public BTNode append(final String keyTemplate, final String something) {
+		return () -> {
+			bb.append(bb.format(keyTemplate), something);
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public BTNode remove(final String keyPattern) {
 		return () -> {
 			bb.remove(keyPattern);
 			return BTStatus.Succeeded;
 		};
 	}
 
-	public BTNode clear() {
+	public BTNode removeAll() {
 		return () -> {
 			bb.removeAll();
 			return BTStatus.Succeeded;
