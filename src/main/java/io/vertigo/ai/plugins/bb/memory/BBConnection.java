@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.bb;
+package io.vertigo.ai.plugins.bb.memory;
 
 import java.sql.SQLException;
 

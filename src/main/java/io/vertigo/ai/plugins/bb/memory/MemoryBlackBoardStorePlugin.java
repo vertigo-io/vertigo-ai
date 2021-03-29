@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.ai.impl.bb.BBConnection;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.commons.transaction.VTransaction;
@@ -22,7 +21,7 @@ import io.vertigo.core.param.ParamValue;
 public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	private final Map<String, Type> keys = Collections.synchronizedMap(new LinkedHashMap<>());
-	private final Map<String, String> values = Collections.synchronizedMap(new LinkedHashMap<>());
+	private final Map<String, Object> values = Collections.synchronizedMap(new LinkedHashMap<>());
 	private final Map<String, BBList> lists = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	private final Optional<String> storeNameOpt;
@@ -125,13 +124,39 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 */
 	@Override
 	public String get(final String key) {
+		return String.valueOf(values.get(key));
+	}
+
+	/**
+	 * Returns the value or null if the key does not exist
+	 * @param key the key
+	 * @return the value mapped with the key or null if the key does not exist
+	 */
+	@Override
+	public String getString(final String key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return values.get(key);
+		return (String) values.get(key);
 	}
 
 	@Override
-	public void put(final String key, final Type type, final String value) {
+	public Integer getInteger(final String key) {
+		Assertion.check().isNotNull(key);
+		// ---
+		return (Integer) values.get(key);
+	}
+
+	@Override
+	public void putString(final String key, final String value) {
+		doPut(key, Type.String, value);
+	}
+
+	@Override
+	public void putInteger(final String key, final Integer value) {
+		doPut(key, Type.Integer, value);
+	}
+
+	private void doPut(final String key, final Type type, final Object value) {
 		Assertion.check()
 				.isNotNull(key)
 				.isNotNull(type);
@@ -149,28 +174,16 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		Assertion.check()
 				.isNotNull(key);
 		//---
-		Integer i = formatToInteger(get(key));
+		Integer i = getInteger(key);
 		if (i == null) {
 			i = 0;
 		}
-		put(key, Type.Integer, formatToString(i + value));
+		putInteger(key, i + value);
 	}
 
 	@Override
 	public Type getType(final String key) {
 		return keys.get(key);
-	}
-
-	private static String formatToString(final Integer i) {
-		return i == null
-				? null
-				: String.valueOf(i);
-	}
-
-	private static Integer formatToInteger(final String s) {
-		return s == null
-				? null
-				: Integer.valueOf(s);
 	}
 
 	//------------------------------------
@@ -201,31 +214,31 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public int len(final String key) {
+	public int listLen(final String key) {
 		return getListOrEmpty(key)
 				.len();
 	}
 
 	@Override
-	public void push(final String key, final String value) {
+	public void listPush(final String key, final String value) {
 		getListOrCreate(key)
 				.push(value);
 	}
 
 	@Override
-	public String pop(final String key) {
+	public String listPop(final String key) {
 		return getListOrEmpty(key)
 				.pop();
 	}
 
 	@Override
-	public String peek(final String key) {
+	public String listPeek(final String key) {
 		return getListOrEmpty(key)
 				.peek();
 	}
 
 	@Override
-	public String get(final String key, final int idx) {
+	public String listGet(final String key, final int idx) {
 		return getListOrEmpty(key)
 				.get(idx);
 	}

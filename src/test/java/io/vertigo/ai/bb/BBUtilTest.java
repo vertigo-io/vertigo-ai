@@ -53,37 +53,43 @@ public class BBUtilTest {
 	@Test
 	public void testFormatter0() {
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			Assertions.assertEquals("hello world", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello world"));
+			final BlackBoard blackBoard = blackBoardManager.connect();
+			//---
+			Assertions.assertEquals("hello world", blackBoard.format("hello world"));
 		}
 	}
 
 	@Test
 	public void testFormatter1() {
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			Assertions.assertEquals("hello world", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello world"));
-			blackBoardManager.put(BlackBoardManager.MAIN_STORE_NAME, "name", "joe");
-			blackBoardManager.put(BlackBoardManager.MAIN_STORE_NAME, "lastname", "diMagio");
+			final BlackBoard blackBoard = blackBoardManager.connect();
 			//---
-			Assertions.assertEquals("joe", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "{{name}}"));
-			Assertions.assertEquals("hello joe", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{name}}"));
-			Assertions.assertEquals("hello joe...", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{name}}..."));
-			Assertions.assertEquals("hello joe diMagio", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{name}} {{lastname}}"));
+			Assertions.assertEquals("hello world", blackBoard.format("hello world"));
+			blackBoard.putString("name", "joe");
+			blackBoard.putString("lastname", "diMagio");
+			//---
+			Assertions.assertEquals("joe", blackBoard.format("{{name}}"));
+			Assertions.assertEquals("hello joe", blackBoard.format("hello {{name}}"));
+			Assertions.assertEquals("hello joe...", blackBoard.format("hello {{name}}..."));
+			Assertions.assertEquals("hello joe diMagio", blackBoard.format("hello {{name}} {{lastname}}"));
 			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{name}"));
+					() -> blackBoard.format("hello {{name}"));
 			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{name"));
+					() -> blackBoard.format("hello {{name"));
 			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello name}}"));
+					() -> blackBoard.format("hello name}}"));
 		}
 	}
 
 	@Test
 	public void testFormatter2() {
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			blackBoardManager.put(BlackBoardManager.MAIN_STORE_NAME, "u/1/name", "alan");
-			blackBoardManager.put(BlackBoardManager.MAIN_STORE_NAME, "u/2/name", "ada");
-			blackBoardManager.put(BlackBoardManager.MAIN_STORE_NAME, "u/idx", "2");
-			Assertions.assertEquals("hello ada", blackBoardManager.format(BlackBoardManager.MAIN_STORE_NAME, "hello {{u/{{u/idx}}/name}}"));
+			final BlackBoard blackBoard = blackBoardManager.connect();
+			//---
+			blackBoard.putString("u/1/name", "alan");
+			blackBoard.putString("u/2/name", "ada");
+			blackBoard.putString("u/idx", "2");
+			Assertions.assertEquals("hello ada", blackBoard.format("hello {{u/{{u/idx}}/name}}"));
 		}
 	}
 }

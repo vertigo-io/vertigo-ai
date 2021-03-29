@@ -43,7 +43,7 @@ public class SampleBot {
 	void runTick() {
 		botEngine = botManager.createBotEngine(BlackBoardManager.MAIN_STORE_NAME);
 		final BTNode rootNode = sequence(
-				botEngine.fulfill("u/name", "Hello I'm Alan what is your name ?"),
+				botEngine.inputString("u/name", "Hello I'm Alan what is your name ?"),
 				//intents
 				main(),
 				botEngine.display("bye bye {{u/name}}"));
@@ -57,7 +57,7 @@ public class SampleBot {
 		botEngine = botManager.createBotEngine(BlackBoardManager.MAIN_STORE_NAME);
 		// create or parse or retrieve the brain
 		final BTNode rootNode = sequence(
-				botEngine.fulfill("u/name", "Hello I'm Alan what is your name ?"),
+				botEngine.inputString("u/name", "Hello I'm Alan what is your name ?"),
 				//intents
 				main(),
 				botEngine.display("bye bye {{u/name}}"));
@@ -97,9 +97,9 @@ public class SampleBot {
 						//botEngine.clear("i/*"),
 						//botEngine.clear("rate/*"),
 						//						botEngine.fulfill("i/name", "Hi {{u/name}} please select [W]eather, [T]icket, [G]ame or e[X]it ?", "W", "G", "T", "X"),
-						botEngine.fulfill("i/name", "Hi {{u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
+						botEngine.inputString("i/name", "Hi {{u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
 						selector(
-								botEngine.isFulFilled("i/done"),
+								botEngine.fulfilled("i/done"),
 								botEngine.doSwitch("i/name")
 										.when("W", weather())
 										.when("G", game())
@@ -112,7 +112,7 @@ public class SampleBot {
 
 	private static BTNode weather() {
 		return sequence(
-				botEngine.fulfill("w/city", "Please choose a city"),
+				botEngine.inputString("w/city", "Please choose a city"),
 				botEngine.display("It's sunny in {{w/city}} !"),
 				botEngine.set("i/done", "ok"),
 				botEngine.clear("w/*"));
@@ -138,7 +138,7 @@ public class SampleBot {
 		return sequence(
 				//first select a random number between 0 and 100
 				selector(
-						botEngine.isFulFilled("g/target"),
+						botEngine.fulfilledInteger("g/target"),
 						sequence(
 								botEngine.display("You have chosen to play !"),
 								botEngine.display("{{u/name}}, you must find the number I have chosen between 0 and 100"),
@@ -146,18 +146,18 @@ public class SampleBot {
 										Double.valueOf(Math.floor(Math.random() * 101)).intValue()))),
 				//make your choice until having found the right number
 				selector(
-						botEngine.eq("g/target", "{{g/choice}}"),
+						botEngine.eqIntegerByValue("g/target", "g/choice"),
 						sequence(
-								botEngine.fulfill("g/choice", "What is your choice ?"),
+								botEngine.inputInteger("g/choice", "What is your choice ?"),
 								botEngine.inc("g/rounds"),
 								selector(
 										sequence(
-												botEngine.gt("g/target", "{{g/choice}}"),
+												botEngine.gtByValue("g/target", "g/choice"),
 												botEngine.display("select up !"),
 												botEngine.clear("g/choice"),
 												BTNodes.running()),
 										sequence(
-												botEngine.lt("g/target", "{{g/choice}}"),
+												botEngine.ltByValue("g/target", "g/choice"),
 												botEngine.display("select down !"),
 												botEngine.clear("g/choice"),
 												BTNodes.running()),
@@ -170,7 +170,7 @@ public class SampleBot {
 
 	private static BTNode rate() {
 		return sequence(
-				botEngine.fulfill("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
+				botEngine.inputString("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
 				botEngine.display("You have rated {{rate/rating}}"),
 				botEngine.clear("rate/*"));
 	}

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bot.BotEngine;
 import io.vertigo.ai.bot.BotManager;
@@ -38,7 +39,7 @@ public class BotManagerImpl implements BotManager {
 
 	@Override
 	public BotEngine createBotEngine(final String storeName) {
-		return new BotEngine(blackBoardManager, storeName);
+		return new BotEngine(blackBoardManager.connect(storeName));
 	}
 
 	@Override
@@ -56,12 +57,18 @@ public class BotManagerImpl implements BotManager {
 	}
 
 	private BotResponse doRunTick(final BTNode bot, final String storeName, final Optional<String> userResponseOpt) {
+		final BlackBoard blackBoard = blackBoardManager.connect(storeName);
 		userResponseOpt.ifPresent(response -> {
-			final var key = blackBoardManager.format(storeName, "{{bot/response}}");
-			blackBoardManager.put(storeName, key, response);
+			final var key = blackBoard.getString("bot/response");
+			final var type = blackBoard.getString("bot/response/type");
+			if ("integer".equals(type)) {
+				blackBoard.putInteger(key, Integer.valueOf(response));
+			} else {
+				blackBoard.putString(key, response);
+			}
 		});
 		if (behaviorTreeManager.run(bot) == BTStatus.Running) {
-			return BotResponse.talk(blackBoardManager.get(storeName, "bot/question"));
+			return BotResponse.talk(blackBoard.getString("bot/question"));
 		}
 		return BotResponse.BOT_RESPONSE_END;
 	}

@@ -38,7 +38,18 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 */
 	String get(final String key);
 
-	void put(final String key, final Type type, final String value);
+	/**
+	 * Returns the value or null if the key does not exist
+	 * @param key the key
+	 * @return the value mapped with the key or null if the key does not exist
+	 */
+	String getString(final String key);
+
+	void putString(final String key, final String value);
+
+	Integer getInteger(final String key);
+
+	void putInteger(final String key, final Integer value);
 
 	void incrBy(final String key, final int value);
 
@@ -49,15 +60,15 @@ public interface BlackBoardStorePlugin extends Plugin {
 	//- All methods are prefixed with l  -
 	//------------------------------------
 
-	int len(final String key);
+	int listLen(final String key);
 
-	void push(final String key, final String value);
+	void listPush(final String key, final String value);
 
-	String pop(final String key);
+	String listPop(final String key);
 
-	String peek(final String key);
+	String listPeek(final String key);
 
-	String get(final String key, final int idx);
+	String listGet(final String key, final int idx);
 
 	//------------------------------------
 	//- Plugin                             -
