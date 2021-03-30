@@ -8,10 +8,6 @@ import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardImpl implements BlackBoard {
-
-	public static final String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
-	public static final String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
-
 	private final BlackBoardStorePlugin blackBoardStorePlugin;
 
 	BlackBoardImpl(

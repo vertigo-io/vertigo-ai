@@ -3,6 +3,8 @@ package io.vertigo.ai.bb;
 import java.util.Set;
 
 public interface BlackBoard {
+	String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
+	String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
 
 	//------------------------------------
 	//--- Keys

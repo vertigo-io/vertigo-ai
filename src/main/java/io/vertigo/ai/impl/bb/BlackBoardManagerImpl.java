@@ -11,10 +11,6 @@ import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardManagerImpl implements BlackBoardManager {
-
-	public static final String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
-	public static final String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
-
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
 
 	public enum Type {
