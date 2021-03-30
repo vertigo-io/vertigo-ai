@@ -21,12 +21,6 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	//--- Keys
 	//------------------------------------
-	/**
-	 * Returns if the keys exist
-	 *
-	 * @param key the key
-	 * @return if the key exists
-	 */
 	@Override
 	public boolean exists(final String key) {
 		checkKey(key);
@@ -35,11 +29,6 @@ public final class BlackBoardImpl implements BlackBoard {
 				.exists(key);
 	}
 
-	/**
-	 * Returns all the keys matching the pattern
-	 * @param keyPattern the pattern
-	 * @return A list of keys
-	 */
 	@Override
 	public Set<String> keys(final String keyPattern) {
 		checkKeyPattern(keyPattern);
@@ -58,47 +47,6 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	//--- KV
 	//------------------------------------
-
-	/**
-	 * Returns the value or null if the key does not exist
-	 * @param key the key
-	 * @return the value mapped with the key or null if the key does not exist
-	 */
-	@Override
-	public String getString(final String key) {
-		checkKey(key);
-		//---
-		return blackBoardStorePlugin
-				.getString(key);
-	}
-
-	@Override
-	public Integer getInteger(final String key) {
-		checkKey(key);
-		checkType(key, Type.Integer);
-		//---
-		return blackBoardStorePlugin
-				.getInteger(key);
-	}
-
-	@Override
-	public void putInteger(final String key, final Integer value) {
-		checkKey(key);
-		checkType(key, Type.Integer);
-		//---
-		blackBoardStorePlugin
-				.putInteger(key, value);
-	}
-
-	@Override
-	public void putString(final String key, final String value) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		blackBoardStorePlugin
-				.putString(key, value);
-	}
-
 	@Override
 	public String format(final String msg) {
 		Assertion.check()
@@ -126,6 +74,24 @@ public final class BlackBoardImpl implements BlackBoard {
 		return builder.toString();
 	}
 
+	//--- KV String 
+	@Override
+	public String getString(final String key) {
+		checkKey(key);
+		//---
+		return blackBoardStorePlugin
+				.getString(key);
+	}
+
+	@Override
+	public void putString(final String key, final String value) {
+		checkKey(key);
+		checkType(key, Type.String);
+		//---
+		blackBoardStorePlugin
+				.putString(key, value);
+	}
+
 	@Override
 	public void append(final String key, final String something) {
 		String value = getString(key);
@@ -136,8 +102,50 @@ public final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void decr(final String key) {
-		incrBy(key, -1);
+	public boolean eq(final String key, final String compare) {
+		checkKey(key);
+		checkType(key, Type.String);
+		//---
+		final String k = getString(key);
+		return k == null ? compare == null : k.equals(compare);
+	}
+
+	@Override
+	public boolean eqCaseInsensitive(final String key, final String compare) {
+		checkKey(key);
+		checkType(key, Type.String);
+		//---
+		final String k = getString(key);
+		return k == null ? compare == null : k.equalsIgnoreCase(compare);
+	}
+
+	@Override
+	public boolean startsWith(final String key, final String compare) {
+		checkKey(key);
+		checkType(key, Type.String);
+		//---
+		final String k = getString(key);
+		return k == null ? compare == null : k.startsWith(compare);
+	}
+
+	//--- KV Integer
+
+	@Override
+	public Integer getInteger(final String key) {
+		checkKey(key);
+		checkType(key, Type.Integer);
+		//---
+		return blackBoardStorePlugin
+				.getInteger(key);
+	}
+
+	@Override
+	public void putInteger(final String key, final Integer value) {
+		checkKey(key);
+		checkType(key, Type.Integer);
+		//---
+		blackBoardStorePlugin
+				.putInteger(key, value);
 	}
 
 	@Override
@@ -153,7 +161,11 @@ public final class BlackBoardImpl implements BlackBoard {
 		blackBoardStorePlugin.incrBy(key, value);
 	}
 
-	//Integers
+	@Override
+	public void decr(final String key) {
+		incrBy(key, -1);
+	}
+
 	@Override
 	public boolean lt(final String key, final Integer compare) {
 		return compareInteger(key, compare) < 0;
@@ -187,39 +199,10 @@ public final class BlackBoardImpl implements BlackBoard {
 		return k.compareTo(compare);
 	}
 
-	//String
-	@Override
-	public boolean eq(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.equals(compare);
-	}
-
-	@Override
-	public boolean eqCaseInsensitive(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.equalsIgnoreCase(compare);
-	}
-
-	@Override
-	public boolean startsWith(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.startsWith(compare);
-	}
-
 	//------------------------------------
-	//- List                             -
-	//- All methods are prefixed with l  -
+	//- List                             
+	//- All methods are prefixed with list  
 	//------------------------------------
-
 	@Override
 	public int listSize(final String key) {
 		return blackBoardStorePlugin
