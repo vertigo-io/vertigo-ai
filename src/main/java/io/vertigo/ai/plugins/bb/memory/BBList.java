@@ -21,7 +21,7 @@ final class BBList {
 		}
 	}
 
-	int len() {
+	int size() {
 		return values.size();
 	}
 

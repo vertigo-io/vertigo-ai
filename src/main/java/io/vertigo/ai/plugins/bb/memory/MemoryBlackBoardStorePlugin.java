@@ -214,9 +214,9 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public int listLen(final String key) {
+	public int listSize(final String key) {
 		return getListOrEmpty(key)
-				.len();
+				.size();
 	}
 
 	@Override

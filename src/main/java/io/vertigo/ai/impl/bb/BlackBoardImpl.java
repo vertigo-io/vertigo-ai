@@ -221,7 +221,7 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 
 	@Override
-	public int listLen(final String key) {
+	public int listSize(final String key) {
 		return blackBoardStorePlugin
 				.listLen(key);
 	}

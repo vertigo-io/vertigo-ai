@@ -60,7 +60,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	//- All methods are prefixed with l  -
 	//------------------------------------
 
-	int listLen(final String key);
+	int listSize(final String key);
 
 	void listPush(final String key, final String value);
 
