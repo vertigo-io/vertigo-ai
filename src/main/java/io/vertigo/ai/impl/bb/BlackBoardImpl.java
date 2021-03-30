@@ -223,7 +223,7 @@ public final class BlackBoardImpl implements BlackBoard {
 	@Override
 	public int listSize(final String key) {
 		return blackBoardStorePlugin
-				.listLen(key);
+				.listSize(key);
 	}
 
 	@Override

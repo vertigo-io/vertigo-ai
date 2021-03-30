@@ -2,6 +2,15 @@ package io.vertigo.ai.bb;
 
 import java.util.Set;
 
+/**
+ * The blackboard is a simple structure allowing to read and write values identified by keys.
+ * Some basic operations are supported
+ * The blackboard can be volatile or persistent
+ * The blackboard can be shared or not
+ * 
+ * Keys must follow a rule (see the regex)
+ * @author pchretien
+ */
 public interface BlackBoard {
 	String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
 	String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
