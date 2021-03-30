@@ -2,7 +2,7 @@ package io.vertigo.ai.impl.bb;
 
 import java.util.Set;
 
-import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
+import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.core.node.component.Plugin;
 
 public interface BlackBoardStorePlugin extends Plugin {
@@ -27,6 +27,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 
 	void remove(final String keyPattern);
 
+	Type getType(final String key);
 	//------------------------------------
 	//--- KV
 	//------------------------------------
@@ -53,11 +54,9 @@ public interface BlackBoardStorePlugin extends Plugin {
 
 	void incrBy(final String key, final int value);
 
-	Type getType(final String key);
-
 	//------------------------------------
-	//- List                             -
-	//- All methods are prefixed with l  -
+	//- List                             
+	//- All methods are prefixed with list  
 	//------------------------------------
 
 	int listSize(final String key);

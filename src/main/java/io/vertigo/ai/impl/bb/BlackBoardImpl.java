@@ -4,17 +4,15 @@ import java.util.Optional;
 import java.util.Set;
 
 import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.impl.bb.BlackBoardManagerImpl.Type;
 import io.vertigo.core.lang.Assertion;
 
 public final class BlackBoardImpl implements BlackBoard {
 	private final BlackBoardStorePlugin blackBoardStorePlugin;
 
-	BlackBoardImpl(
-			final BlackBoardStorePlugin blackBoardStorePlugin) {
+	BlackBoardImpl(final BlackBoardStorePlugin blackBoardStorePlugin) {
 		Assertion.check()
 				.isNotNull(blackBoardStorePlugin);
-		// ---
+		//---
 		this.blackBoardStorePlugin = blackBoardStorePlugin;
 	}
 
@@ -40,8 +38,16 @@ public final class BlackBoardImpl implements BlackBoard {
 	@Override
 	public void remove(final String keyPattern) {
 		checkKeyPattern(keyPattern);
+		//---
 		blackBoardStorePlugin
 				.remove(keyPattern);
+	}
+
+	@Override
+	public Type getType(final String key) {
+		checkKey(key);
+		//---
+		return blackBoardStorePlugin.getType(key);
 	}
 
 	//------------------------------------
@@ -77,7 +83,7 @@ public final class BlackBoardImpl implements BlackBoard {
 	//--- KV String 
 	@Override
 	public String getString(final String key) {
-		checkKey(key);
+		checkKey(key, Type.String);
 		//---
 		return blackBoardStorePlugin
 				.getString(key);
@@ -85,8 +91,7 @@ public final class BlackBoardImpl implements BlackBoard {
 
 	@Override
 	public void putString(final String key, final String value) {
-		checkKey(key);
-		checkType(key, Type.String);
+		checkKey(key, Type.String);
 		//---
 		blackBoardStorePlugin
 				.putString(key, value);
@@ -103,37 +108,27 @@ public final class BlackBoardImpl implements BlackBoard {
 
 	@Override
 	public boolean eq(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.equals(compare);
+		final String value = getString(key);
+		return value == null ? compare == null : value.equals(compare);
 	}
 
 	@Override
 	public boolean eqCaseInsensitive(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.equalsIgnoreCase(compare);
+		final String value = getString(key);
+		return value == null ? compare == null : value.equalsIgnoreCase(compare);
 	}
 
 	@Override
 	public boolean startsWith(final String key, final String compare) {
-		checkKey(key);
-		checkType(key, Type.String);
-		//---
-		final String k = getString(key);
-		return k == null ? compare == null : k.startsWith(compare);
+		final String value = getString(key);
+		return value == null ? compare == null : value.startsWith(compare);
 	}
 
 	//--- KV Integer
 
 	@Override
 	public Integer getInteger(final String key) {
-		checkKey(key);
-		checkType(key, Type.Integer);
+		checkKey(key, Type.Integer);
 		//---
 		return blackBoardStorePlugin
 				.getInteger(key);
@@ -141,24 +136,22 @@ public final class BlackBoardImpl implements BlackBoard {
 
 	@Override
 	public void putInteger(final String key, final Integer value) {
-		checkKey(key);
-		checkType(key, Type.Integer);
+		checkKey(key, Type.Integer);
 		//---
 		blackBoardStorePlugin
 				.putInteger(key, value);
 	}
 
 	@Override
-	public void incr(final String key) {
-		incrBy(key, 1);
+	public void incrBy(final String key, final int value) {
+		checkKey(key, Type.Integer);
+		//---
+		blackBoardStorePlugin.incrBy(key, value);
 	}
 
 	@Override
-	public void incrBy(final String key, final int value) {
-		checkKey(key);
-		checkType(key, Type.Integer);
-		//---
-		blackBoardStorePlugin.incrBy(key, value);
+	public void incr(final String key) {
+		incrBy(key, 1);
 	}
 
 	@Override
@@ -182,21 +175,10 @@ public final class BlackBoardImpl implements BlackBoard {
 	}
 
 	private int compareInteger(final String key, final Integer compare) {
-		checkKey(key);
-		checkType(key, Type.Integer);
+		checkKey(key, Type.Integer);
 		//---
-		final Integer k = getInteger(key);
-		if (k == null) {
-			return compare == null
-					? 0
-					: -1;
-		}
-		if (compare == null) {
-			return k == null
-					? 0
-					: -1;
-		}
-		return k.compareTo(compare);
+		final Integer value = getInteger(key);
+		return compareInteger(value, compare);
 	}
 
 	//------------------------------------
@@ -205,30 +187,40 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	@Override
 	public int listSize(final String key) {
+		checkKey(key, Type.List);
+		//---
 		return blackBoardStorePlugin
 				.listSize(key);
 	}
 
 	@Override
 	public void listPush(final String key, final String value) {
+		checkKey(key, Type.List);
+		//---
 		blackBoardStorePlugin
 				.listPush(key, value);
 	}
 
 	@Override
 	public String listPop(final String key) {
+		checkKey(key, Type.List);
+		//---
 		return blackBoardStorePlugin
 				.listPop(key);
 	}
 
 	@Override
 	public String listPeek(final String key) {
+		checkKey(key, Type.List);
+		//---
 		return blackBoardStorePlugin
 				.listPeek(key);
 	}
 
 	@Override
 	public String listGet(final String key, final int idx) {
+		checkKey(key, Type.List);
+		//---
 		return blackBoardStorePlugin
 				.listGet(key, idx);
 	}
@@ -236,19 +228,18 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	//- Utils                             -
 	//------------------------------------
-
 	private static void checkKey(final String key) {
 		Assertion.check()
 				.isNotBlank(key)
 				.isTrue(key.matches(KEY_REGEX), "the key '{0}' must contain only a-z 1-9 words separated with /", key);
 	}
 
-	private void checkType(final String key, final Type type) {
+	private void checkKey(final String key, final Type type) {
 		Assertion.check()
-				.isNotNull(key)
+				.isNotBlank(key)
 				.isNotNull(type);
 		//---
-		final Type t = blackBoardStorePlugin.getType(key);
+		final Type t = getType(key);
 		if (t != null && !type.equals(t)) {
 			throw new IllegalStateException("the type of the key " + t + " is not the one expected " + type);
 		}
@@ -258,6 +249,20 @@ public final class BlackBoardImpl implements BlackBoard {
 		Assertion.check()
 				.isNotBlank(keyPattern)
 				.isTrue(keyPattern.matches(KEY_PATTERN_REGEX), "the key pattern '{0}' must contain only a-z 1-9 words separated with / and is finished by a * or nothing", keyPattern);
+	}
+
+	private static int compareInteger(final Integer value, final Integer compare) {
+		if (value == null) {
+			return compare == null
+					? 0
+					: -1;
+		}
+		if (compare == null) {
+			return value == null
+					? 0
+					: -1;
+		}
+		return value.compareTo(compare);
 	}
 
 }

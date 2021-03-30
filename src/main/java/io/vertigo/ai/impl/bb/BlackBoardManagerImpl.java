@@ -13,10 +13,6 @@ import io.vertigo.core.lang.Assertion;
 public final class BlackBoardManagerImpl implements BlackBoardManager {
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
 
-	public enum Type {
-		String, Integer, List
-	}
-
 	@Inject
 	public BlackBoardManagerImpl(
 			final List<BlackBoardStorePlugin> blackBoardStorePlugins) {

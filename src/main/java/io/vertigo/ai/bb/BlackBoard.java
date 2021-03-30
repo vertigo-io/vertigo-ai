@@ -15,6 +15,15 @@ public interface BlackBoard {
 	String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
 	String KEY_PATTERN_REGEX = "(" + KEY_REGEX + "[\\*]?)|[\\*]";
 
+	/**
+	 * Types
+	 */
+	enum Type {
+		String,
+		Integer,
+		List
+	}
+
 	//------------------------------------
 	//--- Keys
 	//------------------------------------
@@ -36,13 +45,20 @@ public interface BlackBoard {
 	Set<String> keys(final String keyPattern);
 
 	/**
-	 * Remove all the keys matching the pattern
+	 * Removes all the keys matching the pattern
 	 * 
 	 * The magic pattern * remove all the keys
 	 * 
 	 * @param keyPattern the pattern
 	 */
 	void remove(final String keyPattern);
+
+	/**
+	 * Returns the key type or null if the keys does'nt exist
+	 * @param key the key
+	 * @return the key type or null 
+	 */
+	Type getType(final String key);
 
 	//------------------------------------
 	//--- KV
@@ -80,13 +96,6 @@ public interface BlackBoard {
 	void putInteger(final String key, final Integer value);
 
 	/**
-	 * Increments the value (must be an integer) at the key
-	 * 
-	 * @param key the key
-	 */
-	void incr(final String key);
-
-	/**
 	 * Increments the value (must be an integer) at the key by a value
 	 * 
 	 * @param key the key
@@ -95,11 +104,22 @@ public interface BlackBoard {
 	void incrBy(final String key, final int value);
 
 	/**
+	 * Increments the value (must be an integer) at the key
+	 * 
+	 * @param key the key
+	 */
+	default void incr(final String key) {
+		incrBy(key, 1);
+	}
+
+	/**
 	 * Decrements the value (must be an integer) at the key
 	 * 
 	 * @param key the key
 	 */
-	void decr(final String key);
+	default void decr(final String key) {
+		incrBy(key, -1);
+	}
 
 	boolean lt(final String key, final Integer compare);
 
