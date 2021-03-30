@@ -49,16 +49,6 @@ public final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public Set<String> keys() {
-		return keys("*");
-	}
-
-	@Override
-	public void removeAll() {
-		remove("*");
-	}
-
-	@Override
 	public void remove(final String keyPattern) {
 		checkKeyPattern(keyPattern);
 		blackBoardStorePlugin
