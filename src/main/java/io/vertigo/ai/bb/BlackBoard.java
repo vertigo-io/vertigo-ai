@@ -33,7 +33,9 @@ public interface BlackBoard {
 	//------------------------------------
 	//--- KV
 	//------------------------------------
+	String format(final String msg);
 
+	//--- KV String 
 	/**
 	 * Returns the value or null if the key does not exist
 	 * @param key the key
@@ -41,15 +43,20 @@ public interface BlackBoard {
 	 */
 	String getString(final String key);
 
+	void putString(final String key, final String value);
+
+	void append(final String key, final String something);
+
+	boolean eq(final String key, final String compare);
+
+	boolean eqCaseInsensitive(final String key, final String compare);
+
+	boolean startsWith(final String key, final String compare);
+
+	//--- KV Integer
 	Integer getInteger(final String key);
 
 	void putInteger(final String key, final Integer value);
-
-	void putString(final String key, final String value);
-
-	String format(final String msg);
-
-	void append(final String key, final String something);
 
 	void decr(final String key);
 
@@ -57,14 +64,6 @@ public interface BlackBoard {
 
 	void incrBy(final String key, final int value);
 
-	//String
-	boolean eq(final String key, final String compare);
-
-	boolean eqCaseInsensitive(final String key, final String compare);
-
-	boolean startsWith(final String key, final String compare);
-
-	//Integer
 	boolean lt(final String key, final Integer compare);
 
 	boolean eq(final String key, final Integer compare);
@@ -72,8 +71,8 @@ public interface BlackBoard {
 	boolean gt(final String key, final Integer compare);
 
 	//------------------------------------
-	//- List                             -
-	//- All methods are prefixed with list  -
+	//- List                             
+	//- All methods are prefixed with list  
 	//------------------------------------
 
 	int listLen(final String key);
