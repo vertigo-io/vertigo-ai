@@ -45,13 +45,13 @@ public interface BlackBoard {
 	Set<String> keys(final String keyPattern);
 
 	/**
-	 * Removes all the keys matching the pattern
+	 * Deletes all the keys matching the pattern
 	 * 
 	 * The magic pattern * remove all the keys
 	 * 
 	 * @param keyPattern the pattern
 	 */
-	void remove(final String keyPattern);
+	void delete(final String keyPattern);
 
 	/**
 	 * Returns the key type or null if the keys does'nt exist

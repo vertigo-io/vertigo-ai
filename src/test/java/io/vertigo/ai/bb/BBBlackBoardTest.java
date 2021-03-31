@@ -77,7 +77,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(0, blackBoard.keys("test/*").size());
 			Assertions.assertEquals(1, blackBoard.keys("*").size());
 			//---
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			blackBoard.incr("test");
 			blackBoard.incr("test/1");
 			blackBoard.incr("test/2");
@@ -85,7 +85,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(2, blackBoard.keys("test/*").size());
 			Assertions.assertEquals(3, blackBoard.keys("*").size());
 			//--check the key pattern
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			Assertions.assertThrows(Exception.class,
 					() -> blackBoard.keys(" sample"));
 			Assertions.assertThrows(Exception.class,
@@ -97,7 +97,7 @@ public class BBBlackBoardTest {
 			Assertions.assertThrows(Exception.class,
 					() -> blackBoard.keys("samplekey/*/test").isEmpty());
 			//--- keys and keys("*")
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			blackBoard.incr("test");
 			blackBoard.incr("test/1");
 			blackBoard.incr("test/3");
@@ -175,15 +175,15 @@ public class BBBlackBoardTest {
 			blackBoard.incr("sample/3");
 			blackBoard.incr("sample/4");
 			Assertions.assertEquals(4, blackBoard.keys("*").size());
-			blackBoard.remove("sample/1");
+			blackBoard.delete("sample/1");
 			Assertions.assertEquals(3, blackBoard.keys("*").size());
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			Assertions.assertEquals(0, blackBoard.keys("*").size());
 			blackBoard.incr("sample/1");
 			blackBoard.incr("sample/2");
 			blackBoard.incr("sample/3");
 			blackBoard.incr("sample/4");
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			Assertions.assertEquals(0, blackBoard.keys("*").size());
 		}
 	}
@@ -219,7 +219,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(null, blackBoard.getString("sample"));
 			blackBoard.putString("sample", "test");
 			Assertions.assertEquals("test", blackBoard.getString("sample"));
-			blackBoard.remove("*");
+			blackBoard.delete("*");
 			blackBoard.append("sample", "hello");
 			blackBoard.append("sample", " ");
 			blackBoard.append("sample", "world");

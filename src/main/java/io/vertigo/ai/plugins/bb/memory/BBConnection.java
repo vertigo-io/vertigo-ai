@@ -6,7 +6,8 @@ import io.vertigo.commons.transaction.VTransactionResource;
 import io.vertigo.core.lang.Assertion;
 
 /**
- * Represents a connection to a blackboard
+ * Connection to a blackboard
+ * 
  * @author mlaroche
  */
 public final class BBConnection implements VTransactionResource {

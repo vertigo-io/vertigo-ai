@@ -36,7 +36,7 @@ public final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void remove(final String keyPattern) {
+	public void delete(final String keyPattern) {
 		checkKeyPattern(keyPattern);
 		//---
 		blackBoardStorePlugin

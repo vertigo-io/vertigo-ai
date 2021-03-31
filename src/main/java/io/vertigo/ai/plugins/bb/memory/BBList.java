@@ -14,11 +14,9 @@ final class BBList {
 	}
 
 	private BBList(final boolean mutable) {
-		if (mutable) {
-			values = new ArrayList<>();
-		} else {
-			values = Collections.emptyList();
-		}
+		values = mutable
+				? new ArrayList<>()
+				: Collections.emptyList();
 	}
 
 	int size() {

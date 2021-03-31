@@ -75,7 +75,7 @@ public class BotEngine {
 
 	public BTNode remove(final String keyPattern) {
 		return () -> {
-			bb.remove(keyPattern);
+			bb.delete(keyPattern);
 			return BTStatus.Succeeded;
 		};
 	}
