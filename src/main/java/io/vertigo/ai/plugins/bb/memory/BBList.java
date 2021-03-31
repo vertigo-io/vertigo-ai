@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This structure is hybrid and can be used as a stack or a list.
+
+ * @author pchretien
+ */
 final class BBList {
 	static final BBList EMPTY = new BBList(false);
 
