@@ -121,18 +121,14 @@ public interface BlackBoard {
 	 * 
 	 * @param key the key
 	 */
-	default void incr(final String key) {
-		incrBy(key, 1);
-	}
+	void incr(final String key);
 
 	/**
 	 * Decrements the value (must be an integer) at the key
 	 * 
 	 * @param key the key
 	 */
-	default void decr(final String key) {
-		incrBy(key, -1);
-	}
+	void decr(final String key);
 
 	boolean lt(final String key, final Integer compare);
 

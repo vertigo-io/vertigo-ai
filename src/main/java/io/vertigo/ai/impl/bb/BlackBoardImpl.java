@@ -41,7 +41,7 @@ public final class BlackBoardImpl implements BlackBoard {
 		checkKeyPattern(keyPattern);
 		//---
 		blackBoardStorePlugin
-				.remove(keyPattern);
+				.delete(keyPattern);
 	}
 
 	@Override
@@ -100,7 +100,9 @@ public final class BlackBoardImpl implements BlackBoard {
 	@Override
 	public boolean startsWith(final String key, final String compare) {
 		final String value = getString(key); // getString includes type checking
-		return value == null ? compare == null : value.startsWith(compare);
+		return value == null
+				? compare == null
+				: value.startsWith(compare);
 	}
 
 	//--- KV Integer
