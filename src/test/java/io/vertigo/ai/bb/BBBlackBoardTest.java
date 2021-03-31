@@ -77,7 +77,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(0, blackBoard.keys("test/*").size());
 			Assertions.assertEquals(1, blackBoard.keys("*").size());
 			//---
-			blackBoard.removeAll();
+			blackBoard.remove("*");
 			blackBoard.incr("test");
 			blackBoard.incr("test/1");
 			blackBoard.incr("test/2");
@@ -85,7 +85,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(2, blackBoard.keys("test/*").size());
 			Assertions.assertEquals(3, blackBoard.keys("*").size());
 			//--check the key pattern
-			blackBoard.removeAll();
+			blackBoard.remove("*");
 			Assertions.assertThrows(Exception.class,
 					() -> blackBoard.keys(" sample"));
 			Assertions.assertThrows(Exception.class,
@@ -97,13 +97,13 @@ public class BBBlackBoardTest {
 			Assertions.assertThrows(Exception.class,
 					() -> blackBoard.keys("samplekey/*/test").isEmpty());
 			//--- keys and keys("*")
-			blackBoard.removeAll();
+			blackBoard.remove("*");
 			blackBoard.incr("test");
 			blackBoard.incr("test/1");
 			blackBoard.incr("test/3");
 			blackBoard.incr("test/4");
 			Assertions.assertEquals(4, blackBoard.keys("*").size());
-			Assertions.assertEquals(4, blackBoard.keys().size());
+			Assertions.assertEquals(4, blackBoard.keys("*").size());
 		}
 	}
 
@@ -169,22 +169,22 @@ public class BBBlackBoardTest {
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
 			final BlackBoard blackBoard = blackBoardManager.connect();
 			//---
-			Assertions.assertEquals(0, blackBoard.keys().size());
+			Assertions.assertEquals(0, blackBoard.keys("*").size());
 			blackBoard.incr("sample/1");
 			blackBoard.incr("sample/2");
 			blackBoard.incr("sample/3");
 			blackBoard.incr("sample/4");
-			Assertions.assertEquals(4, blackBoard.keys().size());
+			Assertions.assertEquals(4, blackBoard.keys("*").size());
 			blackBoard.remove("sample/1");
-			Assertions.assertEquals(3, blackBoard.keys().size());
+			Assertions.assertEquals(3, blackBoard.keys("*").size());
 			blackBoard.remove("*");
-			Assertions.assertEquals(0, blackBoard.keys().size());
+			Assertions.assertEquals(0, blackBoard.keys("*").size());
 			blackBoard.incr("sample/1");
 			blackBoard.incr("sample/2");
 			blackBoard.incr("sample/3");
 			blackBoard.incr("sample/4");
-			blackBoard.removeAll();
-			Assertions.assertEquals(0, blackBoard.keys().size());
+			blackBoard.remove("*");
+			Assertions.assertEquals(0, blackBoard.keys("*").size());
 		}
 	}
 
@@ -219,7 +219,7 @@ public class BBBlackBoardTest {
 			Assertions.assertEquals(null, blackBoard.getString("sample"));
 			blackBoard.putString("sample", "test");
 			Assertions.assertEquals("test", blackBoard.getString("sample"));
-			blackBoard.removeAll();
+			blackBoard.remove("*");
 			blackBoard.append("sample", "hello");
 			blackBoard.append("sample", " ");
 			blackBoard.append("sample", "world");
@@ -232,17 +232,17 @@ public class BBBlackBoardTest {
 		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
 			final BlackBoard blackBoard = blackBoardManager.connect();
 			//---
-			Assertions.assertEquals(0, blackBoard.listLen("sample"));
+			Assertions.assertEquals(0, blackBoard.listSize("sample"));
 			blackBoard.listPush("sample", "a");
 			blackBoard.listPush("sample", "b");
 			blackBoard.listPush("sample", "c");
-			Assertions.assertEquals(3, blackBoard.listLen("sample"));
+			Assertions.assertEquals(3, blackBoard.listSize("sample"));
 			Assertions.assertEquals("c", blackBoard.listPop("sample"));
-			Assertions.assertEquals(2, blackBoard.listLen("sample"));
+			Assertions.assertEquals(2, blackBoard.listSize("sample"));
 			Assertions.assertEquals("b", blackBoard.listPeek("sample"));
-			Assertions.assertEquals(2, blackBoard.listLen("sample"));
+			Assertions.assertEquals(2, blackBoard.listSize("sample"));
 			blackBoard.listPush("sample", "c");
-			Assertions.assertEquals(3, blackBoard.listLen("sample"));
+			Assertions.assertEquals(3, blackBoard.listSize("sample"));
 			Assertions.assertEquals("a", blackBoard.listGet("sample", 0));
 			Assertions.assertEquals("b", blackBoard.listGet("sample", 1));
 			Assertions.assertEquals("c", blackBoard.listGet("sample", 2));
@@ -253,7 +253,7 @@ public class BBBlackBoardTest {
 			blackBoard.listPop("sample");
 			blackBoard.listPop("sample");
 			blackBoard.listPop("sample");
-			Assertions.assertEquals(0, blackBoard.listLen("sample"));
+			Assertions.assertEquals(0, blackBoard.listSize("sample"));
 		}
 	}
 
