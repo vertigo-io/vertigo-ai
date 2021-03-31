@@ -54,7 +54,8 @@ public interface BlackBoard {
 	void delete(final String keyPattern);
 
 	/**
-	 * Returns the key type or null if the keys does'nt exist
+	 * Returns the key type or null if the keys doesn't exist
+	 * 
 	 * @param key the key
 	 * @return the key type or null 
 	 */
@@ -74,6 +75,12 @@ public interface BlackBoard {
 	 */
 	String getString(final String key);
 
+	/**
+	 *	Associates the specified value with the specified key
+	 *
+	 * @param key the key 
+	 * @param value the value
+	 */
 	void putString(final String key, final String value);
 
 	void append(final String key, final String something);
@@ -93,6 +100,12 @@ public interface BlackBoard {
 	 */
 	Integer getInteger(final String key);
 
+	/**
+	 *	Associates the specified value with the specified key
+	 *
+	 * @param key the key 
+	 * @param value the value
+	 */
 	void putInteger(final String key, final Integer value);
 
 	/**
