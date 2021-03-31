@@ -82,7 +82,7 @@ public class BotEngine {
 
 	public BTNode removeAll() {
 		return () -> {
-			bb.removeAll();
+			bb.delete("*");
 			return BTStatus.Succeeded;
 		};
 	}

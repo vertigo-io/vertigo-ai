@@ -20,4 +20,4 @@ public class BotResponse {
 		return new BotResponse(BotStatus.Talking, question);
 	}
 
-};
+}
