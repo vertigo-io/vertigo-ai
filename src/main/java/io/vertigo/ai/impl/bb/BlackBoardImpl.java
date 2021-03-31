@@ -228,12 +228,25 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	//- Utils                             -
 	//------------------------------------
+	/**
+	 * Checks the key is following the regex	 
+	 * 
+	 * @param key the key
+	 */
 	private static void checkKey(final String key) {
 		Assertion.check()
 				.isNotBlank(key)
 				.isTrue(key.matches(KEY_REGEX), "the key '{0}' must contain only a-z 1-9 words separated with /", key);
 	}
 
+	/**
+	 * Checks  
+	 * - the key is following the regex
+	 * - the type is ok
+	 * 
+	 * @param key
+	 * @param type
+	 */
 	private void checkKey(final String key, final Type type) {
 		Assertion.check()
 				.isNotBlank(key)
