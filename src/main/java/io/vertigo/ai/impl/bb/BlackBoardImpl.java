@@ -2,6 +2,7 @@ package io.vertigo.ai.impl.bb;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.core.lang.Assertion;
@@ -55,29 +56,7 @@ public final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	@Override
 	public String format(final String msg) {
-		Assertion.check()
-				.isNotNull(msg);
-		//---
-		final String START_TOKEN = "{{";
-		final String END_TOKEN = "}}";
-
-		final StringBuilder builder = new StringBuilder(msg);
-		int start = 0;
-		int end;
-		while ((end = builder.indexOf(END_TOKEN, start)) >= 0) {
-			start = builder.lastIndexOf(START_TOKEN, end);
-			if (start < 0) {
-				throw new IllegalStateException("An end token '" + END_TOKEN + "+'has been found without a start token " + START_TOKEN);
-			}
-			final var paramName = builder.substring(start + START_TOKEN.length(), end);
-			final var paramVal = Optional.ofNullable(blackBoardStorePlugin.get(paramName))
-					.orElse("not found:" + paramName);
-			builder.replace(start, end + END_TOKEN.length(), paramVal);
-		}
-		if (builder.indexOf(START_TOKEN) > 0) {
-			throw new IllegalStateException("A start token '" + START_TOKEN + "+'has been found without an end token " + END_TOKEN);
-		}
-		return builder.toString();
+		return format(msg, this.blackBoardStorePlugin::get);
 	}
 
 	//--- KV String 
@@ -99,7 +78,7 @@ public final class BlackBoardImpl implements BlackBoard {
 
 	@Override
 	public void append(final String key, final String something) {
-		String value = getString(key);
+		String value = getString(key); // getString includes type checking 
 		if (value == null) {
 			value = "";
 		}
@@ -108,19 +87,19 @@ public final class BlackBoardImpl implements BlackBoard {
 
 	@Override
 	public boolean eq(final String key, final String compare) {
-		final String value = getString(key);
+		final String value = getString(key); // getString includes type checking
 		return value == null ? compare == null : value.equals(compare);
 	}
 
 	@Override
 	public boolean eqCaseInsensitive(final String key, final String compare) {
-		final String value = getString(key);
+		final String value = getString(key); // getString includes type checking
 		return value == null ? compare == null : value.equalsIgnoreCase(compare);
 	}
 
 	@Override
 	public boolean startsWith(final String key, final String compare) {
-		final String value = getString(key);
+		final String value = getString(key); // getString includes type checking
 		return value == null ? compare == null : value.startsWith(compare);
 	}
 
@@ -276,6 +255,32 @@ public final class BlackBoardImpl implements BlackBoard {
 					: -1;
 		}
 		return value.compareTo(compare);
+	}
+
+	public static String format(final String msg, final Function<String, String> kv) {
+		Assertion.check()
+				.isNotNull(msg);
+		//---
+		final String START_TOKEN = "{{";
+		final String END_TOKEN = "}}";
+
+		final StringBuilder builder = new StringBuilder(msg);
+		int start = 0;
+		int end;
+		while ((end = builder.indexOf(END_TOKEN, start)) >= 0) {
+			start = builder.lastIndexOf(START_TOKEN, end);
+			if (start < 0) {
+				throw new IllegalStateException("An end token '" + END_TOKEN + "+'has been found without a start token " + START_TOKEN);
+			}
+			final var paramName = builder.substring(start + START_TOKEN.length(), end);
+			final var paramVal = Optional.ofNullable(kv.apply(paramName))
+					.orElse("not found:" + paramName);
+			builder.replace(start, end + END_TOKEN.length(), paramVal);
+		}
+		if (builder.indexOf(START_TOKEN) > 0) {
+			throw new IllegalStateException("A start token '" + START_TOKEN + "+'has been found without an end token " + END_TOKEN);
+		}
+		return builder.toString();
 	}
 
 }
