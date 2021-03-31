@@ -96,7 +96,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public void remove(final String keyPattern) {
+	public void delete(final String keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
 		if ("*".equals(keyPattern)) {
 			removeAll();
