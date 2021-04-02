@@ -89,17 +89,13 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		return keys.keySet();
 	}
 
-	private void removeAll() {
-		values.clear();
-		keys.clear();
-		lists.clear();
-	}
-
 	@Override
 	public void delete(final String keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
 		if ("*".equals(keyPattern)) {
-			removeAll();
+			values.clear();
+			keys.clear();
+			lists.clear();
 		} else if (keyPattern.endsWith("*")) {
 			final var prefix = keyPattern.replaceAll("\\*", "");
 			values.keySet().removeIf(s -> s.startsWith(prefix));
