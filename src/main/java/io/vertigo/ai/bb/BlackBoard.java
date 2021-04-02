@@ -64,6 +64,12 @@ public interface BlackBoard {
 	//------------------------------------
 	//--- KV
 	//------------------------------------
+	/**
+	 * Formats a message including {{keys}} with mustaches
+	 * 
+	 * @param msg the msg
+	 * @return the formatted msg
+	 */
 	String format(final String msg);
 
 	//--- KV String 
@@ -76,19 +82,39 @@ public interface BlackBoard {
 	String getString(final String key);
 
 	/**
-	 *	Associates the specified value with the specified key
+	 * Associates the specified value with the specified key
 	 *
 	 * @param key the key 
 	 * @param value the value
 	 */
 	void putString(final String key, final String value);
 
+	/**
+	 * Appends something to a key 
+	 * 
+	 * @param key the key
+	 * @param something something
+	 */
 	void append(final String key, final String something);
 
+	/**
+	 * Returns true if the value associated to the key equals the compare string
+	 * 
+	 * @param key the key
+	 * @param compare the value to compare
+	 * @return true if the value associated to the key equals the compare
+	 */
 	boolean eq(final String key, final String compare);
 
 	boolean eqCaseInsensitive(final String key, final String compare);
 
+	/**
+	 * Returns true if the value associated to the key starts with the compare string
+	 * 
+	 * @param key the key
+	 * @param compare the value to compare
+	 * @return true if the value associated to the key starts with the compare string
+	 */
 	boolean startsWith(final String key, final String compare);
 
 	//--- KV Integer
@@ -101,7 +127,7 @@ public interface BlackBoard {
 	Integer getInteger(final String key);
 
 	/**
-	 *	Associates the specified value with the specified key
+	 * Associates the specified value with the specified key
 	 *
 	 * @param key the key 
 	 * @param value the value

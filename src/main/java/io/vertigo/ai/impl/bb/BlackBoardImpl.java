@@ -7,7 +7,7 @@ import java.util.function.Function;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.core.lang.Assertion;
 
-public final class BlackBoardImpl implements BlackBoard {
+final class BlackBoardImpl implements BlackBoard {
 	private final BlackBoardStorePlugin blackBoardStorePlugin;
 
 	BlackBoardImpl(final BlackBoardStorePlugin blackBoardStorePlugin) {
