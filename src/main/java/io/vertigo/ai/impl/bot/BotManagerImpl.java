@@ -12,27 +12,20 @@ import io.vertigo.ai.bot.BotResponse;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
-import io.vertigo.commons.transaction.VTransactionManager;
-import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.lang.Assertion;
 
 public class BotManagerImpl implements BotManager {
-
-	private final VTransactionManager transactionManager;
 	private final BlackBoardManager blackBoardManager;
 	private final BehaviorTreeManager behaviorTreeManager;
 
 	@Inject
 	public BotManagerImpl(
-			final VTransactionManager transactionManager,
 			final BlackBoardManager blackBoardManager,
 			final BehaviorTreeManager behaviorTreeManager) {
 		Assertion.check()
-				.isNotNull(transactionManager)
 				.isNotNull(blackBoardManager)
 				.isNotNull(behaviorTreeManager);
 		//---
-		this.transactionManager = transactionManager;
 		this.blackBoardManager = blackBoardManager;
 		this.behaviorTreeManager = behaviorTreeManager;
 	}
@@ -44,19 +37,6 @@ public class BotManagerImpl implements BotManager {
 
 	@Override
 	public BotResponse runTick(final BTNode bot, final String storeName, final Optional<String> userResponseOpt) {
-		if (transactionManager.hasCurrentTransaction()) {
-			// if we have a transaction we use the current one
-			return doRunTick(bot, storeName, userResponseOpt);
-		}
-		//else we create a new one and commit it if everything went well
-		try (final VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			final BotResponse botResponse = doRunTick(bot, storeName, userResponseOpt);
-			transaction.commit();
-			return botResponse;
-		}
-	}
-
-	private BotResponse doRunTick(final BTNode bot, final String storeName, final Optional<String> userResponseOpt) {
 		final BlackBoard blackBoard = blackBoardManager.connect(storeName);
 		userResponseOpt.ifPresent(response -> {
 			final var key = blackBoard.getString("bot/response");
@@ -72,5 +52,4 @@ public class BotManagerImpl implements BotManager {
 		}
 		return BotResponse.BOT_RESPONSE_END;
 	}
-
 }
