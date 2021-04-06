@@ -284,5 +284,4 @@ final class BlackBoardImpl implements BlackBoard {
 		}
 		return builder.toString();
 	}
-
 }

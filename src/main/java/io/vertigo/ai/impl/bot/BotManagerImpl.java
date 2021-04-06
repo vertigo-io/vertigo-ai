@@ -14,7 +14,7 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.core.lang.Assertion;
 
-public class BotManagerImpl implements BotManager {
+public final class BotManagerImpl implements BotManager {
 	private final BlackBoardManager blackBoardManager;
 	private final BehaviorTreeManager behaviorTreeManager;
 
