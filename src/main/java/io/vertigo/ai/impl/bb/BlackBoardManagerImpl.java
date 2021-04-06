@@ -14,8 +14,7 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	private final Map<String, BlackBoardStorePlugin> blackBoardPluginByStore = new HashMap<>();
 
 	@Inject
-	public BlackBoardManagerImpl(
-			final List<BlackBoardStorePlugin> blackBoardStorePlugins) {
+	public BlackBoardManagerImpl(final List<BlackBoardStorePlugin> blackBoardStorePlugins) {
 		Assertion.check()
 				.isNotNull(blackBoardStorePlugins);
 		// ---
