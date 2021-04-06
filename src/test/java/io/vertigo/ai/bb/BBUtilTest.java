@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
-import io.vertigo.commons.CommonsFeatures;
-import io.vertigo.commons.transaction.VTransactionManager;
-import io.vertigo.commons.transaction.VTransactionWritable;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -21,8 +18,6 @@ public class BBUtilTest {
 
 	@Inject
 	private BlackBoardManager blackBoardManager;
-	@Inject
-	private VTransactionManager transactionManager;
 
 	private AutoCloseableNode node;
 
@@ -34,7 +29,6 @@ public class BBUtilTest {
 
 	private NodeConfig buildNodeConfig() {
 		return NodeConfig.builder()
-				.addModule(new CommonsFeatures().build())// for transactions
 				.addModule(
 						ModuleConfig.builder("myModule")
 								.addComponent(BlackBoardManager.class, BlackBoardManagerImpl.class)
@@ -52,44 +46,38 @@ public class BBUtilTest {
 
 	@Test
 	public void testFormatter0() {
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			final BlackBoard blackBoard = blackBoardManager.connect();
-			//---
-			Assertions.assertEquals("hello world", blackBoard.format("hello world"));
-		}
+		final BlackBoard blackBoard = blackBoardManager.connect();
+		//---
+		Assertions.assertEquals("hello world", blackBoard.format("hello world"));
 	}
 
 	@Test
 	public void testFormatter1() {
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			final BlackBoard blackBoard = blackBoardManager.connect();
-			//---
-			Assertions.assertEquals("hello world", blackBoard.format("hello world"));
-			blackBoard.putString("name", "joe");
-			blackBoard.putString("lastname", "diMagio");
-			//---
-			Assertions.assertEquals("joe", blackBoard.format("{{name}}"));
-			Assertions.assertEquals("hello joe", blackBoard.format("hello {{name}}"));
-			Assertions.assertEquals("hello joe...", blackBoard.format("hello {{name}}..."));
-			Assertions.assertEquals("hello joe diMagio", blackBoard.format("hello {{name}} {{lastname}}"));
-			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoard.format("hello {{name}"));
-			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoard.format("hello {{name"));
-			Assertions.assertThrows(IllegalStateException.class,
-					() -> blackBoard.format("hello name}}"));
-		}
+		final BlackBoard blackBoard = blackBoardManager.connect();
+		//---
+		Assertions.assertEquals("hello world", blackBoard.format("hello world"));
+		blackBoard.putString("name", "joe");
+		blackBoard.putString("lastname", "diMagio");
+		//---
+		Assertions.assertEquals("joe", blackBoard.format("{{name}}"));
+		Assertions.assertEquals("hello joe", blackBoard.format("hello {{name}}"));
+		Assertions.assertEquals("hello joe...", blackBoard.format("hello {{name}}..."));
+		Assertions.assertEquals("hello joe diMagio", blackBoard.format("hello {{name}} {{lastname}}"));
+		Assertions.assertThrows(IllegalStateException.class,
+				() -> blackBoard.format("hello {{name}"));
+		Assertions.assertThrows(IllegalStateException.class,
+				() -> blackBoard.format("hello {{name"));
+		Assertions.assertThrows(IllegalStateException.class,
+				() -> blackBoard.format("hello name}}"));
 	}
 
 	@Test
 	public void testFormatter2() {
-		try (VTransactionWritable transaction = transactionManager.createCurrentTransaction()) {
-			final BlackBoard blackBoard = blackBoardManager.connect();
-			//---
-			blackBoard.putString("u/1/name", "alan");
-			blackBoard.putString("u/2/name", "ada");
-			blackBoard.putString("u/idx", "2");
-			Assertions.assertEquals("hello ada", blackBoard.format("hello {{u/{{u/idx}}/name}}"));
-		}
+		final BlackBoard blackBoard = blackBoardManager.connect();
+		//---
+		blackBoard.putString("u/1/name", "alan");
+		blackBoard.putString("u/2/name", "ada");
+		blackBoard.putString("u/idx", "2");
+		Assertions.assertEquals("hello ada", blackBoard.format("hello {{u/{{u/idx}}/name}}"));
 	}
 }
