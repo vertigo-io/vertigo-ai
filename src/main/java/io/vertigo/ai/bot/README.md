@@ -168,3 +168,11 @@ namespaces
 /administrator
 /contributor 
 /user
+
+# shuffle ?
+
+begin shuffle
+	say "Hi"
+	say "Hello"
+	say  Hey!"
+end shuffle
