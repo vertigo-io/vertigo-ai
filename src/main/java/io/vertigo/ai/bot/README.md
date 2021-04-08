@@ -145,21 +145,26 @@ begin while [ {{u/age}}>=75 or {{u/illness}}==1 ]
 end while 
 	
 
-# macros 
-declare macro "administrator"  ???namespace 
+# trees
+How to declare the main trees and these used inside ?
+
+declare tree "administrator"
 	say "hello, you're an admin"
-end macro
+end tree
 
-begin switch {{role}}
-	case "C"
-		macro "contributor" ???? namespace'	
-	case "A"
-		macro "administrator" 	
-	case "U"
-		macro "user" 	
-end switch 
+declare tree "main"
+	begin switch {{role}}
+		case "C"
+			tree "contributor" {{/contributor}}
+		case "A"
+			tree "administrator" {{/administrator}}
+		case "U"
+			tree "user" {{/user}} 	
+	end switch 
+end tree
 
-
-
-
-
+namespaces
+/
+/administrator
+/contributor 
+/user
