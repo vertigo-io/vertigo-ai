@@ -49,13 +49,17 @@ public class NluManagerImpl implements NluManager {
 
 	@Override
 	public void train(final Map<VIntent, List<String>> trainingData) {
-		// TODO Auto-generated method stub
+		train(trainingData, DEFAULT_ENGINE_NAME);
 
 	}
 
 	@Override
 	public void train(final Map<VIntent, List<String>> trainingData, final String engineName) {
-		// TODO Auto-generated method stub
+		Assertion.check()
+				.isNotBlank(engineName);
+		// ---
+		getEngineByName(engineName)
+				.train(trainingData);
 
 	}
 

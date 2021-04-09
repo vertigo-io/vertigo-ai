@@ -94,8 +94,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 			return "";
 		}
 		// output yaml format for Rasa
-		value.set(0, "- " + value.get(0));
-		return String.join("\n- ", value);
+		return "- " + String.join("\n- ", value);
 	}
 
 	/** {@inheritDoc} */
