@@ -10,15 +10,13 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou
  */
 public class VRecognitionResult {
-
 	private final String rawSentence;
-
 	private final List<VIntentClassification> intentClassificationList;
 
 	public VRecognitionResult(final String rawSentence, final List<VIntentClassification> intentClassificationList) {
 		Assertion.check().isNotBlank(rawSentence);
 		Assertion.check().isNotNull(intentClassificationList);
-		//--
+		//---
 		this.rawSentence = rawSentence;
 		this.intentClassificationList = intentClassificationList;
 	}
@@ -36,5 +34,4 @@ public class VRecognitionResult {
 	public List<VIntentClassification> getIntentClassificationList() {
 		return intentClassificationList;
 	}
-
 }

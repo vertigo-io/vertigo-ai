@@ -11,6 +11,7 @@ import io.vertigo.core.node.component.Manager;
  * @author skerdudou
  */
 public interface NluManager extends Manager {
+	String DEFAULT_ENGINE_NAME = "main";
 
 	/**
 	 * Starts the process to train the default engine with provided data.
@@ -45,14 +46,14 @@ public interface NluManager extends Manager {
 	VRecognitionResult recognize(String sentence, String engineName);
 
 	/**
-	 * Check if the default engine is ready to recognize sentences.
+	 * Checks if the default engine is ready to recognize sentences.
 	 *
 	 * @return true if the engine is ready
 	 */
 	boolean isReady();
 
 	/**
-	 * Check if the specified engine is ready to recognize sentences.
+	 * Checks if the specified engine is ready to recognize sentences.
 	 *
 	 * @param engineName name of the engine to check
 	 * @return true if the engine is ready

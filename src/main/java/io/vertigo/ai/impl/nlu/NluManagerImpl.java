@@ -15,9 +15,6 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou
  */
 public class NluManagerImpl implements NluManager {
-
-	public static final String DEFAULT_ENGINE_NAME = "main";
-
 	private final Map<String, NluEnginePlugin> nluEnginePluginMap;
 
 	/**
@@ -26,10 +23,9 @@ public class NluManagerImpl implements NluManager {
 	 * @param nluEnginePlugins List of NLU engine plugins
 	 */
 	@Inject
-	public NluManagerImpl(
-			final List<NluEnginePlugin> nluEnginePlugins) {
+	public NluManagerImpl(final List<NluEnginePlugin> nluEnginePlugins) {
 		Assertion.check().isNotNull(nluEnginePlugins);
-		//-----
+		//---
 		nluEnginePluginMap = new HashMap<>();
 
 		for (final NluEnginePlugin nluEnginePlugin : nluEnginePlugins) {
@@ -41,7 +37,7 @@ public class NluManagerImpl implements NluManager {
 
 	private NluEnginePlugin getEngineByName(final String name) {
 		Assertion.check().isNotBlank(name);
-
+		//---
 		final NluEnginePlugin nluEnginePlugin = nluEnginePluginMap.get(name);
 		Assertion.check().isNotNull(nluEnginePlugin, "NluEnginePlugin {0}, wasn't registered.", name);
 		return nluEnginePlugin;
@@ -50,45 +46,35 @@ public class NluManagerImpl implements NluManager {
 	@Override
 	public void train(final Map<VIntent, List<String>> trainingData) {
 		train(trainingData, DEFAULT_ENGINE_NAME);
-
 	}
 
 	@Override
 	public void train(final Map<VIntent, List<String>> trainingData, final String engineName) {
 		Assertion.check()
 				.isNotBlank(engineName);
-		// ---
+		//---
 		getEngineByName(engineName)
 				.train(trainingData);
 
 	}
 
-	/**
-	 * {@inherit
-	 * }
-	 * /** {@inheritDoc}
-	 */
 	@Override
 	public VRecognitionResult recognize(final String sentence) {
 		return recognize(sentence, DEFAULT_ENGINE_NAME);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public VRecognitionResult recognize(final String sentence, final String engineName) {
 		return getEngineByName(engineName).recognize(sentence);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean isReady() {
 		return isReady(DEFAULT_ENGINE_NAME);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean isReady(final String engineName) {
 		return getEngineByName(engineName).isReady();
 	}
-
 }

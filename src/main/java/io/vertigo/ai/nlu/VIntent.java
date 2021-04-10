@@ -8,7 +8,6 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou
  */
 public final class VIntent {
-
 	private final String code;
 
 	private VIntent(final String code) {

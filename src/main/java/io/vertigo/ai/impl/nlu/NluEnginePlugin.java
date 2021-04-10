@@ -13,12 +13,12 @@ import io.vertigo.core.node.component.Plugin;
 public interface NluEnginePlugin extends Plugin {
 
 	/**
-	 * Start the process to train the neural network against registered intents.
+	 * Starts the process to train the neural network against registered intents.
 	 */
 	void train(final Map<VIntent, List<String>> trainingData);
 
 	/**
-	 * Use the previously trained model to classify a new and unknown sentence.
+	 * Uses the previously trained model to classify a new and unknown sentence.
 	 *
 	 * @param sentence the sentence we wants to classify.
 	 * @return the result of the analysis
@@ -26,7 +26,7 @@ public interface NluEnginePlugin extends Plugin {
 	VRecognitionResult recognize(String sentence);
 
 	/**
-	 * Check if ready to recognize sentences.
+	 * Checks if ready to recognize sentences.
 	 *
 	 * @return true if the engine is ready
 	 */

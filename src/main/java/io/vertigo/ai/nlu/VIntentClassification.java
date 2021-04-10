@@ -8,9 +8,7 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou
  */
 public class VIntentClassification {
-
 	private final VIntent intent;
-
 	private final Double accuracy;
 
 	public VIntentClassification(final VIntent intent, final Double accuracy) {
