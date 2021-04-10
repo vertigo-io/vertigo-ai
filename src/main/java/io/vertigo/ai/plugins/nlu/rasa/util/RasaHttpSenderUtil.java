@@ -25,7 +25,6 @@ import io.vertigo.ai.plugins.nlu.rasa.mda.RasaParsingResponse;
 import io.vertigo.core.lang.VSystemException;
 
 public final class RasaHttpSenderUtil {
-
 	private static final String RASA_MODEL = "/model";
 	private static final String RASA_TRAIN = "/train";
 	private static final String RASA_PARSE = "/parse";
@@ -90,16 +89,14 @@ public final class RasaHttpSenderUtil {
 	}
 
 	private static <T extends Object> HttpResponse<T> sendRequest(final HttpClient client, final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
-		HttpResponse<T> response;
 		try {
-			response = client.send(request, handler);
+			final HttpResponse<T> response = client.send(request, handler);
 			if (response.statusCode() != successStatutCode) {
 				throw new VSystemException("Error while sending request to '{0}'. Expected HTTP code '{1}' but was '{2}'.", request.uri().toString(), successStatutCode, response.statusCode());
 			}
+			return response;
 		} catch (IOException | InterruptedException e) {
 			throw new VSystemException(e, "Error while sending request to '{0}'", request.uri().toString());
 		}
-		return response;
 	}
-
 }

@@ -9,13 +9,14 @@ import io.vertigo.core.lang.Assertion;
  *
  * @author skerdudou
  */
-public class VRecognitionResult {
+public final class VRecognitionResult {
 	private final String rawSentence;
 	private final List<VIntentClassification> intentClassificationList;
 
 	public VRecognitionResult(final String rawSentence, final List<VIntentClassification> intentClassificationList) {
-		Assertion.check().isNotBlank(rawSentence);
-		Assertion.check().isNotNull(intentClassificationList);
+		Assertion.check()
+				.isNotBlank(rawSentence)
+				.isNotNull(intentClassificationList);
 		//---
 		this.rawSentence = rawSentence;
 		this.intentClassificationList = intentClassificationList;

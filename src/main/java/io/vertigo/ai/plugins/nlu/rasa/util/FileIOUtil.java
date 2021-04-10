@@ -65,19 +65,19 @@ public final class FileIOUtil {
 		final OutputStreamWriter writer = new OutputStreamWriter(output);
 		yaml.dump(map, writer);
 		return output.toByteArray();
-
 	}
 
 	public static ObjectMapper createCustomObjectMapper() {
-		final ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		return mapper;
+		return new ObjectMapper()
+				.setSerializationInclusion(Include.NON_NULL)
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 
 	public static <T> String getJsonStringFromObject(final ObjectMapper mapper, final T object) {
 		try {
-			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+			return mapper
+					.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(object);
 		} catch (final JsonProcessingException e) {
 			throw new VSystemException(e, "error during the creation of json from {0}.", object);
 		}

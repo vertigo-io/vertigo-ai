@@ -28,13 +28,12 @@ import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 
 public class RasaNluEnginePlugin implements NluEnginePlugin {
-
 	private final String name;
 	private final String rasaUrl;
 
 	private final URL configFileUrl;
 
-	private Boolean ready;
+	private boolean ready;
 
 	@Inject
 	public RasaNluEnginePlugin(
@@ -42,7 +41,6 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 			@ParamValue("configFile") final Optional<String> configFileOpt,
 			@ParamValue("pluginName") final Optional<String> pluginNameOpt,
 			final ResourceManager resourceManager) {
-
 		Assertion.check().isNotBlank(rasaUrl);
 
 		this.rasaUrl = rasaUrl;
@@ -105,13 +103,14 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 			try {
 				Thread.sleep(500);
 			} catch (final InterruptedException e) {
-				Thread.currentThread().interrupt(); //si interrupt on relance
+				//si interrupt on relance
+				Thread.currentThread().interrupt();
 			}
 			retry++;
 		}
 
 		if (!ready) {
-			throw new IllegalStateException("NLU engine '" + getName() + "' is not ready to recognize sentenses.");
+			throw new IllegalStateException("NLU engine '" + getName() + "' is not ready to recognize sentences.");
 		}
 
 		final MessageToRecognize message = new MessageToRecognize(sentence);

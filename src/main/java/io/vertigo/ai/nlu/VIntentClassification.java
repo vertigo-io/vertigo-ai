@@ -7,9 +7,9 @@ import io.vertigo.core.lang.Assertion;
  *
  * @author skerdudou
  */
-public class VIntentClassification {
+public final class VIntentClassification {
 	private final VIntent intent;
-	private final Double accuracy;
+	private final double accuracy;
 
 	public VIntentClassification(final VIntent intent, final Double accuracy) {
 		Assertion.check()
@@ -30,8 +30,7 @@ public class VIntentClassification {
 	/**
 	 * @return the accuracy
 	 */
-	public Double getAccuracy() {
+	public double getAccuracy() {
 		return accuracy;
 	}
-
 }
