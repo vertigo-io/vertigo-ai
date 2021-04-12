@@ -12,7 +12,7 @@ import io.vertigo.core.lang.Assertion;
  * After this success the other nodes are not evaluated.
  * 
  * A selector fails when all the nodes fail.
- * 
+ * An empty selector always fails
  * @author pchretien
  */
 final class BTSelector implements BTNode {

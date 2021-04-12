@@ -1,7 +1,6 @@
 package io.vertigo.ai.plugins.nlu.rasa.mda;
 
 public final class RasaIntentWithConfidence {
-
 	private String id;
 	private String name;
 	private Double confidence;

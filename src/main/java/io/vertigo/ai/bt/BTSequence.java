@@ -11,6 +11,7 @@ import io.vertigo.core.lang.Assertion;
  * It succeeds when all the nodes succeed.
  * It fails when one node fails.
  * After this failure the other nodes are not evaluated.
+ * An empty sequence always succeeds.
  * 
  * @author pchretien
  */

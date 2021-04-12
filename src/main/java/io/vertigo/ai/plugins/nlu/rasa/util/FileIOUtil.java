@@ -92,9 +92,8 @@ public final class FileIOUtil {
 	}
 
 	public static ObjectNode createNode(final ObjectMapper mapper, final String key, final String value) {
-		final ObjectNode node = mapper.createObjectNode();
-		node.put(key, value);
-		return node;
+		return mapper.createObjectNode()
+				.put(key, value);
 	}
 
 }
