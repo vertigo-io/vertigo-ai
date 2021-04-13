@@ -6,14 +6,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,11 +33,12 @@ public final class RasaHttpSenderUtil {
 	public static String launchTraining(final String rasaUrl, final Map<String, Object> map) {
 		final byte[] output = FileIOUtil.getYamlByteArrayFromMap(map);
 
-		final HttpClient client = getBasicHttpClient();
-		final String urlRequest = rasaUrl + RASA_MODEL + RASA_TRAIN;
+		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL + RASA_TRAIN))
+				.header("Content-Type", "application/x-yaml")
+				.POST(BodyPublishers.ofByteArray(output))
+				.build();
 
-		final HttpRequest request = createPostRequest(urlRequest, Map.of("Content-Type", "application/x-yaml"), BodyPublishers.ofByteArray(output));
-		final HttpResponse<InputStream> response = sendRequest(client, request, BodyHandlers.ofInputStream(), 200);
+		final HttpResponse<InputStream> response = sendRequest(request, BodyHandlers.ofInputStream(), 200);
 		return response.headers().map().get("filename").get(0);
 	}
 
@@ -51,44 +49,31 @@ public final class RasaHttpSenderUtil {
 		final String json = FileIOUtil.getJsonStringFromObject(mapper, node);
 
 		//send request
-		final HttpClient client = getBasicHttpClient();
-		final HttpRequest request = createPutRequest(rasaUrl + RASA_MODEL, Map.of("Content-Type", "application/json"), BodyPublishers.ofString(json));
-		sendRequest(client, request, BodyHandlers.ofString(), HttpServletResponse.SC_NO_CONTENT);
+		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL))
+				.header("Content-Type", "application/json")
+				.PUT(BodyPublishers.ofString(json))
+				.build();
+
+		sendRequest(request, BodyHandlers.ofString(), HttpServletResponse.SC_NO_CONTENT);
 	}
 
 	public static RasaParsingResponse getIntentFromRasa(final String rasaUrl, final MessageToRecognize message) {
 		final ObjectMapper mapper = FileIOUtil.createCustomObjectMapper();
 		final String json = FileIOUtil.getJsonStringFromObject(mapper, message);
 
-		final String urlRequest = rasaUrl + RASA_MODEL + RASA_PARSE;
-		final HttpClient client = getBasicHttpClient();
-		final HttpRequest request = createPostRequest(urlRequest, Map.of("Content-Type", "application/json"), BodyPublishers.ofString(json));
-		final HttpResponse<String> response = sendRequest(client, request, BodyHandlers.ofString(), 200);
+		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL + RASA_PARSE))
+				.header("Content-Type", "application/json")
+				.POST(BodyPublishers.ofString(json))
+				.build();
+
+		final HttpResponse<String> response = sendRequest(request, BodyHandlers.ofString(), 200);
 		return FileIOUtil.getObjectFromJson(mapper, response.body(), RasaParsingResponse.class);
 	}
 
 	/************** Request Part *********/
-	private static HttpClient getBasicHttpClient() {
-		return HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-	}
 
-	private static Builder createRequestBuilder(final String url, final Map<String, String> headers) {
-		final Builder builder = HttpRequest.newBuilder().uri(URI.create(url));
-		for (final Entry<String, String> entry : headers.entrySet()) {
-			builder.setHeader(entry.getKey(), entry.getValue());
-		}
-		return builder;
-	}
-
-	private static HttpRequest createPostRequest(final String url, final Map<String, String> headers, final BodyPublisher publisher) {
-		return createRequestBuilder(url, headers).POST(publisher).build();
-	}
-
-	private static HttpRequest createPutRequest(final String url, final Map<String, String> headers, final BodyPublisher publisher) {
-		return createRequestBuilder(url, headers).PUT(publisher).build();
-	}
-
-	private static <T extends Object> HttpResponse<T> sendRequest(final HttpClient client, final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
+	private static <T extends Object> HttpResponse<T> sendRequest(final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
+		final HttpClient client = HttpClient.newBuilder().version(Version.HTTP_1_1).build();
 		try {
 			final HttpResponse<T> response = client.send(request, handler);
 			if (response.statusCode() != successStatutCode) {
