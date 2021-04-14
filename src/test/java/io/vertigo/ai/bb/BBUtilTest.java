@@ -7,11 +7,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
-import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
+import io.vertigo.ai.AiFeatures;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
-import io.vertigo.core.node.config.ModuleConfig;
 import io.vertigo.core.node.config.NodeConfig;
 
 public class BBUtilTest {
@@ -30,9 +28,9 @@ public class BBUtilTest {
 	private NodeConfig buildNodeConfig() {
 		return NodeConfig.builder()
 				.addModule(
-						ModuleConfig.builder("myModule")
-								.addComponent(BlackBoardManager.class, BlackBoardManagerImpl.class)
-								.addPlugin(MemoryBlackBoardStorePlugin.class)
+						new AiFeatures()
+								.withBlackboard()
+								.withMemoryBlackboard()
 								.build())
 				.build();
 	}

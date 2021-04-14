@@ -1,7 +1,12 @@
 package io.vertigo.ai;
 
+import io.vertigo.ai.bb.BlackBoardManager;
+import io.vertigo.ai.bt.BehaviorTreeManager;
+import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
+import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
+import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
 import io.vertigo.ai.plugins.nlu.rasa.RasaNluEnginePlugin;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.Features;
@@ -13,7 +18,31 @@ public class AiFeatures extends Features<AiFeatures> {
 	 * Constructor.
 	 */
 	public AiFeatures() {
-		super("ai");
+		super("vertigo-ai");
+	}
+
+	/**
+	 * Activates BlackBoard.
+	 *
+	 * @return these features
+	 */
+	@Feature("blackboard")
+	public AiFeatures withBlackboard() {
+		getModuleConfigBuilder()
+				.addComponent(BlackBoardManager.class, BlackBoardManagerImpl.class);
+		return this;
+	}
+
+	/**
+	 * Add ability to use memory plugin to store Blackboards.
+	 *
+	 * @return these features
+	 */
+	@Feature("blackboard.memory")
+	public AiFeatures withMemoryBlackboard(final Param... params) {
+		getModuleConfigBuilder()
+				.addPlugin(MemoryBlackBoardStorePlugin.class, params);
+		return this;
 	}
 
 	/**
@@ -43,6 +72,8 @@ public class AiFeatures extends Features<AiFeatures> {
 	/** {@inheritDoc} */
 	@Override
 	protected void buildFeatures() {
+		getModuleConfigBuilder()
+				.addComponent(BehaviorTreeManager.class, BehaviorTreeManagerImpl.class); // no params or plugin so always here!
 		//
 	}
 }
