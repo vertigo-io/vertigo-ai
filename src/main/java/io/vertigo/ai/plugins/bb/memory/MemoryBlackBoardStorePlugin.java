@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.ai.bb.BlackBoardManager;
+import io.vertigo.ai.bb.KeyPattern;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
@@ -40,10 +42,10 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 * @return if the key exists
 	 */
 	@Override
-	public boolean exists(final String key) {
+	public boolean exists(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return keys.containsKey(key);
+		return keys.containsKey(key.getKey());
 	}
 
 	/**
@@ -52,42 +54,45 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 * @return A list of keys
 	 */
 	@Override
-	public Set<String> keys(final String keyPattern) {
+	public Set<BBKey> keys(final KeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
+		final var keyPatternString = keyPattern.getKeyPattern();
 		//---
-		if ("*".equals(keyPattern)) {
+		if ("*".equals(keyPatternString)) {
 			return keys();
 		}
-		if (keyPattern.endsWith("*")) {
-			final var prefix = keyPattern.replaceAll("\\*", "");
+		if (keyPatternString.endsWith("*")) {
+			final var prefix = keyPatternString.replaceAll("\\*", "");
 			return keys.keySet().stream()
+					.map(BBKey::of)
 					.filter(s -> s.startsWith(prefix))
 					.collect(Collectors.toSet());
 		}
-		final var key = keyPattern;
+		final var key = keyPatternString;
 		return keys.containsKey(key)
-				? Set.of(key)
+				? Set.of(BBKey.of(key))
 				: Collections.emptySet();
 	}
 
-	private Set<String> keys() {
-		return keys.keySet();
+	private Set<BBKey> keys() {
+		return keys.keySet().stream().map(BBKey::of).collect(Collectors.toSet());
 	}
 
 	@Override
-	public void delete(final String keyPattern) {
+	public void delete(final KeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
-		if ("*".equals(keyPattern)) {
+		final var keyPatternString = keyPattern.getKeyPattern();
+		if ("*".equals(keyPatternString)) {
 			values.clear();
 			keys.clear();
 			lists.clear();
-		} else if (keyPattern.endsWith("*")) {
-			final var prefix = keyPattern.replaceAll("\\*", "");
+		} else if (keyPatternString.endsWith("*")) {
+			final var prefix = keyPatternString.replaceAll("\\*", "");
 			values.keySet().removeIf(s -> s.startsWith(prefix));
 			lists.keySet().removeIf(s -> s.startsWith(prefix));
 			keys.keySet().removeIf(s -> s.startsWith(prefix));
 		} else {
-			final var key = keyPattern;
+			final var key = keyPatternString;
 			values.remove(key);
 			lists.remove(key);
 			keys.remove(key);
@@ -104,8 +109,8 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
 	@Override
-	public String get(final String key) {
-		return String.valueOf(values.get(key));
+	public String get(final BBKey key) {
+		return String.valueOf(values.get(key.getKey()));
 	}
 
 	/**
@@ -114,44 +119,44 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
 	@Override
-	public String getString(final String key) {
+	public String getString(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return (String) values.get(key);
+		return (String) values.get(key.getKey());
 	}
 
 	@Override
-	public Integer getInteger(final String key) {
+	public Integer getInteger(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return (Integer) values.get(key);
+		return (Integer) values.get(key.getKey());
 	}
 
 	@Override
-	public void putString(final String key, final String value) {
+	public void putString(final BBKey key, final String value) {
 		doPut(key, Type.String, value);
 	}
 
 	@Override
-	public void putInteger(final String key, final Integer value) {
+	public void putInteger(final BBKey key, final Integer value) {
 		doPut(key, Type.Integer, value);
 	}
 
-	private void doPut(final String key, final Type type, final Object value) {
+	private void doPut(final BBKey key, final Type type, final Object value) {
 		Assertion.check()
 				.isNotNull(key)
 				.isNotNull(type);
 		// ---
 		//---
-		final Type previousType = keys.put(key, type);
+		final Type previousType = keys.put(key.getKey(), type);
 		if (previousType != null && type != previousType) {
 			throw new IllegalStateException("the type is already defined" + previousType);
 		}
-		values.put(key, value);
+		values.put(key.getKey(), value);
 	}
 
 	@Override
-	public void incrBy(final String key, final int value) {
+	public void incrBy(final BBKey key, final int value) {
 		Assertion.check()
 				.isNotNull(key);
 		//---
@@ -163,63 +168,63 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public Type getType(final String key) {
-		return keys.get(key);
+	public Type getType(final BBKey key) {
+		return keys.get(key.getKey());
 	}
 
 	//------------------------------------
 	//- List                             -
 	//- All methods are prefixed with l  -
 	//------------------------------------
-	private BBList getListOrCreate(final String key) {
+	private BBList getListOrCreate(final BBKey key) {
 		Assertion.check()
 				.isNotNull(key);
 		//---
-		BBList list = lists.get(key);
+		BBList list = lists.get(key.getKey());
 		if (list != null) {
 			return list;
 		}
 		list = new BBList();
-		lists.put(key, list);
+		lists.put(key.getKey(), list);
 		return list;
 	}
 
-	private BBList getListOrEmpty(final String key) {
+	private BBList getListOrEmpty(final BBKey key) {
 		Assertion.check()
 				.isNotNull(key);
 		//---
-		final BBList list = lists.get(key);
+		final BBList list = lists.get(key.getKey());
 		return list == null
 				? BBList.EMPTY
 				: list;
 	}
 
 	@Override
-	public int listSize(final String key) {
+	public int listSize(final BBKey key) {
 		return getListOrEmpty(key)
 				.size();
 	}
 
 	@Override
-	public void listPush(final String key, final String value) {
+	public void listPush(final BBKey key, final String value) {
 		getListOrCreate(key)
 				.push(value);
 	}
 
 	@Override
-	public String listPop(final String key) {
+	public String listPop(final BBKey key) {
 		return getListOrEmpty(key)
 				.pop();
 	}
 
 	@Override
-	public String listPeek(final String key) {
+	public String listPeek(final BBKey key) {
 		return getListOrEmpty(key)
 				.peek();
 	}
 
 	@Override
-	public String listGet(final String key, final int idx) {
+	public String listGet(final BBKey key, final int idx) {
 		return getListOrEmpty(key)
 				.get(idx);
 	}

@@ -2,7 +2,9 @@ package io.vertigo.ai.impl.bb;
 
 import java.util.Set;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard.Type;
+import io.vertigo.ai.bb.KeyPattern;
 import io.vertigo.core.node.component.Plugin;
 
 public interface BlackBoardStorePlugin extends Plugin {
@@ -16,33 +18,33 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 * @param key the key
 	 * @return if the key exists
 	 */
-	boolean exists(final String key);
+	boolean exists(final BBKey key);
 
 	/**
 	 * Returns all the keys matching the pattern
 	 * The magic pattern * returns all the keys
-	 * 
+	 *
 	 * @param keyPattern the pattern
 	 * @return A list of keys
 	 */
-	Set<String> keys(final String keyPattern);
+	Set<BBKey> keys(final KeyPattern keyPattern);
 
 	/**
 	 * Deletes all the keys matching the pattern
-	 * 
+	 *
 	 * The magic pattern * remove all the keys
-	 * 
+	 *
 	 * @param keyPattern the pattern
 	 */
-	void delete(final String keyPattern);
+	void delete(final KeyPattern keyPattern);
 
 	/**
 	 * Returns the key type or null if the keys doesn't exist
-	 * 
+	 *
 	 * @param key the key
-	 * @return the key type or null 
+	 * @return the key type or null
 	 */
-	Type getType(final String key);
+	Type getType(final BBKey key);
 
 	//------------------------------------
 	//--- KV
@@ -52,81 +54,81 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 * @param key the key
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
-	String get(final String key);
+	String get(final BBKey key);
 
-	//--- KV String 
+	//--- KV String
 	/**
 	 * Returns the value or null if the key does not exist
 	 * @param key the key
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
-	String getString(final String key);
+	String getString(final BBKey key);
 
-	void putString(final String key, final String value);
+	void putString(final BBKey key, final String value);
 
 	//--- KV Integer
 	/**
 	 * Returns the value or null if the key does not exist
-	 * 
+	 *
 	 * @param key the key
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
-	Integer getInteger(final String key);
+	Integer getInteger(final BBKey key);
 
-	void putInteger(final String key, final Integer value);
+	void putInteger(final BBKey key, final Integer value);
 
 	/**
 	 * Increments the value (must be an integer) at the key by a value
-	 * 
+	 *
 	 * @param key the key
 	 * @param value the value
 	 */
-	void incrBy(final String key, final int value);
+	void incrBy(final BBKey key, final int value);
 
 	//------------------------------------
-	//- List                             
-	//- All methods are prefixed with list  
+	//- List
+	//- All methods are prefixed with list
 	//------------------------------------
 	/**
-	 * Returns the size of the list identified by the key 
-	 * 
+	 * Returns the size of the list identified by the key
+	 *
 	 * @param key the key
-	 * @return the size of the list 
+	 * @return the size of the list
 	 */
-	int listSize(final String key);
+	int listSize(final BBKey key);
 
 	/**
-	 * Pushes a value at the top of the list 
-	 * 
+	 * Pushes a value at the top of the list
+	 *
 	 * @param key the key
 	 * @param value the value
 	 */
-	void listPush(final String key, final String value);
+	void listPush(final BBKey key, final String value);
 
 	/**
-	 * Removes and returns the value at the top of the list 
-	 * 
+	 * Removes and returns the value at the top of the list
+	 *
 	 * @param key the key
 	 * @param value the value
 	 */
-	String listPop(final String key);
+	String listPop(final BBKey key);
 
 	/**
-	 * Returns the value at the top of the list 
-	 * 
+	 * Returns the value at the top of the list
+	 *
 	 * @param key the key
 	 * @param value the value
 	 */
-	String listPeek(final String key);
+	String listPeek(final BBKey key);
 
 	/**
 	 * Reads the value at the index of the list
-	 * 
+	 *
 	 * @param key the key
 	 * @param idx the index
-	 * @return the value at the corresponding index 
+	 * @return the value at the corresponding index
 	 */
-	String listGet(final String key, final int idx);
+	String listGet(final BBKey key, final int idx);
 
 	//------------------------------------
 	//- Plugin                             -

@@ -4,7 +4,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.ai.bb.KeyPattern;
+import io.vertigo.ai.bb.KeyTemplate;
 import io.vertigo.core.lang.Assertion;
 
 final class BlackBoardImpl implements BlackBoard {
@@ -21,32 +24,30 @@ final class BlackBoardImpl implements BlackBoard {
 	//--- Keys
 	//------------------------------------
 	@Override
-	public boolean exists(final String key) {
-		checkKey(key);
+	public boolean exists(final BBKey key) {
+		Assertion.check().isNotNull(key);
 		//---
 		return blackBoardStorePlugin
 				.exists(key);
 	}
 
 	@Override
-	public Set<String> keys(final String keyPattern) {
-		checkKeyPattern(keyPattern);
+	public Set<BBKey> keys(final KeyPattern keyPattern) {
 		//---
 		return blackBoardStorePlugin
 				.keys(keyPattern);
 	}
 
 	@Override
-	public void delete(final String keyPattern) {
-		checkKeyPattern(keyPattern);
+	public void delete(final KeyPattern keyPattern) {
 		//---
 		blackBoardStorePlugin
 				.delete(keyPattern);
 	}
 
 	@Override
-	public Type getType(final String key) {
-		checkKey(key);
+	public Type getType(final BBKey key) {
+		Assertion.check().isNotNull(key);
 		//---
 		return blackBoardStorePlugin.getType(key);
 	}
@@ -55,13 +56,13 @@ final class BlackBoardImpl implements BlackBoard {
 	//--- KV
 	//------------------------------------
 	@Override
-	public String format(final String msg) {
-		return format(msg, this.blackBoardStorePlugin::get);
+	public String format(final KeyTemplate msg) {
+		return format(msg.getKeyTemplate(), blackBoardStorePlugin::get);
 	}
 
-	//--- KV String 
+	//--- KV String
 	@Override
-	public String getString(final String key) {
+	public String getString(final BBKey key) {
 		checkKey(key, Type.String);
 		//---
 		return blackBoardStorePlugin
@@ -69,7 +70,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void putString(final String key, final String value) {
+	public void putString(final BBKey key, final String value) {
 		checkKey(key, Type.String);
 		//---
 		blackBoardStorePlugin
@@ -77,8 +78,8 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void append(final String key, final String something) {
-		String value = getString(key); // getString includes type checking 
+	public void append(final BBKey key, final String something) {
+		String value = getString(key); // getString includes type checking
 		if (value == null) {
 			value = "";
 		}
@@ -86,19 +87,19 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public boolean eq(final String key, final String compare) {
+	public boolean eq(final BBKey key, final String compare) {
 		final String value = getString(key); // getString includes type checking
 		return value == null ? compare == null : value.equals(compare);
 	}
 
 	@Override
-	public boolean eqCaseInsensitive(final String key, final String compare) {
+	public boolean eqCaseInsensitive(final BBKey key, final String compare) {
 		final String value = getString(key); // getString includes type checking
 		return value == null ? compare == null : value.equalsIgnoreCase(compare);
 	}
 
 	@Override
-	public boolean startsWith(final String key, final String compare) {
+	public boolean startsWith(final BBKey key, final String compare) {
 		final String value = getString(key); // getString includes type checking
 		return value == null
 				? compare == null
@@ -108,7 +109,7 @@ final class BlackBoardImpl implements BlackBoard {
 	//--- KV Integer
 
 	@Override
-	public Integer getInteger(final String key) {
+	public Integer getInteger(final BBKey key) {
 		checkKey(key, Type.Integer);
 		//---
 		return blackBoardStorePlugin
@@ -116,7 +117,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void putInteger(final String key, final Integer value) {
+	public void putInteger(final BBKey key, final Integer value) {
 		checkKey(key, Type.Integer);
 		//---
 		blackBoardStorePlugin
@@ -124,38 +125,38 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void incrBy(final String key, final int value) {
+	public void incrBy(final BBKey key, final int value) {
 		checkKey(key, Type.Integer);
 		//---
 		blackBoardStorePlugin.incrBy(key, value);
 	}
 
 	@Override
-	public void incr(final String key) {
+	public void incr(final BBKey key) {
 		incrBy(key, 1);
 	}
 
 	@Override
-	public void decr(final String key) {
+	public void decr(final BBKey key) {
 		incrBy(key, -1);
 	}
 
 	@Override
-	public boolean lt(final String key, final Integer compare) {
+	public boolean lt(final BBKey key, final Integer compare) {
 		return compareInteger(key, compare) < 0;
 	}
 
 	@Override
-	public boolean eq(final String key, final Integer compare) {
+	public boolean eq(final BBKey key, final Integer compare) {
 		return compareInteger(key, compare) == 0;
 	}
 
 	@Override
-	public boolean gt(final String key, final Integer compare) {
+	public boolean gt(final BBKey key, final Integer compare) {
 		return compareInteger(key, compare) > 0;
 	}
 
-	private int compareInteger(final String key, final Integer compare) {
+	private int compareInteger(final BBKey key, final Integer compare) {
 		checkKey(key, Type.Integer);
 		//---
 		final Integer value = getInteger(key);
@@ -163,11 +164,11 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	//------------------------------------
-	//- List                             
-	//- All methods are prefixed with list  
+	//- List
+	//- All methods are prefixed with list
 	//------------------------------------
 	@Override
-	public int listSize(final String key) {
+	public int listSize(final BBKey key) {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
@@ -175,7 +176,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public void listPush(final String key, final String value) {
+	public void listPush(final BBKey key, final String value) {
 		checkKey(key, Type.List);
 		//---
 		blackBoardStorePlugin
@@ -183,7 +184,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public String listPop(final String key) {
+	public String listPop(final BBKey key) {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
@@ -191,7 +192,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public String listPeek(final String key) {
+	public String listPeek(final BBKey key) {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
@@ -199,7 +200,7 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public String listGet(final String key, final int idx) {
+	public String listGet(final BBKey key, final int idx) {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
@@ -209,40 +210,24 @@ final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	//- Utils                             -
 	//------------------------------------
-	/**
-	 * Checks the key is following the regex	 
-	 * 
-	 * @param key the key
-	 */
-	private static void checkKey(final String key) {
-		Assertion.check()
-				.isNotBlank(key)
-				.isTrue(key.matches(KEY_REGEX), "the key '{0}' must contain only a-z 1-9 words separated with /", key);
-	}
 
 	/**
-	 * Checks  
+	 * Checks
 	 * - the key is following the regex
 	 * - the type is ok
-	 * 
+	 *
 	 * @param key
 	 * @param type
 	 */
-	private void checkKey(final String key, final Type type) {
+	private void checkKey(final BBKey key, final Type type) {
 		Assertion.check()
-				.isNotBlank(key)
+				.isNotNull(key)
 				.isNotNull(type);
 		//---
 		final Type t = getType(key);
 		if (t != null && !type.equals(t)) {
 			throw new IllegalStateException("the type of the key " + t + " is not the one expected " + type);
 		}
-	}
-
-	private static void checkKeyPattern(final String keyPattern) {
-		Assertion.check()
-				.isNotBlank(keyPattern)
-				.isTrue(keyPattern.matches(KEY_PATTERN_REGEX), "the key pattern '{0}' must contain only a-z 1-9 words separated with / and is finished by a * or nothing", keyPattern);
 	}
 
 	private static int compareInteger(final Integer value, final Integer compare) {
@@ -259,7 +244,7 @@ final class BlackBoardImpl implements BlackBoard {
 		return value.compareTo(compare);
 	}
 
-	public static String format(final String msg, final Function<String, String> kv) {
+	public static String format(final String msg, final Function<BBKey, String> kv) {
 		Assertion.check()
 				.isNotNull(msg);
 		//---
@@ -275,7 +260,7 @@ final class BlackBoardImpl implements BlackBoard {
 				throw new IllegalStateException("An end token '" + END_TOKEN + "+'has been found without a start token " + START_TOKEN);
 			}
 			final var paramName = builder.substring(start + START_TOKEN.length(), end);
-			final var paramVal = Optional.ofNullable(kv.apply(paramName))
+			final var paramVal = Optional.ofNullable(kv.apply(BBKey.of(paramName)))
 					.orElse("not found:" + paramName);
 			builder.replace(start, end + END_TOKEN.length(), paramVal);
 		}
