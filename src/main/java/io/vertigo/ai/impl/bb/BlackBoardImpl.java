@@ -56,8 +56,13 @@ final class BlackBoardImpl implements BlackBoard {
 	//--- KV
 	//------------------------------------
 	@Override
-	public String format(final KeyTemplate msg) {
-		return format(msg.getKeyTemplate(), blackBoardStorePlugin::get);
+	public String format(final String msg) {
+		return format(msg, blackBoardStorePlugin::get);
+	}
+
+	@Override
+	public BBKey eval(final KeyTemplate keyTemplate) {
+		return BBKey.of(format(keyTemplate.getKeyTemplate(), blackBoardStorePlugin::get));
 	}
 
 	//--- KV String

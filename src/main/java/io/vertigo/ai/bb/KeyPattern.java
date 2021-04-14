@@ -20,8 +20,26 @@ public final class KeyPattern {
 		return keyPattern;
 	}
 
+	public KeyPattern indent(final String prefix) {
+		Assertion.check().isNotBlank(prefix);
+		//---
+		return KeyPattern.of(prefix + keyPattern);
+	}
+
+	public KeyPattern outdent(final String prefix) {
+		Assertion.check()
+				.isNotBlank(prefix)
+				.isTrue(keyPattern.startsWith(prefix), "To outdent the keyPattern '{0}' it must starts with the provided prefix '{1}' ", keyPattern, prefix);
+		//---
+		return KeyPattern.of(keyPattern.substring(0, prefix.length() - 1));
+	}
+
 	public static KeyPattern of(final String keyPattern) {
 		return new KeyPattern(keyPattern);
+	}
+
+	public static KeyPattern ofRoot(final BBKey rootKey) {
+		return new KeyPattern(rootKey.getKey() + "/*");
 	}
 
 }

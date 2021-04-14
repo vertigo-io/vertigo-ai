@@ -56,21 +56,22 @@ public class BBBlackBoardTest {
 	public void testKeys() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
+		final var testKey = BBKey.of("test");
 		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.of("test")).size());
-		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.of("test/*")).size());
+		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.ofRoot(testKey)).size());
 		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.of("*")).size());
 		//---
 		blackBoard.incr(BBKey.of("test"));
 		Assertions.assertEquals(1, blackBoard.keys(KeyPattern.of("test")).size());
-		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.of("test/*")).size());
+		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.ofRoot(testKey)).size());
 		Assertions.assertEquals(1, blackBoard.keys(KeyPattern.of("*")).size());
 		//---
 		blackBoard.delete(KeyPattern.of("*"));
 		blackBoard.incr(BBKey.of("test"));
-		blackBoard.incr(BBKey.of("test/1"));
-		blackBoard.incr(BBKey.of("test/2"));
+		blackBoard.incr(testKey.subKey("/1"));
+		blackBoard.incr(testKey.subKey("/2"));
 		Assertions.assertEquals(1, blackBoard.keys(KeyPattern.of("test")).size());
-		Assertions.assertEquals(2, blackBoard.keys(KeyPattern.of("test/*")).size());
+		Assertions.assertEquals(2, blackBoard.keys(KeyPattern.ofRoot(testKey)).size());
 		Assertions.assertEquals(3, blackBoard.keys(KeyPattern.of("*")).size());
 		//--check the key pattern
 		blackBoard.delete(KeyPattern.of("*"));
@@ -98,21 +99,30 @@ public class BBBlackBoardTest {
 	public void testGetPut() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
-		Assertions.assertEquals(null, blackBoard.getString(BBKey.of("sample/key")));
-		blackBoard.putString(BBKey.of("sample/key"), "test");
-		Assertions.assertEquals("test", blackBoard.getString(BBKey.of("sample/key")));
-		blackBoard.putString(BBKey.of("sample/key"), "test2");
-		Assertions.assertEquals("test2", blackBoard.getString(BBKey.of("sample/key")));
+		final BBKey sampleKey = BBKey.of("sample/key");
+		Assertions.assertEquals(null, blackBoard.getString(sampleKey));
+		blackBoard.putString(sampleKey, "test");
+		Assertions.assertEquals("test", blackBoard.getString(sampleKey));
+		blackBoard.putString(sampleKey, "test2");
+		Assertions.assertEquals("test2", blackBoard.getString(sampleKey));
 	}
 
 	@Test
 	public void testFormat() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
-		Assertions.assertEquals("", blackBoard.format(KeyTemplate.of("")));
-		Assertions.assertEquals("hello", blackBoard.format(KeyTemplate.of("hello")));
+		Assertions.assertEquals("", blackBoard.format(""));
+		Assertions.assertEquals("hello", blackBoard.format("hello"));
 		blackBoard.putString(BBKey.of("sample/key"), "test");
-		Assertions.assertEquals("hello test", blackBoard.format(KeyTemplate.of("hello {{sample/key}}")));
+		Assertions.assertEquals("hello test", blackBoard.format("hello {{sample/key}}"));
+	}
+
+	@Test
+	public void testEvalKeyTemplate() {
+		final BlackBoard blackBoard = blackBoardManager.connect();
+		//---
+		blackBoard.putString(BBKey.of("sample/key"), "test");
+		Assertions.assertEquals("/u/test", blackBoard.format("/u/{{sample/key}}"));
 	}
 
 	@Test
@@ -149,11 +159,12 @@ public class BBBlackBoardTest {
 	public void testRemove() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
+		final BBKey sampleKey = BBKey.of("sample");
 		Assertions.assertEquals(0, blackBoard.keys(KeyPattern.of("*")).size());
-		blackBoard.incr(BBKey.of("sample/1"));
-		blackBoard.incr(BBKey.of("sample/2"));
-		blackBoard.incr(BBKey.of("sample/3"));
-		blackBoard.incr(BBKey.of("sample/4"));
+		blackBoard.incr(sampleKey.subKey("/1"));
+		blackBoard.incr(sampleKey.subKey("/2"));
+		blackBoard.incr(sampleKey.subKey("/3"));
+		blackBoard.incr(sampleKey.subKey("/4"));
 		Assertions.assertEquals(4, blackBoard.keys(KeyPattern.of("*")).size());
 		blackBoard.delete(KeyPattern.of("sample/1"));
 		Assertions.assertEquals(3, blackBoard.keys(KeyPattern.of("*")).size());

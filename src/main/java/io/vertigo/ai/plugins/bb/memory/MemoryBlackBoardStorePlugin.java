@@ -18,9 +18,9 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
 
 public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin {
-	private final Map<String, Type> keys = Collections.synchronizedMap(new LinkedHashMap<>());
-	private final Map<String, Object> values = Collections.synchronizedMap(new LinkedHashMap<>());
-	private final Map<String, BBList> lists = Collections.synchronizedMap(new LinkedHashMap<>());
+	private final Map<BBKey, Type> keys = Collections.synchronizedMap(new LinkedHashMap<>());
+	private final Map<BBKey, Object> values = Collections.synchronizedMap(new LinkedHashMap<>());
+	private final Map<BBKey, BBList> lists = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	private final Optional<String> storeNameOpt;
 
@@ -45,7 +45,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	public boolean exists(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return keys.containsKey(key.getKey());
+		return keys.containsKey(key);
 	}
 
 	/**
@@ -64,18 +64,17 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		if (keyPatternString.endsWith("*")) {
 			final var prefix = keyPatternString.replaceAll("\\*", "");
 			return keys.keySet().stream()
-					.map(BBKey::of)
-					.filter(s -> s.startsWith(prefix))
+					.filter(s -> s.getKey().startsWith(prefix))
 					.collect(Collectors.toSet());
 		}
-		final var key = keyPatternString;
+		final var key = BBKey.of(keyPatternString);
 		return keys.containsKey(key)
-				? Set.of(BBKey.of(key))
+				? Set.of(key)
 				: Collections.emptySet();
 	}
 
 	private Set<BBKey> keys() {
-		return keys.keySet().stream().map(BBKey::of).collect(Collectors.toSet());
+		return keys.keySet();
 	}
 
 	@Override
@@ -88,11 +87,11 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 			lists.clear();
 		} else if (keyPatternString.endsWith("*")) {
 			final var prefix = keyPatternString.replaceAll("\\*", "");
-			values.keySet().removeIf(s -> s.startsWith(prefix));
-			lists.keySet().removeIf(s -> s.startsWith(prefix));
-			keys.keySet().removeIf(s -> s.startsWith(prefix));
+			values.keySet().removeIf(s -> s.getKey().startsWith(prefix));
+			lists.keySet().removeIf(s -> s.getKey().startsWith(prefix));
+			keys.keySet().removeIf(s -> s.getKey().startsWith(prefix));
 		} else {
-			final var key = keyPatternString;
+			final var key = BBKey.of(keyPatternString);
 			values.remove(key);
 			lists.remove(key);
 			keys.remove(key);
@@ -110,7 +109,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 */
 	@Override
 	public String get(final BBKey key) {
-		return String.valueOf(values.get(key.getKey()));
+		return String.valueOf(values.get(key));
 	}
 
 	/**
@@ -122,14 +121,14 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	public String getString(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return (String) values.get(key.getKey());
+		return (String) values.get(key);
 	}
 
 	@Override
 	public Integer getInteger(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		// ---
-		return (Integer) values.get(key.getKey());
+		return (Integer) values.get(key);
 	}
 
 	@Override
@@ -148,11 +147,11 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 				.isNotNull(type);
 		// ---
 		//---
-		final Type previousType = keys.put(key.getKey(), type);
+		final Type previousType = keys.put(key, type);
 		if (previousType != null && type != previousType) {
 			throw new IllegalStateException("the type is already defined" + previousType);
 		}
-		values.put(key.getKey(), value);
+		values.put(key, value);
 	}
 
 	@Override
@@ -169,7 +168,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 
 	@Override
 	public Type getType(final BBKey key) {
-		return keys.get(key.getKey());
+		return keys.get(key);
 	}
 
 	//------------------------------------
@@ -180,12 +179,12 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		Assertion.check()
 				.isNotNull(key);
 		//---
-		BBList list = lists.get(key.getKey());
+		BBList list = lists.get(key);
 		if (list != null) {
 			return list;
 		}
 		list = new BBList();
-		lists.put(key.getKey(), list);
+		lists.put(key, list);
 		return list;
 	}
 
@@ -193,7 +192,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		Assertion.check()
 				.isNotNull(key);
 		//---
-		final BBList list = lists.get(key.getKey());
+		final BBList list = lists.get(key);
 		return list == null
 				? BBList.EMPTY
 				: list;

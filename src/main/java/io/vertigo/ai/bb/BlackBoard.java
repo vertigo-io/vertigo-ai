@@ -66,7 +66,15 @@ public interface BlackBoard {
 	 * @param msg the msg
 	 * @return the formatted msg
 	 */
-	String format(final KeyTemplate msg);
+	String format(final String msg);
+
+	/**
+	 * Evaluate a keyTemplate including {{keys}} with mustaches
+	 *
+	 * @param keyTemplate the keyTemplate
+	 * @return the key
+	 */
+	BBKey eval(final KeyTemplate keyTemplate);
 
 	//--- KV String
 	/**

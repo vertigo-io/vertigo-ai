@@ -17,6 +17,20 @@ public final class KeyTemplate {
 		return keyTemplate;
 	}
 
+	public KeyTemplate indent(final String prefix) {
+		Assertion.check().isNotBlank(prefix);
+		//---
+		return KeyTemplate.of(prefix + keyTemplate);
+	}
+
+	public KeyTemplate outdent(final String prefix) {
+		Assertion.check()
+				.isNotBlank(prefix)
+				.isTrue(keyTemplate.startsWith(prefix), "To outdent the keyTemplate '{0}' it must starts with the provided prefix '{1}' ", keyTemplate, prefix);
+		//---
+		return KeyTemplate.of(keyTemplate.substring(0, prefix.length() - 1));
+	}
+
 	public static KeyTemplate of(final String keyTemplate) {
 		return new KeyTemplate(keyTemplate);
 	}
