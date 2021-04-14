@@ -35,19 +35,19 @@ public interface BlackBoard {
 	 * Returns all the keys matching the pattern
 	 * The magic pattern * returns all the keys
 	 *
-	 * @param keyPattern the pattern
+	 * @param bBKeyPattern the pattern
 	 * @return A list of keys
 	 */
-	Set<BBKey> keys(final KeyPattern keyPattern);
+	Set<BBKey> keys(final BBKeyPattern bBKeyPattern);
 
 	/**
 	 * Deletes all the keys matching the pattern
 	 *
 	 * The magic pattern * remove all the keys
 	 *
-	 * @param keyPattern the pattern
+	 * @param bBKeyPattern the pattern
 	 */
-	void delete(final KeyPattern keyPattern);
+	void delete(final BBKeyPattern bBKeyPattern);
 
 	/**
 	 * Returns the key type or null if the keys doesn't exist
@@ -71,10 +71,10 @@ public interface BlackBoard {
 	/**
 	 * Evaluate a keyTemplate including {{keys}} with mustaches
 	 *
-	 * @param keyTemplate the keyTemplate
+	 * @param bBKeyTemplate the keyTemplate
 	 * @return the key
 	 */
-	BBKey eval(final KeyTemplate keyTemplate);
+	BBKey eval(final BBKeyTemplate bBKeyTemplate);
 
 	//--- KV String
 	/**

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.ai.bb.KeyPattern;
+import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
@@ -50,13 +50,13 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 
 	/**
 	 * Returns all the keys matching the pattern
-	 * @param keyPattern the pattern
+	 * @param bBKeyPattern the pattern
 	 * @return A list of keys
 	 */
 	@Override
-	public Set<BBKey> keys(final KeyPattern keyPattern) {
-		Assertion.check().isNotNull(keyPattern);
-		final var keyPatternString = keyPattern.getKeyPattern();
+	public Set<BBKey> keys(final BBKeyPattern bBKeyPattern) {
+		Assertion.check().isNotNull(bBKeyPattern);
+		final var keyPatternString = bBKeyPattern.getKeyPattern();
 		//---
 		if ("*".equals(keyPatternString)) {
 			return keys();
@@ -78,9 +78,9 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public void delete(final KeyPattern keyPattern) {
-		Assertion.check().isNotNull(keyPattern);
-		final var keyPatternString = keyPattern.getKeyPattern();
+	public void delete(final BBKeyPattern bBKeyPattern) {
+		Assertion.check().isNotNull(bBKeyPattern);
+		final var keyPatternString = bBKeyPattern.getKeyPattern();
 		if ("*".equals(keyPatternString)) {
 			values.clear();
 			keys.clear();
