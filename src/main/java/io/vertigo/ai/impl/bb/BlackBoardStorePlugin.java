@@ -4,7 +4,7 @@ import java.util.Set;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard.Type;
-import io.vertigo.ai.bb.KeyPattern;
+import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.core.node.component.Plugin;
 
 public interface BlackBoardStorePlugin extends Plugin {
@@ -27,7 +27,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 * @param keyPattern the pattern
 	 * @return A list of keys
 	 */
-	Set<BBKey> keys(final KeyPattern keyPattern);
+	Set<BBKey> keys(final BBKeyPattern keyPattern);
 
 	/**
 	 * Deletes all the keys matching the pattern
@@ -36,7 +36,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 *
 	 * @param keyPattern the pattern
 	 */
-	void delete(final KeyPattern keyPattern);
+	void delete(final BBKeyPattern keyPattern);
 
 	/**
 	 * Returns the key type or null if the keys doesn't exist

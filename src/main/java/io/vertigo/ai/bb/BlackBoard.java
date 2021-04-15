@@ -38,7 +38,7 @@ public interface BlackBoard {
 	 * @param keyPattern the pattern
 	 * @return A list of keys
 	 */
-	Set<BBKey> keys(final KeyPattern keyPattern);
+	Set<BBKey> keys(final BBKeyPattern keyPattern);
 
 	/**
 	 * Deletes all the keys matching the pattern
@@ -47,7 +47,7 @@ public interface BlackBoard {
 	 *
 	 * @param keyPattern the pattern
 	 */
-	void delete(final KeyPattern keyPattern);
+	void delete(final BBKeyPattern keyPattern);
 
 	/**
 	 * Returns the key type or null if the keys doesn't exist
@@ -74,7 +74,7 @@ public interface BlackBoard {
 	 * @param keyTemplate the keyTemplate
 	 * @return the key
 	 */
-	BBKey eval(final KeyTemplate keyTemplate);
+	BBKey eval(final BBKeyTemplate keyTemplate);
 
 	//--- KV String
 	/**

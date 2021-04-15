@@ -16,14 +16,20 @@ public final class BBKey {
 		this.key = key;
 	}
 
-	public String getKey() {
+	public String key() {
 		return key;
 	}
 
-	public BBKey subKey(final String suffix) {
-		Assertion.check().isNotBlank(suffix);
+	public static BBKey of(final String key) {
+		return new BBKey(key);
+	}
+
+	public static BBKey of(final BBKey rootKey, final String key) {
+		Assertion.check()
+				.isNotNull(rootKey)
+				.isNotBlank(key);
 		//---
-		return BBKey.of(key + suffix);
+		return BBKey.of(rootKey.key() + key);
 	}
 
 	public BBKey indent(final String prefix) {
@@ -38,10 +44,6 @@ public final class BBKey {
 				.isTrue(key.startsWith(prefix), "To outdent the key '{0}' it must starts with the provided prefix '{1}' ", key, prefix);
 		//---
 		return BBKey.of(key.substring(0, prefix.length() - 1));
-	}
-
-	public static BBKey of(final String key) {
-		return new BBKey(key);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.ai.bb.KeyPattern;
+import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
@@ -54,9 +54,9 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	 * @return A list of keys
 	 */
 	@Override
-	public Set<BBKey> keys(final KeyPattern keyPattern) {
+	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
-		final var keyPatternString = keyPattern.getKeyPattern();
+		final var keyPatternString = keyPattern.keyPattern();
 		//---
 		if ("*".equals(keyPatternString)) {
 			return keys();
@@ -64,7 +64,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		if (keyPatternString.endsWith("*")) {
 			final var prefix = keyPatternString.replaceAll("\\*", "");
 			return keys.keySet().stream()
-					.filter(s -> s.getKey().startsWith(prefix))
+					.filter(s -> s.key().startsWith(prefix))
 					.collect(Collectors.toSet());
 		}
 		final var key = BBKey.of(keyPatternString);
@@ -78,18 +78,18 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public void delete(final KeyPattern keyPattern) {
+	public void delete(final BBKeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
-		final var keyPatternString = keyPattern.getKeyPattern();
+		final var keyPatternString = keyPattern.keyPattern();
 		if ("*".equals(keyPatternString)) {
 			values.clear();
 			keys.clear();
 			lists.clear();
 		} else if (keyPatternString.endsWith("*")) {
 			final var prefix = keyPatternString.replaceAll("\\*", "");
-			values.keySet().removeIf(s -> s.getKey().startsWith(prefix));
-			lists.keySet().removeIf(s -> s.getKey().startsWith(prefix));
-			keys.keySet().removeIf(s -> s.getKey().startsWith(prefix));
+			values.keySet().removeIf(s -> s.key().startsWith(prefix));
+			lists.keySet().removeIf(s -> s.key().startsWith(prefix));
+			keys.keySet().removeIf(s -> s.key().startsWith(prefix));
 		} else {
 			final var key = BBKey.of(keyPatternString);
 			values.remove(key);

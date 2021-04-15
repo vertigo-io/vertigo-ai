@@ -6,8 +6,8 @@ import java.util.function.Function;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.bb.KeyPattern;
-import io.vertigo.ai.bb.KeyTemplate;
+import io.vertigo.ai.bb.BBKeyPattern;
+import io.vertigo.ai.bb.BBKeyTemplate;
 import io.vertigo.core.lang.Assertion;
 
 final class BlackBoardImpl implements BlackBoard {
@@ -32,14 +32,14 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public Set<BBKey> keys(final KeyPattern keyPattern) {
+	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		//---
 		return blackBoardStorePlugin
 				.keys(keyPattern);
 	}
 
 	@Override
-	public void delete(final KeyPattern keyPattern) {
+	public void delete(final BBKeyPattern keyPattern) {
 		//---
 		blackBoardStorePlugin
 				.delete(keyPattern);
@@ -61,8 +61,8 @@ final class BlackBoardImpl implements BlackBoard {
 	}
 
 	@Override
-	public BBKey eval(final KeyTemplate keyTemplate) {
-		return BBKey.of(format(keyTemplate.getKeyTemplate(), blackBoardStorePlugin::get));
+	public BBKey eval(final BBKeyTemplate keyTemplate) {
+		return BBKey.of(format(keyTemplate.keyTemplate(), blackBoardStorePlugin::get));
 	}
 
 	//--- KV String
