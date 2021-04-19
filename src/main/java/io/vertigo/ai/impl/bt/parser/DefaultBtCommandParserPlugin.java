@@ -10,7 +10,7 @@ import io.vertigo.ai.bt.BtNodeProvider;
  * 
  * @author skerdudou
  */
-public class DefaultBtTextParserPlugin extends SimpleBtTextParserPlugin<BtNodeProvider> {
+public class DefaultBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BtNodeProvider> {
 
 	@Override
 	public BtNodeProvider getNodeProvider(final List<Object> params) {

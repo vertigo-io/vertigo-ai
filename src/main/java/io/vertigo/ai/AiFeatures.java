@@ -2,8 +2,11 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
+import io.vertigo.ai.bt.parser.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
+import io.vertigo.ai.impl.bt.parser.BtCommandManagerImpl;
+import io.vertigo.ai.impl.bt.parser.DefaultBtCommandParserPlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
@@ -19,6 +22,19 @@ public class AiFeatures extends Features<AiFeatures> {
 	 */
 	public AiFeatures() {
 		super("vertigo-ai");
+	}
+
+	/**
+	 * Activates Behavior Tree.
+	 *
+	 * @return these features
+	 */
+	@Feature("parser")
+	public AiFeatures withParser() {
+		getModuleConfigBuilder()
+				.addComponent(BtCommandManager.class, BtCommandManagerImpl.class)
+				.addPlugin(DefaultBtCommandParserPlugin.class);
+		return this;
 	}
 
 	/**

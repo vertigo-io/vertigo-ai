@@ -19,12 +19,12 @@ import io.vertigo.core.lang.VSystemException;
  * @author skerdudou
  * @param <P> Type of the BtNodeProvider
  */
-public abstract class SimpleBtTextParserPlugin<P extends BtNodeProvider> implements BtTextParserPlugin<P> {
+public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> implements BtCommandParserPlugin<P> {
 
 	private final Map<String, CommandResolver<P>> basicCommands = new HashMap<>();
 	private final Map<String, CommandResolver<P>> compositeCommands = new HashMap<>();
 
-	public SimpleBtTextParserPlugin() {
+	public SimpleBtCommandParserPlugin() {
 		init();
 	}
 

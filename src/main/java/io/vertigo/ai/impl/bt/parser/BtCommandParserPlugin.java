@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BtNodeProvider;
+import io.vertigo.core.node.component.Plugin;
 
 /**
  * Plugin to parse a command into a function providing the associated BtNode. The plugin may need an intermediate object called BtNodeProvider that is resolved at runtime and
@@ -14,7 +15,7 @@ import io.vertigo.ai.bt.BtNodeProvider;
  * @author skerdudou
  * @param <P> Type of the BtNodeProvider
  */
-public interface BtTextParserPlugin<P extends BtNodeProvider> {
+public interface BtCommandParserPlugin<P extends BtNodeProvider> extends Plugin {
 
 	/**
 	 * Resolve the BtNodeProvider of the plugin. If the plugin needs a parameter (eg a BlackBoard) it will be provided in the params list.

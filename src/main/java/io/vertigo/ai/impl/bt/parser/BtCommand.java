@@ -1,6 +1,5 @@
 package io.vertigo.ai.impl.bt.parser;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -24,16 +23,8 @@ public class BtCommand {
 		this.type = type;
 	}
 
-	public static BtCommand of(final String commandName, final List<String> commandArgs) {
-		return new BtCommand(commandName, commandArgs, CommandType.STANDARD);
-	}
-
-	public static BtCommand ofStart(final String commandName, final List<String> commandArgs) {
-		return new BtCommand(commandName, commandArgs, CommandType.START_COMPOSITE);
-	}
-
-	public static BtCommand ofEnd(final String commandName) {
-		return new BtCommand(commandName, Collections.emptyList(), CommandType.END_COMPOSITE);
+	public static BtCommand of(final String commandName, final List<String> commandArgs, final CommandType type) {
+		return new BtCommand(commandName, commandArgs, type);
 	}
 
 	/**
