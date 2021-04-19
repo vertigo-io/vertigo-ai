@@ -100,4 +100,97 @@ public class BTParserTest {
 		assertEquals("Commands after root node is not supported.", exception.getMessage());
 	}
 
+	@Test
+	public void testSubNodes() {
+		final String bt = "begin sequence\n" +
+				"	begin sequence\n" +
+				"	end sequence\n" +
+				"	begin sequence\n" +
+				"	end sequence\n" +
+				"end sequence";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testUnbalanced() {
+		final String bt = "begin sequence\n" +
+				"	begin sequence\n" +
+				"end sequence\n";
+
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
+			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+			nodeProducer.apply(Collections.emptyList());
+		});
+
+		assertEquals("Node 'sequence' not ended.", exception.getMessage());
+	}
+
+	@Test
+	public void testParams() {
+		final String bt = "begin sequence param1 param2\n" +
+				"end sequence";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testQuotedParams() {
+		final String bt = "begin sequence \"param 1\" \"param 2\"\n" +
+				"end sequence";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testQuotedParamsErr1() {
+		final String bt = "begin sequence \"param 1\n" +
+				"end sequence";
+
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
+			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+			nodeProducer.apply(Collections.emptyList());
+		});
+
+		assertEquals("End quote not found. '\"param 1'", exception.getMessage());
+	}
+
+	@Test
+	public void testQuotedParamsErr2() {
+		final String bt = "begin sequence \"param 1\"param2\n" +
+				"end sequence";
+
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
+			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+			nodeProducer.apply(Collections.emptyList());
+		});
+
+		assertEquals("Text is not allowed just after quotes, please add a space. '\"param 1\"param2'", exception.getMessage());
+	}
+
+	@Test
+	public void testQuotedParamsErr3() {
+		final String bt = "begin sequence param\"1\n" +
+				"end sequence";
+
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
+			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+			nodeProducer.apply(Collections.emptyList());
+		});
+
+		assertEquals("Quotes are only allowed around text or escaped inside quotes. 'param\"1'", exception.getMessage());
+	}
+
 }

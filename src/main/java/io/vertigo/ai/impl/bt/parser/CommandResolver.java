@@ -14,7 +14,6 @@ public final class CommandResolver<P extends BtNodeProvider> {
 	private final boolean isComposite;
 
 	private CommandResolver(final String name, final BiFunction<BtCommand, List<BTNode>, Function<P, BTNode>> commandConverter, final boolean isComposite) {
-		super();
 		this.name = name;
 		this.commandConverter = commandConverter;
 		this.isComposite = isComposite;

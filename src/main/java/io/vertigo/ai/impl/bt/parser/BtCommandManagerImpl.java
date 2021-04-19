@@ -69,9 +69,9 @@ public class BtCommandManagerImpl implements BtCommandManager {
 		final String args = matcher.group(5);
 
 		CommandType commandType;
-		if (type.equals("begin")) {
+		if ("begin".equalsIgnoreCase(type)) {
 			commandType = CommandType.START_COMPOSITE;
-		} else if (type.equals("end")) {
+		} else if ("end".equalsIgnoreCase(type)) {
 			commandType = CommandType.END_COMPOSITE;
 		} else {
 			commandType = CommandType.STANDARD;
@@ -160,8 +160,8 @@ public class BtCommandManagerImpl implements BtCommandManager {
 
 			switch (command.getType()) {
 				case START_COMPOSITE:
-					compositeStack.add(command);
-					stdNodesStack.add(new ArrayList<BTNode>());
+					compositeStack.push(command);
+					stdNodesStack.push(new ArrayList<BTNode>());
 					break;
 				case STANDARD:
 					stdNodesStack.getFirst().add(doParseCommand(command, Collections.emptyList(), pluginNodeProviders));
