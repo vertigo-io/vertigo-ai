@@ -1,22 +1,19 @@
 package io.vertigo.ai.impl.bt.command;
 
-import java.util.List;
-
 import io.vertigo.ai.bt.BTNodes;
-import io.vertigo.ai.bt.BtNodeProvider;
 
 /**
  * Default BT commands.
- * 
+ *
  * @author skerdudou
  */
-public class DefaultBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BtNodeProvider> {
+public class DefaultBtCommandParserPlugin extends SimpleBtCommandParserPlugin {
 
-	@Override
-	public BtNodeProvider getNodeProvider(final List<Object> params) {
-		// full stateless => no need of BtNodeProvider
-		return null;
-	}
+	//	@Override
+	//	public BtNodeProvider getNodeProvider(final List<Object> params) {
+	//		// full stateless => no need of BtNodeProvider
+	//		return null;
+	//	}
 
 	@Override
 	protected void init() {

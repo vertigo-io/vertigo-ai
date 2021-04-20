@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BtNodeProvider;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 
@@ -19,10 +18,10 @@ import io.vertigo.core.lang.VSystemException;
  * @author skerdudou
  * @param <P> Type of the BtNodeProvider
  */
-public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> implements BtCommandParserPlugin<P> {
+public abstract class SimpleBtCommandParserPlugin implements BtCommandParserPlugin {
 
-	private final Map<String, CommandResolver<P>> basicCommands = new HashMap<>();
-	private final Map<String, CommandResolver<P>> compositeCommands = new HashMap<>();
+	private final Map<String, CommandResolver> basicCommands = new HashMap<>();
+	private final Map<String, CommandResolver> compositeCommands = new HashMap<>();
 
 	public SimpleBtCommandParserPlugin() {
 		init();
@@ -34,7 +33,7 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 	protected abstract void init(); // prevent empty concrete classes
 
 	@Override
-	public final Optional<Function<P, BTNode>> parse(final BtCommand command, final List<BTNode> childs) {
+	public final Optional<Function<List<Object>, BTNode>> parse(final BtCommand command, final List<BTNode> childs) {
 		Assertion.check()
 				.isNotNull(command)
 				.isNotNull(childs);
@@ -60,7 +59,7 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 	 * @param name the name of the command
 	 * @param commandConverter the function to convert a command and a nodeProvider into a node
 	 */
-	protected final void registerBasicCommand(final String name, final BiFunction<BtCommand, P, BTNode> commandConverter) {
+	protected final void registerBasicCommand(final String name, final BiFunction<BtCommand, List<Object>, BTNode> commandConverter) {
 		Assertion.check()
 				.isNotBlank(name)
 				.isNotNull(commandConverter);
@@ -74,7 +73,7 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 	 * @param name the name of the command
 	 * @param commandConverter the function to convert a command, a nodeProvider and a list of child nodes into a node
 	 */
-	protected final void registerCompositeCommand(final String name, final CommandResolver<P> commandConverter) {
+	protected final void registerCompositeCommand(final String name, final CommandResolver commandConverter) {
 		Assertion.check()
 				.isNotBlank(name)
 				.isNotNull(commandConverter);
@@ -106,12 +105,12 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 
 	/**
 	 * A TriFunction that resolves inputs (Command, node provider and childs) into a BTNode.
-	 * 
+	 *
 	 * @author skerdudou
 	 * @param <P> Type of the BtNodeProvider
 	 */
 	@FunctionalInterface
-	public interface CommandResolver<P extends BtNodeProvider> {
-		BTNode apply(BtCommand c, P p, List<BTNode> l);
+	public interface CommandResolver {
+		BTNode apply(BtCommand c, List<Object> p, List<BTNode> l);
 	}
 }

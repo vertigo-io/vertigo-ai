@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 
 import io.vertigo.core.lang.Assertion;
 
-public final class BTNodes implements BtNodeProvider {
+public final class BTNodes {
 
 	private BTNodes() {
 		//private constructor
@@ -16,7 +16,7 @@ public final class BTNodes implements BtNodeProvider {
 	 * Creates a sequence.
 	 * Succeeds when all nodes succeed
 	 * Fails when one node fails, the next nodes are not evaluated
-	 * 
+	 *
 	 * @param nodes nodes
 	 * @return sequence
 	 */
@@ -37,7 +37,7 @@ public final class BTNodes implements BtNodeProvider {
 	 * Creates a selector.
 	 * Fails when all node fail
 	 * Succeeds when one node succeeds, the newt nodes are not evaluated
-	 * 
+	 *
 	 * @param nodes nodes
 	 * @return selector
 	 */

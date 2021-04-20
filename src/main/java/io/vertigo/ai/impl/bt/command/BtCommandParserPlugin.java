@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BtNodeProvider;
 import io.vertigo.core.node.component.Plugin;
 
 /**
@@ -15,7 +14,7 @@ import io.vertigo.core.node.component.Plugin;
  * @author skerdudou
  * @param <P> Type of the BtNodeProvider
  */
-public interface BtCommandParserPlugin<P extends BtNodeProvider> extends Plugin {
+public interface BtCommandParserPlugin extends Plugin {
 
 	/**
 	 * Resolve the BtNodeProvider of the plugin. If the plugin needs a parameter (eg a BlackBoard) it will be provided in the params list.
@@ -23,7 +22,7 @@ public interface BtCommandParserPlugin<P extends BtNodeProvider> extends Plugin 
 	 * @param params parameters, if needed
 	 * @return the BtNodeProvider that will be passed back when parsing
 	 */
-	P getNodeProvider(List<Object> params);
+	//P getNodeProvider(List<Object> params);
 
 	/**
 	 * Parses a BtCommand into a function that uses the BtNodeProvider to produce the BTNode.
@@ -33,5 +32,5 @@ public interface BtCommandParserPlugin<P extends BtNodeProvider> extends Plugin 
 	 * @param childs the childs in case of a composite command
 	 * @return optionally, the function
 	 */
-	Optional<Function<P, BTNode>> parse(BtCommand command, List<BTNode> childs);
+	Optional<Function<List<Object>, BTNode>> parse(BtCommand command, List<BTNode> childs);
 }

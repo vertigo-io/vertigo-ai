@@ -4,10 +4,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BtNodeProvider;
 import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.ai.impl.bt.command.BtCommand.CommandType;
 import io.vertigo.core.lang.Assertion;
@@ -28,10 +25,10 @@ import io.vertigo.core.lang.VSystemException;
  */
 public class BtCommandManagerImpl implements BtCommandManager {
 
-	private final List<BtCommandParserPlugin<?>> plugins;
+	private final List<BtCommandParserPlugin> plugins;
 
 	@Inject
-	public BtCommandManagerImpl(final List<BtCommandParserPlugin<?>> plugins) {
+	public BtCommandManagerImpl(final List<BtCommandParserPlugin> plugins) {
 		this.plugins = plugins;
 	}
 
@@ -40,8 +37,8 @@ public class BtCommandManagerImpl implements BtCommandManager {
 		final var commands = doParseText(text);
 
 		return pluginParameters -> {
-			final var pluginNodeProviders = resolvePluginsNodeProvider(pluginParameters);
-			return parseCommands(commands, pluginNodeProviders);
+			//final var pluginNodeProviders = resolvePluginsNodeProvider(pluginParameters);
+			return parseCommands(commands, pluginParameters);
 		};
 	}
 
@@ -139,15 +136,15 @@ public class BtCommandManagerImpl implements BtCommandManager {
 		return out;
 	}
 
-	private Map<BtCommandParserPlugin<?>, BtNodeProvider> resolvePluginsNodeProvider(final List<Object> pluginParameters) {
-		final Map<BtCommandParserPlugin<?>, BtNodeProvider> map = new HashMap<>();
-		for (final BtCommandParserPlugin<?> plugin : plugins) {
-			map.put(plugin, plugin.getNodeProvider(pluginParameters));
-		}
-		return map;
-	}
+	//	private Map<BtCommandParserPlugin<?>, BtNodeProvider> resolvePluginsNodeProvider(final List<Object> pluginParameters) {
+	//		final Map<BtCommandParserPlugin<?>, BtNodeProvider> map = new HashMap<>();
+	//		for (final BtCommandParserPlugin<?> plugin : plugins) {
+	//			map.put(plugin, plugin.getNodeProvider(pluginParameters));
+	//		}
+	//		return map;
+	//	}
 
-	private BTNode parseCommands(final List<BtCommand> commands, final Map<BtCommandParserPlugin<?>, BtNodeProvider> pluginNodeProviders) {
+	private BTNode parseCommands(final List<BtCommand> commands, final List<Object> params) {
 		Assertion.check()
 				.isNotNull(commands)
 				.isFalse(commands.isEmpty(), "No command provided")
@@ -167,7 +164,7 @@ public class BtCommandManagerImpl implements BtCommandManager {
 					stdNodesStack.push(new ArrayList<BTNode>());
 					break;
 				case STANDARD:
-					stdNodesStack.getFirst().add(doParseCommand(command, Collections.emptyList(), pluginNodeProviders));
+					stdNodesStack.getFirst().add(doParseCommand(command, Collections.emptyList(), params));
 					break;
 				case END_COMPOSITE:
 					Assertion.check()
@@ -177,7 +174,7 @@ public class BtCommandManagerImpl implements BtCommandManager {
 									command.getCommandName(), compositeStack.getFirst().getCommandName());
 					//--
 					final BtCommand cmd = compositeStack.pop();
-					final BTNode compositeNode = doParseCommand(cmd, stdNodesStack.pop(), pluginNodeProviders);
+					final BTNode compositeNode = doParseCommand(cmd, stdNodesStack.pop(), params);
 
 					if (compositeStack.isEmpty()) {
 						// we close the root composite
@@ -199,9 +196,9 @@ public class BtCommandManagerImpl implements BtCommandManager {
 		return rootNode;
 	}
 
-	private BTNode doParseCommand(final BtCommand command, final List<BTNode> childs, final Map<BtCommandParserPlugin<?>, BtNodeProvider> pluginNodeProviders) {
+	private BTNode doParseCommand(final BtCommand command, final List<BTNode> childs, final List<Object> params) {
 		return plugins.stream()
-				.map(p -> getOptNode(command, childs, p, pluginNodeProviders.get(p)))
+				.map(p -> p.parse(command, childs).map(f -> f.apply(params)))
 				.filter(Optional::isPresent)
 				.map(Optional::get)
 				.findFirst()
@@ -209,9 +206,9 @@ public class BtCommandManagerImpl implements BtCommandManager {
 						() -> new VSystemException("No plugin found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getCommandName()));
 	}
 
-	private <T extends BtNodeProvider> Optional<BTNode> getOptNode(final BtCommand command, final List<BTNode> childs, final BtCommandParserPlugin<T> plugin, final BtNodeProvider provider) {
-		return plugin.parse(command, childs)
-				.map(f -> f.apply((T) provider)); // dirty cast, BtNodeProvider type enforced by construction of the map (coherent with plugin)
-	}
+	//	private Optional<BTNode> getOptNode(final BtCommand command, final List<BTNode> childs, final BtCommandParserPlugin plugin, final List<Object> params) {
+	//		return plugin.parse(command, childs)
+	//				.map(f -> f.apply((T) provider)); // dirty cast, BtNodeProvider type enforced by construction of the map (coherent with plugin)
+	//	}
 
 }
