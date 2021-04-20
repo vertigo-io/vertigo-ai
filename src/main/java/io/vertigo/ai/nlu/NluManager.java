@@ -14,27 +14,12 @@ public interface NluManager extends Manager {
 	String DEFAULT_ENGINE_NAME = "main";
 
 	/**
-	 * Starts the process to train the default engine with provided data.
-	 *
-	 * @param trainingData all intents with their training phrases
-	 */
-	void train(Map<Intent, List<String>> trainingData);
-
-	/**
 	 * Starts the process to train the specified engine with provided data.
 	 *
 	 * @param trainingData all intents with their training phrases
 	 * @param engineName name of the engine to register with
 	 */
 	void train(Map<Intent, List<String>> trainingData, String engineName);
-
-	/**
-	 * Use the previously trained model on the default engine to classify a new and unknown sentence.
-	 *
-	 * @param sentence the sentence we wants to classify.
-	 * @return the result of the analysis
-	 */
-	RecognitionResult recognize(String sentence);
 
 	/**
 	 * Use the previously trained model on the specified engine to classify a new and unknown sentence.
@@ -44,13 +29,6 @@ public interface NluManager extends Manager {
 	 * @return the result of the analysis
 	 */
 	RecognitionResult recognize(String sentence, String engineName);
-
-	/**
-	 * Checks if the default engine is ready to recognize sentences.
-	 *
-	 * @return true if the engine is ready
-	 */
-	boolean isReady();
 
 	/**
 	 * Checks if the specified engine is ready to recognize sentences.

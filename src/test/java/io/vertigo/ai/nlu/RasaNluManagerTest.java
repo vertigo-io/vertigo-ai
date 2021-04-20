@@ -1,5 +1,7 @@
 package io.vertigo.ai.nlu;
 
+import static io.vertigo.ai.nlu.NluManager.DEFAULT_ENGINE_NAME;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,22 +81,22 @@ public final class RasaNluManagerTest {
 						"je veux une blague",
 						"je voudrais une blague"));
 
-		nluManager.train(intents);
+		nluManager.train(intents, DEFAULT_ENGINE_NAME);
 	}
 
 	@Test
 	public void testNlu() {
 		defaultIntentCorpus();
 
-		var result = nluManager.recognize("je veux rire");
+		var result = nluManager.recognize("je veux rire", DEFAULT_ENGINE_NAME);
 		Assertions.assertFalse(result.getScoredIntents().isEmpty());
 		Assertions.assertEquals("blague", result.getScoredIntents().get(0).getIntent().getCode());
 
-		result = nluManager.recognize("j'ai un train a prendre");
+		result = nluManager.recognize("j'ai un train a prendre", DEFAULT_ENGINE_NAME);
 		Assertions.assertFalse(result.getScoredIntents().isEmpty());
 		Assertions.assertEquals("train", result.getScoredIntents().get(0).getIntent().getCode());
 
-		result = nluManager.recognize("quel est la météo demain");
+		result = nluManager.recognize("quel est la météo demain", DEFAULT_ENGINE_NAME);
 		Assertions.assertEquals("meteo", result.getScoredIntents().get(0).getIntent().getCode());
 		Assertions.assertEquals(true, result.getScoredIntents().get(0).getAccuracy() > 0.4D);
 	}
