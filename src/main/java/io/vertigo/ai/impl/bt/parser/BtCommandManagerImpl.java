@@ -147,7 +147,7 @@ public class BtCommandManagerImpl implements BtCommandManager {
 	private BTNode parseCommands(final List<BtCommand> commands, final Map<BtCommandParserPlugin<?>, BtNodeProvider> pluginNodeProviders) {
 		Assertion.check()
 				.isNotNull(commands)
-				.isTrue(commands.size() > 1, "No command provided")
+				.isFalse(commands.isEmpty(), "No command provided")
 				.isTrue(CommandType.START_COMPOSITE.equals(commands.get(0).getType()), "Root level only accepts composite nodes");
 		//--
 		final Deque<BtCommand> compositeStack = new ArrayDeque<>();
@@ -202,7 +202,8 @@ public class BtCommandManagerImpl implements BtCommandManager {
 				.filter(Optional::isPresent)
 				.map(Optional::get)
 				.findFirst()
-				.orElseThrow(() -> new VSystemException("No plugin found to handle '{0}' command.", command.getCommandName()));
+				.orElseThrow(
+						() -> new VSystemException("No plugin found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getCommandName()));
 	}
 
 	private <T extends BtNodeProvider> Optional<BTNode> getOptNode(final BtCommand command, final List<BTNode> childs, final BtCommandParserPlugin<T> plugin, final BtNodeProvider provider) {

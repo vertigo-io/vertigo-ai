@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.AiFeatures;
 import io.vertigo.ai.bt.parser.BtCommandManager;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -191,6 +192,33 @@ public class BTParserTest {
 		});
 
 		assertEquals("Quotes are only allowed around text or escaped inside quotes. 'param\"1'", exception.getMessage());
+	}
+
+	@Test
+	public void testComments() {
+		final String bt = " -- end sequence \"param 1\" \"param 2\"\n" +
+				"begin sequence -- a\"a\n" +
+				"end sequence";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testUseCompositeWithoutBegin() {
+		final String bt = "begin sequence\n" +
+				"	sequence\n" +
+				"end sequence";
+
+		final Exception exception = Assertions.assertThrows(VSystemException.class, () -> {
+			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+			nodeProducer.apply(Collections.emptyList());
+		});
+
+		assertEquals("No plugin found to handle standard 'sequence' command.", exception.getMessage());
 	}
 
 }
