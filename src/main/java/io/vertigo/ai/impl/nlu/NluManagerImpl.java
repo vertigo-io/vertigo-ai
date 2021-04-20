@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.nlu.VIntent;
-import io.vertigo.ai.nlu.VRecognitionResult;
+import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.RecognitionResult;
 import io.vertigo.core.lang.Assertion;
 
 /**
@@ -44,12 +44,12 @@ public class NluManagerImpl implements NluManager {
 	}
 
 	@Override
-	public void train(final Map<VIntent, List<String>> trainingData) {
+	public void train(final Map<Intent, List<String>> trainingData) {
 		train(trainingData, DEFAULT_ENGINE_NAME);
 	}
 
 	@Override
-	public void train(final Map<VIntent, List<String>> trainingData, final String engineName) {
+	public void train(final Map<Intent, List<String>> trainingData, final String engineName) {
 		Assertion.check()
 				.isNotBlank(engineName);
 		//---
@@ -59,12 +59,12 @@ public class NluManagerImpl implements NluManager {
 	}
 
 	@Override
-	public VRecognitionResult recognize(final String sentence) {
+	public RecognitionResult recognize(final String sentence) {
 		return recognize(sentence, DEFAULT_ENGINE_NAME);
 	}
 
 	@Override
-	public VRecognitionResult recognize(final String sentence, final String engineName) {
+	public RecognitionResult recognize(final String sentence, final String engineName) {
 		return getEngineByName(engineName).recognize(sentence);
 	}
 

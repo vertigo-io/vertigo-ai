@@ -25,9 +25,9 @@ import com.google.gson.JsonObject;
 
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
-import io.vertigo.ai.nlu.VIntent;
-import io.vertigo.ai.nlu.VIntentClassification;
-import io.vertigo.ai.nlu.VRecognitionResult;
+import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.ScoredIntent;
+import io.vertigo.ai.nlu.RecognitionResult;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaConfig;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaNluTrainDataRepresenter;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaParsingResponse;
@@ -74,7 +74,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized void train(final Map<VIntent, List<String>> trainingData) {
+	public synchronized void train(final Map<Intent, List<String>> trainingData) {
 		//train a model
 		final String filename = trainModel(trainingData);
 		ready = false;
@@ -85,7 +85,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		ready = true;
 	}
 
-	private String trainModel(final Map<VIntent, List<String>> trainingData) {
+	private String trainModel(final Map<Intent, List<String>> trainingData) {
 		final RasaTrainingData rasaTrainingData = new RasaTrainingData(
 				rasaConfig.language,
 				rasaConfig.pipeline,
@@ -123,7 +123,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public VRecognitionResult recognize(final String sentence) {
+	public RecognitionResult recognize(final String sentence) {
 		// wait node is ready for recognition
 		waitUntilReady();
 		//---
@@ -140,10 +140,10 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		final RasaParsingResponse rasaParsingResponse = GSON.fromJson(response.body(), RasaParsingResponse.class);
 
 		// put response in the standard format
-		final List<VIntentClassification> intentClassificationList = rasaParsingResponse.intent_ranking.stream()
-				.map(rasaIntent -> new VIntentClassification(VIntent.of(rasaIntent.name), rasaIntent.confidence))
+		final List<ScoredIntent> intentClassificationList = rasaParsingResponse.intent_ranking.stream()
+				.map(rasaIntent -> new ScoredIntent(Intent.of(rasaIntent.name), rasaIntent.confidence))
 				.collect(Collectors.toList());
-		return new VRecognitionResult(rasaParsingResponse.intent.name, intentClassificationList);
+		return new RecognitionResult(rasaParsingResponse.intent.name, intentClassificationList);
 	}
 
 	private void waitUntilReady() {

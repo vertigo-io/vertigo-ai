@@ -53,9 +53,9 @@ public final class RasaNluManagerTest {
 
 	private void defaultIntentCorpus() {
 
-		final Map<VIntent, List<String>> intents = new HashMap<>();
+		final Map<Intent, List<String>> intents = new HashMap<>();
 		intents.put(
-				VIntent.of("meteo"),
+				Intent.of("meteo"),
 				List.of(
 						"quel temps fait-il demain ?",
 						"donne moi la météo",
@@ -64,14 +64,14 @@ public final class RasaNluManagerTest {
 						"va t il pleuvoir dans les prochains jours ?"));
 
 		intents.put(
-				VIntent.of("train"),
+				Intent.of("train"),
 				List.of("je voudrais prendre le train",
 						"réserver billet de train",
 						"réserve-moi un ticket de train",
 						"je veux un billet de train"));
 
 		intents.put(
-				VIntent.of("blague"),
+				Intent.of("blague"),
 				List.of("raconte moi une blague",
 						"donne moi une blague",
 						"fais moi rire",
@@ -87,16 +87,16 @@ public final class RasaNluManagerTest {
 		defaultIntentCorpus();
 
 		var result = nluManager.recognize("je veux rire");
-		Assertions.assertFalse(result.getIntentClassificationList().isEmpty());
-		Assertions.assertEquals("blague", result.getIntentClassificationList().get(0).getIntent().getCode());
+		Assertions.assertFalse(result.getScoredIntents().isEmpty());
+		Assertions.assertEquals("blague", result.getScoredIntents().get(0).getIntent().getCode());
 
 		result = nluManager.recognize("j'ai un train a prendre");
-		Assertions.assertFalse(result.getIntentClassificationList().isEmpty());
-		Assertions.assertEquals("train", result.getIntentClassificationList().get(0).getIntent().getCode());
+		Assertions.assertFalse(result.getScoredIntents().isEmpty());
+		Assertions.assertEquals("train", result.getScoredIntents().get(0).getIntent().getCode());
 
 		result = nluManager.recognize("quel est la météo demain");
-		Assertions.assertEquals("meteo", result.getIntentClassificationList().get(0).getIntent().getCode());
-		Assertions.assertEquals(true, result.getIntentClassificationList().get(0).getAccuracy() > 0.4D);
+		Assertions.assertEquals("meteo", result.getScoredIntents().get(0).getIntent().getCode());
+		Assertions.assertEquals(true, result.getScoredIntents().get(0).getAccuracy() > 0.4D);
 	}
 
 	@BeforeEach

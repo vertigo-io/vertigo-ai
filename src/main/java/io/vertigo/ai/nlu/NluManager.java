@@ -18,7 +18,7 @@ public interface NluManager extends Manager {
 	 *
 	 * @param trainingData all intents with their training phrases
 	 */
-	void train(Map<VIntent, List<String>> trainingData);
+	void train(Map<Intent, List<String>> trainingData);
 
 	/**
 	 * Starts the process to train the specified engine with provided data.
@@ -26,7 +26,7 @@ public interface NluManager extends Manager {
 	 * @param trainingData all intents with their training phrases
 	 * @param engineName name of the engine to register with
 	 */
-	void train(Map<VIntent, List<String>> trainingData, String engineName);
+	void train(Map<Intent, List<String>> trainingData, String engineName);
 
 	/**
 	 * Use the previously trained model on the default engine to classify a new and unknown sentence.
@@ -34,7 +34,7 @@ public interface NluManager extends Manager {
 	 * @param sentence the sentence we wants to classify.
 	 * @return the result of the analysis
 	 */
-	VRecognitionResult recognize(String sentence);
+	RecognitionResult recognize(String sentence);
 
 	/**
 	 * Use the previously trained model on the specified engine to classify a new and unknown sentence.
@@ -43,7 +43,7 @@ public interface NluManager extends Manager {
 	 * @param engineName name of the engine to register with
 	 * @return the result of the analysis
 	 */
-	VRecognitionResult recognize(String sentence, String engineName);
+	RecognitionResult recognize(String sentence, String engineName);
 
 	/**
 	 * Checks if the default engine is ready to recognize sentences.
