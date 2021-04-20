@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.bt.parser;
+package io.vertigo.ai.impl.bt.command;
 
 import java.util.List;
 import java.util.Optional;

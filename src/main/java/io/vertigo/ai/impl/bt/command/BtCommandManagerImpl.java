@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.bt.parser;
+package io.vertigo.ai.impl.bt.command;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -18,11 +18,14 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BtNodeProvider;
-import io.vertigo.ai.bt.parser.BtCommandManager;
-import io.vertigo.ai.impl.bt.parser.BtCommand.CommandType;
+import io.vertigo.ai.bt.command.BtCommandManager;
+import io.vertigo.ai.impl.bt.command.BtCommand.CommandType;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 
+/**
+ * @author skerdudou
+ */
 public class BtCommandManagerImpl implements BtCommandManager {
 
 	private final List<BtCommandParserPlugin<?>> plugins;

@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.bt.parser;
+package io.vertigo.ai.impl.bt.command;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -7,6 +7,10 @@ import java.util.function.Function;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BtNodeProvider;
 
+/**
+ * @author skerdudou
+ * @param <P>
+ */
 public final class CommandResolver<P extends BtNodeProvider> {
 
 	private final String name;

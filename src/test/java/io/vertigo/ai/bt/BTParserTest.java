@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.AiFeatures;
-import io.vertigo.ai.bt.parser.BtCommandManager;
+import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;

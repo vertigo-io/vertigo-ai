@@ -2,11 +2,11 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
-import io.vertigo.ai.bt.parser.BtCommandManager;
+import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
-import io.vertigo.ai.impl.bt.parser.BtCommandManagerImpl;
-import io.vertigo.ai.impl.bt.parser.DefaultBtCommandParserPlugin;
+import io.vertigo.ai.impl.bt.command.BtCommandManagerImpl;
+import io.vertigo.ai.impl.bt.command.DefaultBtCommandParserPlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;

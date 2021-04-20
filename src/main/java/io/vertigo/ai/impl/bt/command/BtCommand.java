@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.bt.parser;
+package io.vertigo.ai.impl.bt.command;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,6 +6,11 @@ import java.util.OptionalInt;
 
 import io.vertigo.core.lang.Assertion;
 
+/**
+ * Generic representation of a command. All args are String and we don't know if this command is valid.
+ * 
+ * @author skerdudou
+ */
 public class BtCommand {
 	public enum CommandType {
 		START_COMPOSITE,
