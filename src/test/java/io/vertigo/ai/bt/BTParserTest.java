@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.AiFeatures;
 import io.vertigo.ai.bt.command.BtCommandManager;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -213,12 +212,12 @@ public class BTParserTest {
 				"	sequence\n" +
 				"end sequence";
 
-		final Exception exception = Assertions.assertThrows(VSystemException.class, () -> {
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
 			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
 			nodeProducer.apply(Collections.emptyList());
 		});
 
-		assertEquals("No plugin found to handle standard 'sequence' command.", exception.getMessage());
+		assertEquals("The command parser is not for the correct type", exception.getMessage());
 	}
 
 }

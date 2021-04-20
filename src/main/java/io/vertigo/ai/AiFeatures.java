@@ -6,7 +6,6 @@ import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.bt.command.BtCommandManagerImpl;
-import io.vertigo.ai.impl.bt.command.DefaultBtCommandParserPlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
@@ -32,8 +31,7 @@ public class AiFeatures extends Features<AiFeatures> {
 	@Feature("parser")
 	public AiFeatures withParser() {
 		getModuleConfigBuilder()
-				.addComponent(BtCommandManager.class, BtCommandManagerImpl.class)
-				.addPlugin(DefaultBtCommandParserPlugin.class);
+				.addComponent(BtCommandManager.class, BtCommandManagerImpl.class);
 		return this;
 	}
 

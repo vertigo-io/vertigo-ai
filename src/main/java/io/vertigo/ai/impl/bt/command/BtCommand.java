@@ -8,13 +8,13 @@ import io.vertigo.core.lang.Assertion;
 
 /**
  * Generic representation of a command. All args are String and we don't know if this command is valid.
- * 
+ *
  * @author skerdudou
  */
 public class BtCommand {
 	public enum CommandType {
-		START_COMPOSITE,
-		END_COMPOSITE,
+		START_COMPOSITE, //
+		END_COMPOSITE, // why start and end type.. start or end should be another property
 		STANDARD
 	}
 
