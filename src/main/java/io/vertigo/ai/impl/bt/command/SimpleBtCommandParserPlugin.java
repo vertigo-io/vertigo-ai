@@ -45,10 +45,10 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 						.isTrue(childs.isEmpty(), "Standard commands dont expect childs");
 				// --
 				return Optional.ofNullable(basicCommands.get(command.getCommandName()))
-						.map(cmd -> cmd.getCommandConverter().apply(command, Collections.emptyList()));
+						.map(resolver -> p -> resolver.apply(command, p, Collections.emptyList()));
 			case START_COMPOSITE:
 				return Optional.ofNullable(compositeCommands.get(command.getCommandName()))
-						.map(cmd -> cmd.getCommandConverter().apply(command, childs));
+						.map(resolver -> p -> resolver.apply(command, p, childs));
 			default:
 				throw new VSystemException("Parser plugin don't handle {0} command types", command.getType());
 		}
@@ -65,7 +65,7 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 				.isNotBlank(name)
 				.isNotNull(commandConverter);
 		//--
-		basicCommands.put(name, CommandResolver.of(name, c -> p -> commandConverter.apply(c, p)));
+		basicCommands.put(name, (c, p, l) -> commandConverter.apply(c, p));
 	}
 
 	/**
@@ -74,12 +74,12 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 	 * @param name the name of the command
 	 * @param commandConverter the function to convert a command, a nodeProvider and a list of child nodes into a node
 	 */
-	protected final void registerCompositeCommand(final String name, final TriFunction<BtCommand, P, List<BTNode>, BTNode> commandConverter) {
+	protected final void registerCompositeCommand(final String name, final CommandResolver<P> commandConverter) {
 		Assertion.check()
 				.isNotBlank(name)
 				.isNotNull(commandConverter);
 		//--
-		compositeCommands.put(name, CommandResolver.ofComposite(name, (c, l) -> (p -> commandConverter.apply(c, p, l))));
+		compositeCommands.put(name, commandConverter);
 	}
 
 	/**
@@ -105,25 +105,13 @@ public abstract class SimpleBtCommandParserPlugin<P extends BtNodeProvider> impl
 	}
 
 	/**
-	 * Register a list of pre-build CommandResolver.
-	 *
-	 * @param commands list of commands to register
+	 * A TriFunction that resolves inputs (Command, node provider and childs) into a BTNode.
+	 * 
+	 * @author skerdudou
+	 * @param <P> Type of the BtNodeProvider
 	 */
-	protected final void registerCommands(final Iterable<CommandResolver<P>> commands) {
-		Assertion.check()
-				.isNotNull(commands);
-		//--
-		for (final CommandResolver<P> command : commands) {
-			if (command.isComposite()) {
-				compositeCommands.put(command.getName(), command);
-			} else {
-				basicCommands.put(command.getName(), command);
-			}
-		}
-	}
-
 	@FunctionalInterface
-	public interface TriFunction<T, U, V, R> {
-		R apply(T t, U u, V v);
+	public interface CommandResolver<P extends BtNodeProvider> {
+		BTNode apply(BtCommand c, P p, List<BTNode> l);
 	}
 }
