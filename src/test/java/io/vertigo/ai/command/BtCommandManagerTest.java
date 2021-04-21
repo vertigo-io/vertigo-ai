@@ -80,11 +80,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence\n" +
 				"end selector";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
-
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 		assertEquals("Cannot close 'selector', currently on 'sequence'", exception.getMessage());
 	}
 
@@ -95,10 +91,7 @@ public class BtCommandManagerTest {
 				"begin selector\n" +
 				"end selector";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("Commands after root node is not supported.", exception.getMessage());
 	}
@@ -123,10 +116,7 @@ public class BtCommandManagerTest {
 				"	begin sequence\n" +
 				"end sequence\n";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("Node 'sequence' not ended.", exception.getMessage());
 	}
@@ -156,10 +146,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence \"param 1\n" +
 				"end sequence";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("End quote not found. '\"param 1'", exception.getMessage());
 	}
@@ -169,10 +156,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence \"param 1\"param2\n" +
 				"end sequence";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("Text is not allowed just after quotes, please add a space. '\"param 1\"param2'", exception.getMessage());
 	}
@@ -182,10 +166,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence param\"1\n" +
 				"end sequence";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("Quotes are only allowed around text or escaped inside quotes. 'param\"1'", exception.getMessage());
 	}
@@ -207,10 +188,7 @@ public class BtCommandManagerTest {
 				"	sequence\n" +
 				"end sequence";
 
-		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
-			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-			nodeProducer.apply(Collections.emptyList());
-		});
+		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> eval(bt));
 
 		assertEquals("The command parser is not for the correct type", exception.getMessage());
 	}
