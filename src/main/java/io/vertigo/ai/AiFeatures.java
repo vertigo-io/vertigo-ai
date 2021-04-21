@@ -5,7 +5,7 @@ import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
-import io.vertigo.ai.impl.bt.command.BtCommandManagerImpl;
+import io.vertigo.ai.impl.command.BtCommandManagerImpl;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;

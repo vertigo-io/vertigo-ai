@@ -1,11 +1,11 @@
-package io.vertigo.ai.impl.bt.command;
+package io.vertigo.ai.impl.command;
 
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.impl.bt.command.BtCommand.CommandType;
+import io.vertigo.ai.impl.command.BtCommand.CommandType;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.definition.AbstractDefinition;
 import io.vertigo.core.node.definition.DefinitionPrefix;
