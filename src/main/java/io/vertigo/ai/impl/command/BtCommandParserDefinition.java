@@ -12,7 +12,7 @@ import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.core.util.StringUtil;
 
 /**
- * Definition to register a way to parse a command (and eventually child nodes for composites) into a BtNode.
+ * Definition to register a way to parse a command (and child nodes for composites) into a BtNode.
  * The evaluator may need external parameters that are resolved at runtime to create the corresponding BTNode.
  *
  * @author skerdudou, mlaroche

@@ -56,6 +56,30 @@ public class BtCommandManagerTest {
 	}
 
 	@Test
+	public void testSucceed() {
+		final String bt = "succeed";
+		final BTStatus status = eval(bt);
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testFail() {
+		final String bt = "fail";
+		final BTStatus status = eval(bt);
+		//---
+		Assertions.assertEquals(BTStatus.Failed, status);
+	}
+
+	@Test
+	public void testRunning() {
+		final String bt = "running";
+		final BTStatus status = eval(bt);
+		//---
+		Assertions.assertEquals(BTStatus.Running, status);
+	}
+
+	@Test
 	public void testSimpleSequence() {
 		// An empty sequence always succeeds
 		final String bt = "begin sequence\n" +

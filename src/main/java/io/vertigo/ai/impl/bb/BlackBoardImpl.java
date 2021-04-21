@@ -5,9 +5,9 @@ import java.util.Set;
 import java.util.function.Function;
 
 import io.vertigo.ai.bb.BBKey;
-import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BBKeyTemplate;
+import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.core.lang.Assertion;
 
 final class BlackBoardImpl implements BlackBoard {
@@ -251,7 +251,8 @@ final class BlackBoardImpl implements BlackBoard {
 
 	public static String format(final String msg, final Function<BBKey, String> kv) {
 		Assertion.check()
-				.isNotNull(msg);
+				.isNotNull(msg)
+				.isNotNull(kv);
 		//---
 		final String START_TOKEN = "{{";
 		final String END_TOKEN = "}}";

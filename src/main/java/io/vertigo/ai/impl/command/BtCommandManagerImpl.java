@@ -241,5 +241,4 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 				throw new VSystemException("Unkown command type {0}", command.getType());
 		}
 	}
-
 }

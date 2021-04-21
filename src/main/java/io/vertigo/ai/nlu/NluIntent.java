@@ -6,11 +6,11 @@ import io.vertigo.core.lang.Assertion;
  * An intent is what a user wants to say.
  * 
  * examples :
- * Health, Meteo are intents. 
- * And a lot of sentences can define these intents.
+ * Health and Weather are intents. 
+ * A lot of sentences can define these two intents.
  * How are you ? 
- * Are you ok ?
- * Are You alright? 
+ * Are you OK ?
+ * Are you alright ? 
  * Are you doing OK ?
  * 
  * What is the weather ?

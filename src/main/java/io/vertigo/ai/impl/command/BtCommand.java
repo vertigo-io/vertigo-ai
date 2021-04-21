@@ -7,7 +7,8 @@ import java.util.OptionalInt;
 import io.vertigo.core.lang.Assertion;
 
 /**
- * Generic representation of a command. All args are String and we don't know if this command is valid.
+ * Generic representation of a command. 
+ * All args are String and we don't know if this command is valid.
  *
  * @author skerdudou
  */
