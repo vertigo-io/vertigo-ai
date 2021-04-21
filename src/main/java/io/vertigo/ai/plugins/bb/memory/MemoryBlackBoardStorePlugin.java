@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BBKey;
+import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.ai.bb.BlackBoardManager;
-import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
@@ -35,12 +35,6 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	//------------------------------------
 	//--- Keys
 	//------------------------------------
-	/**
-	 * Returns if the keys exist
-	 *
-	 * @param key the key
-	 * @return if the key exists
-	 */
 	@Override
 	public boolean exists(final BBKey key) {
 		Assertion.check().isNotNull(key);
@@ -48,11 +42,6 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		return keys.containsKey(key);
 	}
 
-	/**
-	 * Returns all the keys matching the pattern
-	 * @param keyPattern the pattern
-	 * @return A list of keys
-	 */
 	@Override
 	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
@@ -102,21 +91,11 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	//--- KV
 	//------------------------------------
 
-	/**
-	 * Returns the value or null if the key does not exist
-	 * @param key the key
-	 * @return the value mapped with the key or null if the key does not exist
-	 */
 	@Override
 	public String get(final BBKey key) {
 		return String.valueOf(values.get(key));
 	}
 
-	/**
-	 * Returns the value or null if the key does not exist
-	 * @param key the key
-	 * @return the value mapped with the key or null if the key does not exist
-	 */
 	@Override
 	public String getString(final BBKey key) {
 		Assertion.check().isNotNull(key);
