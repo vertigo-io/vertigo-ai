@@ -16,7 +16,7 @@ import io.vertigo.core.node.component.Manager;
 public interface BtCommandManager extends Manager {
 
 	/**
-	 * Transform commands as input text.
+	 * Transforms commands as input text.
 	 *
 	 * @param text input commands
 	 * @return the function to produce the BT

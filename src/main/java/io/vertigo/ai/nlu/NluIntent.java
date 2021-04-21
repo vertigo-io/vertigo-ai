@@ -5,6 +5,18 @@ import io.vertigo.core.lang.Assertion;
 /**
  * An intent is what a user wants to say.
  * 
+ * examples :
+ * Health, Meteo are intents. 
+ * And a lot of sentences can define these intents.
+ * How are you ? 
+ * Are you ok ?
+ * Are You alright? 
+ * Are you doing OK ?
+ * 
+ * What is the weather ?
+ * Is the weather nice ?
+ * ...
+ * 
  * @author skerdudou
  */
 public final class NluIntent {
