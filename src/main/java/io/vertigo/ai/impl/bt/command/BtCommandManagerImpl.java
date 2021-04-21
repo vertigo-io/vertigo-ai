@@ -26,7 +26,12 @@ import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 
 /**
- * @author skerdudou
+ * Implementation of the BtCommandManager.
+ * It uses BtCommandParserDefinitions to get the necessary code to actually convert a line of text into an instance of BTNode.
+ * A BtCommandParserDefinition is created via the static building methods provided in the BtCommandParserDefinition class and then registered in the app DefinitionSpace via a DefinitionProvider.
+ * Multiple definitions can be provided for the same command name. The last registered will be the used one.
+ *
+ * @author skerdudou, mlaroche
  */
 public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionProvider, Activeable {
 
@@ -44,6 +49,9 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 
 	}
 
+	/**
+	 * Register the parsers for the core commands needed to build any BTNode
+	 */
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
@@ -68,21 +76,21 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 		};
 	}
 
-	private List<BtCommand> doParseText(final String text) {
+	private static List<BtCommand> doParseText(final String text) {
 		return text.lines()
-				.map(this::stripComment)
+				.map(BtCommandManagerImpl::stripComment)
 				.map(String::strip)
 				.filter(s -> !s.isEmpty())
-				.map(this::doParseLine)
+				.map(BtCommandManagerImpl::doParseLine)
 				.collect(Collectors.toList());
 	}
 
-	private String stripComment(final String in) {
+	private static String stripComment(final String in) {
 		final int commentIndex = in.indexOf("--");
 		return in.substring(0, commentIndex == -1 ? in.length() : commentIndex);
 	}
 
-	private BtCommand doParseLine(final String line) {
+	private static BtCommand doParseLine(final String line) {
 		final var pattern = Pattern.compile("^((begin|end)\\s+)?([A-Za-z0-9:]+)(\\s+(.*))?$");
 		final Matcher matcher = pattern.matcher(line);
 
@@ -106,7 +114,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 		return BtCommand.of(command, resolveArgs(args), commandType);
 	}
 
-	private List<String> resolveArgs(final String args) {
+	private static List<String> resolveArgs(final String args) {
 		if (args == null) {
 			return Collections.emptyList();
 		}

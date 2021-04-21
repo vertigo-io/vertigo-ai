@@ -12,10 +12,10 @@ import io.vertigo.core.node.definition.DefinitionPrefix;
 import io.vertigo.core.util.StringUtil;
 
 /**
- * Plugin to parse a command (and eventually child nodes for composites) into a BtNode.
- * The plugin may need external parameters that is resolved at runtime and needed to resolve the BtNode.
+ * Definition to register a way to parse a command (and eventually child nodes for composites) into a BtNode.
+ * The evaluator may need external parameters that are resolved at runtime to create the corresponding BTNode.
  *
- * @author skerdudou
+ * @author skerdudou, mlaroche
  */
 @DefinitionPrefix("BtCP")
 public class BtCommandParserDefinition extends AbstractDefinition {
@@ -44,37 +44,37 @@ public class BtCommandParserDefinition extends AbstractDefinition {
 	}
 
 	/**
-	 * Register a function to convert a basic command and his parameters into a node.
+	 * Create a BtCommandParserDefinition to parse a basic command with his parameters and evaluate it as a BTNode.
 	 *
 	 * @param name the name of the command
-	 * @param commandConverter the function to convert a command and a nodeProvider into a node
+	 * @param commandEvaluator the function to convert a command and a nodeProvider into a node
 	 * @return the BtCommandParser
 	 */
-	public static final BtCommandParserDefinition basicCommand(final String name, final BiFunction<BtCommand, List<Object>, BTNode> commandConverter) {
+	public static final BtCommandParserDefinition basicCommand(final String name, final BiFunction<BtCommand, List<Object>, BTNode> commandEvaluator) {
 		Assertion.check()
 				.isNotBlank(name)
-				.isNotNull(commandConverter);
+				.isNotNull(commandEvaluator);
 		//--
-		return new BtCommandParserDefinition(CommandType.STANDARD, name, (c, p, l) -> commandConverter.apply(c, p));
+		return new BtCommandParserDefinition(CommandType.STANDARD, name, (c, p, l) -> commandEvaluator.apply(c, p));
 	}
 
 	/**
-	 * Register a function to convert a composite command with his child nodes and his parameters into a node.
+	 * Create a BtCommandParserDefinition to parse a composite command with his child nodes and his parameters and evaluate it as a BTNode.
 	 *
 	 * @param name the name of the command
-	 * @param commandConverter the function to convert a command, external parameters and a list of child nodes into a node
-	 * @return the BtCommandParser
+	 * @param commandEvaluator the function to evaluate a command as a BTNode instance using external parameters and a list of child nodes
+	 * @return the BtCommandParserDefinition
 	 */
-	public static final BtCommandParserDefinition compositeCommand(final String name, final CommandEvaluator commandConverter) {
+	public static final BtCommandParserDefinition compositeCommand(final String name, final CommandEvaluator commandEvaluator) {
 		Assertion.check()
 				.isNotBlank(name)
-				.isNotNull(commandConverter);
+				.isNotNull(commandEvaluator);
 		//--
-		return new BtCommandParserDefinition(CommandType.START_COMPOSITE, name, commandConverter);
+		return new BtCommandParserDefinition(CommandType.START_COMPOSITE, name, commandEvaluator);
 	}
 
 	/**
-	 * Register a function to convert a basic command to a node.
+	 * Create a BtCommandParserDefinition to parse a basic command with his child nodes and his parameters and evaluate it as a BTNode.
 	 * Here stateless means, no need for external parameters.
 	 *
 	 * @param name the name of the command
@@ -86,15 +86,15 @@ public class BtCommandParserDefinition extends AbstractDefinition {
 	}
 
 	/**
-	 * Register a function to convert a composite command to a node .
+	 * Create a BtCommandParserDefinition to parse a composite command with his child nodes and his parameters and evaluate it as a BTNode.
 	 * Here stateless means, no need for external parameters.
 	 *
 	 * @param name the name of the command
-	 * @param commandConverter function to convert a command and a list of child nodes into a node
+	 * @param commandEvaluator function to convert a command and a list of child nodes into a node
 	 * @return the BtCommandParser
 	 */
-	public static final BtCommandParserDefinition statelessCompositeCommand(final String name, final BiFunction<BtCommand, List<BTNode>, BTNode> commandConverter) {
-		return compositeCommand(name, (c, p, l) -> commandConverter.apply(c, l));
+	public static final BtCommandParserDefinition statelessCompositeCommand(final String name, final BiFunction<BtCommand, List<BTNode>, BTNode> commandEvaluator) {
+		return compositeCommand(name, (c, p, l) -> commandEvaluator.apply(c, l));
 	}
 
 	/**
