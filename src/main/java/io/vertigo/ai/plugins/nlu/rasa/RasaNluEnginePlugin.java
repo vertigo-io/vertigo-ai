@@ -25,7 +25,7 @@ import com.google.gson.JsonObject;
 
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
-import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.ai.nlu.RecognitionResult;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaConfig;
@@ -74,7 +74,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized void train(final Map<Intent, List<String>> trainingData) {
+	public synchronized void train(final Map<NluIntent, List<String>> trainingData) {
 		//train a model
 		final String filename = trainModel(trainingData);
 		ready = false;
@@ -85,7 +85,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		ready = true;
 	}
 
-	private String trainModel(final Map<Intent, List<String>> trainingData) {
+	private String trainModel(final Map<NluIntent, List<String>> trainingData) {
 		final RasaTrainingData rasaTrainingData = new RasaTrainingData(
 				rasaConfig.language,
 				rasaConfig.pipeline,
@@ -141,7 +141,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 		// put response in the standard format
 		final List<ScoredIntent> intentClassificationList = rasaParsingResponse.intent_ranking.stream()
-				.map(rasaIntent -> new ScoredIntent(Intent.of(rasaIntent.name), rasaIntent.confidence))
+				.map(rasaIntent -> new ScoredIntent(NluIntent.of(rasaIntent.name), rasaIntent.confidence))
 				.collect(Collectors.toList());
 		return new RecognitionResult(rasaParsingResponse.intent.name, intentClassificationList);
 	}

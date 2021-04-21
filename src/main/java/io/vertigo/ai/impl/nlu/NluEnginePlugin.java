@@ -3,7 +3,7 @@ package io.vertigo.ai.impl.nlu;
 import java.util.List;
 import java.util.Map;
 
-import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.RecognitionResult;
 import io.vertigo.core.node.component.Plugin;
 
@@ -15,7 +15,7 @@ public interface NluEnginePlugin extends Plugin {
 	/**
 	 * Starts the process to train the neural network against registered intents.
 	 */
-	void train(final Map<Intent, List<String>> trainingData);
+	void train(final Map<NluIntent, List<String>> trainingData);
 
 	/**
 	 * Uses the previously trained model to classify a new and unknown sentence.

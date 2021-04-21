@@ -55,9 +55,9 @@ public final class RasaNluManagerTest {
 
 	private void defaultIntentCorpus() {
 
-		final Map<Intent, List<String>> intents = new HashMap<>();
-		intents.put(
-				Intent.of("meteo"),
+		final Map<NluIntent, List<String>> nluIntents = new HashMap<>();
+		nluIntents.put(
+				NluIntent.of("meteo"),
 				List.of(
 						"quel temps fait-il demain ?",
 						"donne moi la météo",
@@ -65,15 +65,15 @@ public final class RasaNluManagerTest {
 						"il fait beau demain ?",
 						"va t il pleuvoir dans les prochains jours ?"));
 
-		intents.put(
-				Intent.of("train"),
+		nluIntents.put(
+				NluIntent.of("train"),
 				List.of("je voudrais prendre le train",
 						"réserver billet de train",
 						"réserve-moi un ticket de train",
 						"je veux un billet de train"));
 
-		intents.put(
-				Intent.of("blague"),
+		nluIntents.put(
+				NluIntent.of("blague"),
 				List.of("raconte moi une blague",
 						"donne moi une blague",
 						"fais moi rire",
@@ -81,7 +81,7 @@ public final class RasaNluManagerTest {
 						"je veux une blague",
 						"je voudrais une blague"));
 
-		nluManager.train(intents, DEFAULT_ENGINE_NAME);
+		nluManager.train(nluIntents, DEFAULT_ENGINE_NAME);
 	}
 
 	@Test

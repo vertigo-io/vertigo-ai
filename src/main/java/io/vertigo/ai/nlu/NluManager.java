@@ -19,7 +19,7 @@ public interface NluManager extends Manager {
 	 * @param trainingData all intents with their training phrases
 	 * @param engineName name of the engine to register with
 	 */
-	void train(Map<Intent, List<String>> trainingData, String engineName);
+	void train(Map<NluIntent, List<String>> trainingData, String engineName);
 
 	/**
 	 * Use the previously trained model on the specified engine to classify a new and unknown sentence.

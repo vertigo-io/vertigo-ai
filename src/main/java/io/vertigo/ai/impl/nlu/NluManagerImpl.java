@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.RecognitionResult;
 import io.vertigo.core.lang.Assertion;
@@ -44,7 +44,7 @@ public class NluManagerImpl implements NluManager {
 	}
 
 	@Override
-	public void train(final Map<Intent, List<String>> trainingData, final String engineName) {
+	public void train(final Map<NluIntent, List<String>> trainingData, final String engineName) {
 		Assertion.check()
 				.isNotBlank(engineName);
 		//---

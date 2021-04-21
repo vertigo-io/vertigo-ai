@@ -8,10 +8,10 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou
  */
 public final class ScoredIntent {
-	private final Intent intent;
+	private final NluIntent intent;
 	private final double accuracy;
 
-	public ScoredIntent(final Intent intent, final Double accuracy) {
+	public ScoredIntent(final NluIntent intent, final Double accuracy) {
 		Assertion.check()
 				.isNotNull(intent)
 				.isNotNull(accuracy);
@@ -23,7 +23,7 @@ public final class ScoredIntent {
 	/**
 	 * @return the intent
 	 */
-	public Intent getIntent() {
+	public NluIntent getIntent() {
 		return intent;
 	}
 
