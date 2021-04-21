@@ -34,12 +34,12 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
  * @author skerdudou, mlaroche
  */
 public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionProvider, Activeable {
-	private final Map<String, BtCommandParserDefinition> commands = new HashMap<>();
+	private final Map<String, BtCommandParserDefinition> commandParsers = new HashMap<>();
 
 	@Override
 	public void start() {
 		Node.getNode().getDefinitionSpace().getAll(BtCommandParserDefinition.class).stream()
-				.forEach(btCommandParser -> commands.put(btCommandParser.getCommandName(), btCommandParser));
+				.forEach(btCommandParser -> commandParsers.put(btCommandParser.getCommandName(), btCommandParser));
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 	}
 
 	/**
-	 * Register the parsers for the core commands needed to build any BTNode
+	 * Registers the parsers for the core commandParsers needed to build any BTNode
 	 */
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
@@ -224,13 +224,13 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 				.isNotNull(command)
 				.isNotNull(childs);
 		//--
-		final BtCommandParserDefinition commandParser = Optional.ofNullable(commands.get(command.getCommandName()))
+		final BtCommandParserDefinition commandParser = Optional.ofNullable(commandParsers.get(command.getCommandName()))
 				.orElseThrow(() -> new VSystemException("No parser found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getCommandName()));
 
 		switch (command.getType()) {
 			case STANDARD:
 				Assertion.check()
-						.isTrue(childs.isEmpty(), "Standard commands dont expect childs")
+						.isTrue(childs.isEmpty(), "Standard commandParsers dont expect childs")
 						.isTrue(commandParser.getCommandType() == CommandType.STANDARD, "The command parser is not for the correct type");
 				return commandParser.getCommandResolver().apply(command, params, Collections.emptyList());
 			case START_COMPOSITE:
