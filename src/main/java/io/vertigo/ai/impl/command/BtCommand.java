@@ -19,13 +19,18 @@ public class BtCommand {
 		STANDARD
 	}
 
-	private final String commandName;
-	private final List<String> commandArgs;
+	private final String name;
+	private final List<String> args;
 	private final CommandType type;
 
 	private BtCommand(final String commandName, final List<String> commandArgs, final CommandType type) {
-		this.commandName = commandName;
-		this.commandArgs = commandArgs;
+		Assertion.check()
+				.isNotBlank(commandName)
+				.isNotNull(commandArgs)
+				.isNotNull(type);
+		//---
+		this.name = commandName;
+		this.args = commandArgs;
 		this.type = type;
 	}
 
@@ -34,17 +39,17 @@ public class BtCommand {
 	}
 
 	/**
-	 * @return the commandName
+	 * @return the name
 	 */
-	public String getCommandName() {
-		return commandName;
+	public String getName() {
+		return name;
 	}
 
 	/**
-	 * @return the commandArgs
+	 * @return the args
 	 */
-	public List<String> getCommandArgs() {
-		return commandArgs;
+	public List<String> getArgs() {
+		return args;
 	}
 
 	/**
@@ -62,9 +67,9 @@ public class BtCommand {
 	 */
 	public String getStringParam(final int idx) {
 		Assertion.check()
-				.isTrue(idx < commandArgs.size(), "Missing parameter n°{0} on '{1}'.", idx, commandName);
+				.isTrue(idx < args.size(), "Missing parameter n°{0} on '{1}'.", idx, name);
 		//--
-		return commandArgs.get(idx);
+		return args.get(idx);
 	}
 
 	/**
@@ -74,8 +79,8 @@ public class BtCommand {
 	 * @return argument value if exists
 	 */
 	public Optional<String> getOptStringParam(final int idx) {
-		if (idx < commandArgs.size()) {
-			return Optional.of(commandArgs.get(idx));
+		if (idx < args.size()) {
+			return Optional.of(args.get(idx));
 		}
 		return Optional.empty();
 	}
@@ -87,10 +92,10 @@ public class BtCommand {
 	 * @return argument all values
 	 */
 	public String[] getRemainingStringParam(final int idx) {
-		if (idx >= commandArgs.size()) {
+		if (idx >= args.size()) {
 			return new String[0];
 		}
-		return commandArgs.subList(idx, commandArgs.size()).toArray(String[]::new);
+		return args.subList(idx, args.size()).toArray(String[]::new);
 	}
 
 	/**
@@ -101,9 +106,9 @@ public class BtCommand {
 	 */
 	public int getIntParam(final int idx) {
 		Assertion.check()
-				.isTrue(idx < commandArgs.size(), "Missing parameter n°{0} on '{1}'.", idx, commandName);
+				.isTrue(idx < args.size(), "Missing parameter n°{0} on '{1}'.", idx, name);
 		//--
-		return Integer.valueOf(commandArgs.get(idx));
+		return Integer.valueOf(args.get(idx));
 	}
 
 	/**
@@ -113,7 +118,7 @@ public class BtCommand {
 	 * @return argument value if exists
 	 */
 	public OptionalInt getOptIntParam(final int idx) {
-		if (idx < commandArgs.size()) {
+		if (idx < args.size()) {
 			return OptionalInt.of(getIntParam(idx));
 		}
 		return OptionalInt.empty();

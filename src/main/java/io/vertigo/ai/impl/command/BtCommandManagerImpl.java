@@ -191,10 +191,10 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 					break;
 				case END_COMPOSITE:
 					Assertion.check()
-							.isFalse(compositeStack.isEmpty(), "Cannot end composite '{0}', nothing is actually opened", command.getCommandName())
-							.isTrue(compositeStack.getFirst().getCommandName().equals(command.getCommandName()),
+							.isFalse(compositeStack.isEmpty(), "Cannot end composite '{0}', nothing is actually opened", command.getName())
+							.isTrue(compositeStack.getFirst().getName().equals(command.getName()),
 									"Cannot close '{0}', currently on '{1}'",
-									command.getCommandName(), compositeStack.getFirst().getCommandName());
+									command.getName(), compositeStack.getFirst().getName());
 					//--
 					final BtCommand cmd = compositeStack.pop();
 					final BTNode compositeNode = doParseCommand(cmd, stdNodesStack.pop(), params);
@@ -213,7 +213,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 
 		Assertion.check()
 				.isFalse(it.hasNext(), "Commands after root node is not supported.")
-				.isTrue(compositeStack.isEmpty(), "Node '{0}' not ended.", compositeStack.isEmpty() ? "" : compositeStack.getFirst().getCommandName())
+				.isTrue(compositeStack.isEmpty(), "Node '{0}' not ended.", compositeStack.isEmpty() ? "" : compositeStack.getFirst().getName())
 				.isNotNull(rootNode);
 
 		return rootNode;
@@ -224,8 +224,8 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 				.isNotNull(command)
 				.isNotNull(childs);
 		//--
-		final BtCommandParserDefinition commandParser = Optional.ofNullable(commandParsers.get(command.getCommandName()))
-				.orElseThrow(() -> new VSystemException("No parser found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getCommandName()));
+		final BtCommandParserDefinition commandParser = Optional.ofNullable(commandParsers.get(command.getName()))
+				.orElseThrow(() -> new VSystemException("No parser found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getName()));
 
 		switch (command.getType()) {
 			case STANDARD:
