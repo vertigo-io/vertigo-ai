@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +13,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
 
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTNodes;
@@ -22,30 +20,47 @@ import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.ai.impl.bt.command.BtCommand.CommandType;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.definition.DefinitionSpace;
+import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 
 /**
  * @author skerdudou
  */
-public class BtCommandManagerImpl implements BtCommandManager {
+public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionProvider, Activeable {
 
-	private final Map<String, BtCommandParser> commands;
+	private final Map<String, BtCommandParserDefinition> commands = new HashMap<>();
 
-	@Inject
-	public BtCommandManagerImpl(final List<BtCommandParserProviderPlugin> plugins) {
-		commands = Stream.concat(
-				basicCompositeCommandParsers().stream(), // basic ones
-				plugins.stream()
-						.flatMap(plugin -> plugin.get().stream())) // commandParsers from plugins
-				.collect(Collectors.toMap(BtCommandParser::getCommandName, Function.identity()));
+	//	@Inject
+	//	public BtCommandManagerImpl(final List<BtCommandParserProviderPlugin> plugins) {
+	//		commands = Stream.concat(
+	//				basicCompositeCommandParsers().stream(), // basic ones
+	//				plugins.stream()
+	//						.flatMap(plugin -> plugin.get().stream())) // commandParsers from plugins
+	//				.collect(Collectors.toMap(BtCommandParser::getCommandName, Function.identity()));
+	//
+	//	}
+
+	@Override
+	public void start() {
+		Node.getNode().getDefinitionSpace().getAll(BtCommandParserDefinition.class).stream()
+				.forEach(btCommandParser -> commands.put(btCommandParser.getCommandName(), btCommandParser));
+	}
+
+	@Override
+	public void stop() {
+		// nothing
 
 	}
 
-	private static List<BtCommandParser> basicCompositeCommandParsers() {
+	@Override
+	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
-				BtCommandParser.statelessCompositeCommand("sequence", (c, l) -> BTNodes.sequence(l)),
-				BtCommandParser.statelessCompositeCommand("selector", (c, l) -> BTNodes.selector(l)),
-				BtCommandParser.statelessCompositeCommand("try", (c, l) -> BTNodes.doTry(c.getIntParam(0), l)),
-				BtCommandParser.statelessCompositeCommand("loop", (c, l) -> {
+				BtCommandParserDefinition.statelessCompositeCommand("sequence", (c, l) -> BTNodes.sequence(l)),
+				BtCommandParserDefinition.statelessCompositeCommand("selector", (c, l) -> BTNodes.selector(l)),
+				BtCommandParserDefinition.statelessCompositeCommand("try", (c, l) -> BTNodes.doTry(c.getIntParam(0), l)),
+				BtCommandParserDefinition.statelessCompositeCommand("loop", (c, l) -> {
 					final var optionalInt = c.getOptIntParam(0);
 					if (optionalInt.isPresent()) {
 						return BTNodes.loop(optionalInt.getAsInt(), l);
@@ -214,7 +229,7 @@ public class BtCommandManagerImpl implements BtCommandManager {
 				.isNotNull(command)
 				.isNotNull(childs);
 		//--
-		final BtCommandParser commandParser = Optional.ofNullable(commands.get(command.getCommandName()))
+		final BtCommandParserDefinition commandParser = Optional.ofNullable(commands.get(command.getCommandName()))
 				.orElseThrow(() -> new VSystemException("No parser found to handle {0} '{1}' command.", command.getType() == CommandType.STANDARD ? "standard" : "composite", command.getCommandName()));
 
 		switch (command.getType()) {
