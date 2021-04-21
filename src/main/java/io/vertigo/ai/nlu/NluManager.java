@@ -25,9 +25,9 @@ public interface NluManager extends Manager {
 	 * Recognizes intents from a sentence.
 	 * It uses the previously trained model on the specified engine to classify a new and unknown sentence.
 	 *
-	 * @param sentence the sentence we wants to recognize.
+	 * @param sentence the sentence we want to recognize.
 	 * @param engineName name of the engine
-	 * @return the result of the analysis
+	 * @return the result of the recognition
 	 */
 	NluResult recognize(String sentence, String engineName);
 
