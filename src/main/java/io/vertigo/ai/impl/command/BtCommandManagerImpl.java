@@ -34,7 +34,6 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
  * @author skerdudou, mlaroche
  */
 public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionProvider, Activeable {
-
 	private final Map<String, BtCommandParserDefinition> commands = new HashMap<>();
 
 	@Override

@@ -1,4 +1,4 @@
-package io.vertigo.ai.bt;
+package io.vertigo.ai.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,12 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.AiFeatures;
-import io.vertigo.ai.bt.command.BtCommandManager;
+import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 
-public class BTParserTest {
+public class BtCommandManagerTest {
 
 	@Inject
 	private BtCommandManager btCommandManager;

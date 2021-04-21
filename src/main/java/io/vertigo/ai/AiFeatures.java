@@ -2,7 +2,7 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
-import io.vertigo.ai.bt.command.BtCommandManager;
+import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.command.BtCommandManagerImpl;
