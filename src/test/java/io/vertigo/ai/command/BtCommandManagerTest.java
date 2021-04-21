@@ -49,26 +49,28 @@ public class BtCommandManagerTest {
 		}
 	}
 
+	private BTStatus eval(final String commands) {
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(commands);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		return rootNode.eval();
+	}
+
 	@Test
 	public void testSimpleSequence() {
+		// An empty sequence always succeeds
 		final String bt = "begin sequence\n" +
 				"end sequence";
-
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
 	}
 
 	@Test
 	public void testSimpleSelector() {
+		// An empty selector always fails
 		final String bt = "begin selector\n" +
 				"end selector";
-
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Failed, status);
 	}
@@ -110,9 +112,7 @@ public class BtCommandManagerTest {
 				"	end sequence\n" +
 				"end sequence";
 
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
 	}
@@ -136,9 +136,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence param1 param2\n" +
 				"end sequence";
 
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
 	}
@@ -148,9 +146,7 @@ public class BtCommandManagerTest {
 		final String bt = "begin sequence \"param 1\" \"param 2\"\n" +
 				"end sequence";
 
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
 	}
@@ -200,9 +196,7 @@ public class BtCommandManagerTest {
 				"begin sequence -- a\"a\n" +
 				"end sequence";
 
-		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
-		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
-		final BTStatus status = rootNode.eval();
+		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
 	}
