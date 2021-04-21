@@ -32,16 +32,6 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 
 	private final Map<String, BtCommandParserDefinition> commands = new HashMap<>();
 
-	//	@Inject
-	//	public BtCommandManagerImpl(final List<BtCommandParserProviderPlugin> plugins) {
-	//		commands = Stream.concat(
-	//				basicCompositeCommandParsers().stream(), // basic ones
-	//				plugins.stream()
-	//						.flatMap(plugin -> plugin.get().stream())) // commandParsers from plugins
-	//				.collect(Collectors.toMap(BtCommandParser::getCommandName, Function.identity()));
-	//
-	//	}
-
 	@Override
 	public void start() {
 		Node.getNode().getDefinitionSpace().getAll(BtCommandParserDefinition.class).stream()
