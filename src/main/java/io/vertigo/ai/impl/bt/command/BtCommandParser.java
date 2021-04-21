@@ -9,11 +9,10 @@ import io.vertigo.ai.impl.bt.command.BtCommand.CommandType;
 import io.vertigo.core.lang.Assertion;
 
 /**
- * Plugin to parse a command into a function providing the associated BtNode. The plugin may need an intermediate object called BtNodeProvider that is resolved at runtime and
- * needed to resolve the BtNode.
+ * Plugin to parse a command (and eventually child nodes for composites) into a BtNode.
+ * The plugin may need external parameters that is resolved at runtime and needed to resolve the BtNode.
  *
  * @author skerdudou
- * @param <P> Type of the BtNodeProvider
  */
 public class BtCommandParser {
 
@@ -40,10 +39,11 @@ public class BtCommandParser {
 	}
 
 	/**
-	 * Register a function to convert a basic command to a node provider.
+	 * Register a function to convert a basic command and his parameters into a node.
 	 *
 	 * @param name the name of the command
 	 * @param commandConverter the function to convert a command and a nodeProvider into a node
+	 * @return the BtCommandParser
 	 */
 	public static final BtCommandParser basicCommand(final String name, final BiFunction<BtCommand, List<Object>, BTNode> commandConverter) {
 		Assertion.check()
@@ -54,11 +54,11 @@ public class BtCommandParser {
 	}
 
 	/**
-	 * Register a function to convert a composite command to a node provider.
+	 * Register a function to convert a composite command with his child nodes and his parameters into a node.
 	 *
 	 * @param name the name of the command
-	 * @param commandConverter the function to convert a command, a nodeProvider and a list of child nodes into a node
-	 * @return
+	 * @param commandConverter the function to convert a command, external parameters and a list of child nodes into a node
+	 * @return the BtCommandParser
 	 */
 	public static final BtCommandParser compositeCommand(final String name, final CommandEvaluator commandConverter) {
 		Assertion.check()
@@ -70,10 +70,11 @@ public class BtCommandParser {
 
 	/**
 	 * Register a function to convert a basic command to a node.
-	 * Here stateless means, no need for BtNodeProvider object.
+	 * Here stateless means, no need for external parameters.
 	 *
 	 * @param name the name of the command
 	 * @param commandConverter function to convert a command into a node
+	 * @return the BtCommandParser
 	 */
 	public static final BtCommandParser statelessBasicCommand(final String name, final Function<BtCommand, BTNode> commandConverter) {
 		return basicCommand(name, (c, p) -> commandConverter.apply(c));
@@ -81,20 +82,18 @@ public class BtCommandParser {
 
 	/**
 	 * Register a function to convert a composite command to a node .
-	 * Here stateless means, no need for BtNodeProvider object.
+	 * Here stateless means, no need for external parameters.
 	 *
 	 * @param name the name of the command
 	 * @param commandConverter function to convert a command and a list of child nodes into a node
+	 * @return the BtCommandParser
 	 */
 	public static final BtCommandParser statelessCompositeCommand(final String name, final BiFunction<BtCommand, List<BTNode>, BTNode> commandConverter) {
 		return compositeCommand(name, (c, p, l) -> commandConverter.apply(c, l));
 	}
 
 	/**
-	 * A TriFunction that resolves inputs (Command, node provider and childs) into a BTNode.
-	 *
-	 * @author skerdudou
-	 * @param <P> Type of the BtNodeProvider
+	 * A TriFunction that resolves inputs (Command, parameters and childs) into a BTNode.
 	 */
 	@FunctionalInterface
 	public interface CommandEvaluator {
