@@ -9,11 +9,11 @@ import io.vertigo.core.lang.Assertion;
  *
  * @author skerdudou
  */
-public final class RecognitionResult {
+public final class NluResult {
 	private final String rawSentence;
 	private final List<ScoredIntent> scoredIntents;
 
-	public RecognitionResult(final String rawSentence, final List<ScoredIntent> scoredIntents) {
+	public NluResult(final String rawSentence, final List<ScoredIntent> scoredIntents) {
 		Assertion.check()
 				.isNotBlank(rawSentence)
 				.isNotNull(scoredIntents);

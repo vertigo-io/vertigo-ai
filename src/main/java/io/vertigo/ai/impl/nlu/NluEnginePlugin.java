@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.ai.nlu.NluIntent;
-import io.vertigo.ai.nlu.RecognitionResult;
+import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.core.node.component.Plugin;
 
 /**
@@ -23,7 +23,7 @@ public interface NluEnginePlugin extends Plugin {
 	 * @param sentence the sentence we wants to classify.
 	 * @return the result of the analysis
 	 */
-	RecognitionResult recognize(String sentence);
+	NluResult recognize(String sentence);
 
 	/**
 	 * Checks if ready to recognize sentences.

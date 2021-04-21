@@ -28,7 +28,7 @@ public interface NluManager extends Manager {
 	 * @param engineName name of the engine to register with
 	 * @return the result of the analysis
 	 */
-	RecognitionResult recognize(String sentence, String engineName);
+	NluResult recognize(String sentence, String engineName);
 
 	/**
 	 * Checks if the specified engine is ready to recognize sentences.

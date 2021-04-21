@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.nlu.RecognitionResult;
+import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.core.lang.Assertion;
 
 /**
@@ -54,7 +54,7 @@ public class NluManagerImpl implements NluManager {
 	}
 
 	@Override
-	public RecognitionResult recognize(final String sentence, final String engineName) {
+	public NluResult recognize(final String sentence, final String engineName) {
 		return getEngineByName(engineName).recognize(sentence);
 	}
 

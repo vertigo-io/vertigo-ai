@@ -27,7 +27,7 @@ import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.ScoredIntent;
-import io.vertigo.ai.nlu.RecognitionResult;
+import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaConfig;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaNluTrainDataRepresenter;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaParsingResponse;
@@ -123,7 +123,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public RecognitionResult recognize(final String sentence) {
+	public NluResult recognize(final String sentence) {
 		// wait node is ready for recognition
 		waitUntilReady();
 		//---
@@ -143,7 +143,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		final List<ScoredIntent> intentClassificationList = rasaParsingResponse.intent_ranking.stream()
 				.map(rasaIntent -> new ScoredIntent(NluIntent.of(rasaIntent.name), rasaIntent.confidence))
 				.collect(Collectors.toList());
-		return new RecognitionResult(rasaParsingResponse.intent.name, intentClassificationList);
+		return new NluResult(rasaParsingResponse.intent.name, intentClassificationList);
 	}
 
 	private void waitUntilReady() {
