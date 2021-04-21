@@ -5,7 +5,7 @@ import java.util.List;
 import io.vertigo.core.lang.Assertion;
 
 /**
- * Result of the analysis of a sentence by the NLU engine.
+ * Result of the recognition of a sentence by the NLU engine.
  *
  * @author skerdudou
  */

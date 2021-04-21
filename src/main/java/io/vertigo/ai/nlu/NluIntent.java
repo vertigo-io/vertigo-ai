@@ -12,7 +12,7 @@ public final class NluIntent {
 
 	private NluIntent(final String code) {
 		Assertion.check().isNotBlank(code);
-		//--
+		//---
 		this.code = code;
 	}
 
