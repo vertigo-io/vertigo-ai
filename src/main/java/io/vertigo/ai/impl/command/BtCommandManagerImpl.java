@@ -232,11 +232,11 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 				Assertion.check()
 						.isTrue(childs.isEmpty(), "Standard commandParsers dont expect childs")
 						.isTrue(commandParser.getCommandType() == CommandType.STANDARD, "The command parser is not for the correct type");
-				return commandParser.getCommandResolver().apply(command, params, Collections.emptyList());
+				return commandParser.getCommandEvaluator().apply(command, params, Collections.emptyList());
 			case START_COMPOSITE:
 				Assertion.check()
 						.isTrue(commandParser.getCommandType() == CommandType.START_COMPOSITE, "The command parser is not for the correct type");
-				return commandParser.getCommandResolver().apply(command, params, childs);
+				return commandParser.getCommandEvaluator().apply(command, params, childs);
 			default:
 				throw new VSystemException("Unkown command type {0}", command.getType());
 		}

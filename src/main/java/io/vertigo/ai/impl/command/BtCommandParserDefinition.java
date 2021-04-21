@@ -38,7 +38,7 @@ public class BtCommandParserDefinition extends AbstractDefinition {
 		return commandName;
 	}
 
-	public CommandEvaluator getCommandResolver() {
+	public CommandEvaluator getCommandEvaluator() {
 		return commandEvaluator;
 	}
 
