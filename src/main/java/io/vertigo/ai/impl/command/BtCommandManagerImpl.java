@@ -82,9 +82,11 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 				.collect(Collectors.toList());
 	}
 
-	private static String stripComment(final String in) {
-		final int commentIndex = in.indexOf("--");
-		return in.substring(0, commentIndex == -1 ? in.length() : commentIndex);
+	private static String stripComment(final String line) {
+		final int commentIndex = line.indexOf("--");
+		return commentIndex == -1
+				? line
+				: line.substring(0, commentIndex);
 	}
 
 	private static BtCommand doParseLine(final String line) {
