@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.ai.AiFeatures;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
 
-public class BBBlackBoardTest {
+public abstract class AbstractBBBlackBoardTest {
 	@Inject
 	private BlackBoardManager blackBoardManager;
 
@@ -22,23 +21,23 @@ public class BBBlackBoardTest {
 	public final void setUp() throws Exception {
 		node = new AutoCloseableNode(buildNodeConfig());
 		DIInjector.injectMembers(this, node.getComponentSpace());
+		//---
+		clean();
 	}
 
-	private NodeConfig buildNodeConfig() {
-		return NodeConfig.builder()
-				.addModule(
-						new AiFeatures()
-								.withBlackboard()
-								.withMemoryBlackboard()
-								.build())
-				.build();
-	}
+	abstract NodeConfig buildNodeConfig();
 
 	@AfterEach
 	public final void tearDown() throws Exception {
+		clean();
 		if (node != null) {
 			node.close();
 		}
+	}
+
+	private void clean() {
+		final var blackBoard = blackBoardManager.connect();
+		blackBoard.delete(BBKeyPattern.of("*"));
 	}
 
 	@Test
@@ -153,6 +152,7 @@ public class BBBlackBoardTest {
 		Assertions.assertEquals(8, blackBoard.getInteger(key));
 		blackBoard.incrBy(key, -5);
 		Assertions.assertEquals(3, blackBoard.getInteger(key));
+
 	}
 
 	@Test

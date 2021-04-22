@@ -9,6 +9,7 @@ import io.vertigo.ai.impl.command.BtCommandManagerImpl;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
+import io.vertigo.ai.plugins.bb.redis.RedisBlackBoardStorePlugin;
 import io.vertigo.ai.plugins.nlu.rasa.RasaNluEnginePlugin;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.Features;
@@ -56,6 +57,18 @@ public class AiFeatures extends Features<AiFeatures> {
 	public AiFeatures withMemoryBlackboard(final Param... params) {
 		getModuleConfigBuilder()
 				.addPlugin(MemoryBlackBoardStorePlugin.class, params);
+		return this;
+	}
+
+	/**
+	 * Add ability to use redis plugin to store Blackboards.
+	 *
+	 * @return these features
+	 */
+	@Feature("blackboard.redis")
+	public AiFeatures withRedisBlackboard(final Param... params) {
+		getModuleConfigBuilder()
+				.addPlugin(RedisBlackBoardStorePlugin.class, params);
 		return this;
 	}
 

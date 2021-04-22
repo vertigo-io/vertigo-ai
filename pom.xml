@@ -25,6 +25,13 @@
 			<version>${vertigo.version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-redis-connector</artifactId>
+			<version>${vertigo.version}</version>
+			<optional>true</optional>
+		</dependency>
+		
 		
 		<dependency>
 			<groupId>javax.servlet</groupId>
