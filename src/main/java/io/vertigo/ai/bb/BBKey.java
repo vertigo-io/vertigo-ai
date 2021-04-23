@@ -32,6 +32,22 @@ public final class BBKey {
 		return BBKey.of(rootKey.key() + key);
 	}
 
+	public BBKey add(final BBKey otherKey) {
+		return BBKey.of(key + otherKey.key);
+	}
+
+	public BBKey head() {
+		Assertion.check()
+				.isTrue(key.charAt(0) == '/', "Key {0} doesn't start with the first char '/'", key);
+		final int nextSlash = key.indexOf('/', 1);
+		return nextSlash < 0 ? this : BBKey.of(key.substring(0, nextSlash));
+	}
+
+	public BBKey tail() {
+		final int lastSlash = key.lastIndexOf('/');
+		return lastSlash == 0 ? this : BBKey.of(key.substring(lastSlash));
+	}
+
 	public BBKey indent(final String prefix) {
 		Assertion.check().isNotBlank(prefix);
 		//---

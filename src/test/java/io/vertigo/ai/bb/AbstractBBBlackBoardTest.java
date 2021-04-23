@@ -49,6 +49,18 @@ public abstract class AbstractBBBlackBoardTest {
 	}
 
 	@Test
+	public void testKeyOperations() {
+
+		final var rootKey = BBKey.of("/root");
+		final var subKey = rootKey.add(BBKey.of("/sub"));
+
+		Assertions.assertEquals(rootKey, rootKey.head());
+		Assertions.assertEquals(rootKey, subKey.head());
+		Assertions.assertEquals("/sub", subKey.tail().key());
+		Assertions.assertEquals("/root", rootKey.tail().key());
+	}
+
+	@Test
 	public void testExists() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		final BBKey sampleKey = BBKey.of("/samplekey");
