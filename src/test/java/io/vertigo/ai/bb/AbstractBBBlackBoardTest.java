@@ -25,7 +25,7 @@ public abstract class AbstractBBBlackBoardTest {
 		clean();
 	}
 
-	abstract NodeConfig buildNodeConfig();
+	protected abstract NodeConfig buildNodeConfig();
 
 	@AfterEach
 	public final void tearDown() throws Exception {

@@ -1,6 +1,7 @@
-package io.vertigo.ai.bb;
+package io.vertigo.ai.bb.redis;
 
 import io.vertigo.ai.AiFeatures;
+import io.vertigo.ai.bb.AbstractBBBlackBoardTest;
 import io.vertigo.connectors.redis.RedisFeatures;
 import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.param.Param;
