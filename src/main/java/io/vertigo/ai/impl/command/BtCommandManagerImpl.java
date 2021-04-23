@@ -54,6 +54,9 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
+				BtCommandParserDefinition.statelessBasicCommand("succeed", c -> BTNodes.succeed()),
+				BtCommandParserDefinition.statelessBasicCommand("fail", c -> BTNodes.fail()),
+				BtCommandParserDefinition.statelessBasicCommand("running", c -> BTNodes.running()),
 				BtCommandParserDefinition.statelessCompositeCommand("sequence", (c, l) -> BTNodes.sequence(l)),
 				BtCommandParserDefinition.statelessCompositeCommand("selector", (c, l) -> BTNodes.selector(l)),
 				BtCommandParserDefinition.statelessCompositeCommand("try", (c, l) -> BTNodes.doTry(c.getIntParam(0), l)),

@@ -57,7 +57,9 @@ public class BtCommandManagerTest {
 
 	@Test
 	public void testSucceed() {
-		final String bt = "succeed";
+		final String bt = "begin sequence\n"
+				+ "	succeed\n"
+				+ "end sequence";
 		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
@@ -65,7 +67,9 @@ public class BtCommandManagerTest {
 
 	@Test
 	public void testFail() {
-		final String bt = "fail";
+		final String bt = "begin sequence\n"
+				+ "	fail\n"
+				+ "end sequence";
 		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Failed, status);
@@ -73,7 +77,9 @@ public class BtCommandManagerTest {
 
 	@Test
 	public void testRunning() {
-		final String bt = "running";
+		final String bt = "begin sequence\n"
+				+ "	running\n"
+				+ "end sequence";
 		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Running, status);
