@@ -4,7 +4,7 @@ import io.vertigo.core.lang.Assertion;
 
 public final class BBKey {
 
-	public static String KEY_REGEX = "[a-z]+(/[a-z0-9]*)*";
+	public static String KEY_REGEX = "/[a-z]+(/[a-z0-9]*)*";
 
 	private final String key;
 

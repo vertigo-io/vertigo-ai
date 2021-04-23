@@ -54,17 +54,17 @@ public class BBUtilTest {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
 		Assertions.assertEquals("hello world", blackBoard.format("hello world"));
-		blackBoard.putString(BBKey.of("name"), "joe");
-		blackBoard.putString(BBKey.of("lastname"), "diMagio");
+		blackBoard.putString(BBKey.of("/name"), "joe");
+		blackBoard.putString(BBKey.of("/lastname"), "diMagio");
 		//---
-		Assertions.assertEquals("joe", blackBoard.format("{{name}}"));
-		Assertions.assertEquals("hello joe", blackBoard.format("hello {{name}}"));
-		Assertions.assertEquals("hello joe...", blackBoard.format("hello {{name}}..."));
-		Assertions.assertEquals("hello joe diMagio", blackBoard.format("hello {{name}} {{lastname}}"));
+		Assertions.assertEquals("joe", blackBoard.format("{{/name}}"));
+		Assertions.assertEquals("hello joe", blackBoard.format("hello {{/name}}"));
+		Assertions.assertEquals("hello joe...", blackBoard.format("hello {{/name}}..."));
+		Assertions.assertEquals("hello joe diMagio", blackBoard.format("hello {{/name}} {{/lastname}}"));
 		Assertions.assertThrows(IllegalStateException.class,
-				() -> blackBoard.format("hello {{name}"));
+				() -> blackBoard.format("hello {{/name}"));
 		Assertions.assertThrows(IllegalStateException.class,
-				() -> blackBoard.format("hello {{name"));
+				() -> blackBoard.format("hello {{/name"));
 		Assertions.assertThrows(IllegalStateException.class,
 				() -> blackBoard.format("hello name}}"));
 	}
@@ -73,9 +73,9 @@ public class BBUtilTest {
 	public void testFormatter2() {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
-		blackBoard.putString(BBKey.of("u/1/name"), "alan");
-		blackBoard.putString(BBKey.of("u/2/name"), "ada");
-		blackBoard.putString(BBKey.of("u/idx"), "2");
-		Assertions.assertEquals("hello ada", blackBoard.format("hello {{u/{{u/idx}}/name}}"));
+		blackBoard.putString(BBKey.of("/u/1/name"), "alan");
+		blackBoard.putString(BBKey.of("/u/2/name"), "ada");
+		blackBoard.putString(BBKey.of("/u/idx"), "2");
+		Assertions.assertEquals("hello ada", blackBoard.format("hello {{/u/{{/u/idx}}/name}}"));
 	}
 }
