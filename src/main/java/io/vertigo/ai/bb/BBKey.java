@@ -24,7 +24,7 @@ import io.vertigo.core.lang.Assertion;
  * @author pchretien
  */
 public final class BBKey {
-	public static String KEY_REGEX = "(/[a-z0-9]*)+";
+	public static String KEY_REGEX = "(/[a-z0-9]+)+";
 	private final String key;
 
 	private BBKey(final String key) {
@@ -39,17 +39,17 @@ public final class BBKey {
 		return new BBKey(key);
 	}
 
+	public static BBKey of(final BBKey rootKey, final String key) {
+		Assertion.check()
+				.isNotNull(rootKey)
+				.isNotBlank(key);
+		//---
+		return BBKey.of(rootKey.key() + key);
+	}
+
 	public String key() {
 		return key;
 	}
-
-	//	public static BBKey of(final BBKey rootKey, final String key) {
-	//		Assertion.check()
-	//				.isNotNull(rootKey)
-	//				.isNotBlank(key);
-	//		//---
-	//		return BBKey.of(rootKey.key() + key);
-	//	}
 
 	public BBKey add(final BBKey otherKey) {
 		return BBKey.of(key + otherKey.key);
