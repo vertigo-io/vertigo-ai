@@ -4,7 +4,7 @@ import io.vertigo.core.node.component.Manager;
 
 /**
  * This manager provides blackboards. 
- * You have to connect with a blackboard by its name.
+ * You have to connect to a blackboard by its name.
  * 
  * You can copy a tree of keys (with values) from a blackboard to another.
  * 
@@ -16,14 +16,14 @@ public interface BlackBoardManager extends Manager {
 	String MAIN_STORE_NAME = "main";
 
 	/**
-	 * Connects with a blackboard identified by its name.
+	 * Connects to a blackboard identified by its name.
 	 * @param storeName the name of the blackboard
 	 * @return the blackboard
 	 */
 	BlackBoard connect(String storeName);
 
 	/**
-	 * Connects with the main blackboard
+	 * Connects to the main blackboard
 	 * @return the main blackboard
 	 */
 	default BlackBoard connect() {
