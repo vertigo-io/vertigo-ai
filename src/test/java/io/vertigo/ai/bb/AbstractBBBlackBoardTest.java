@@ -37,7 +37,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	private void clean() {
 		final var blackBoard = blackBoardManager.connect();
-		blackBoard.delete(BBKeyPattern.of("*"));
+		blackBoard.delete(BBKeyPattern.of("/*"));
 	}
 
 	@Test
@@ -77,22 +77,22 @@ public abstract class AbstractBBBlackBoardTest {
 		final var testKey = BBKey.of("/test");
 		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/test")).size());
 		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.ofRoot(testKey)).size());
-		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		//---
 		blackBoard.incr(testKey);
 		Assertions.assertEquals(1, blackBoard.keys(BBKeyPattern.of("/test")).size());
 		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.ofRoot(testKey)).size());
-		Assertions.assertEquals(1, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(1, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		//---
-		blackBoard.delete(BBKeyPattern.of("*"));
+		blackBoard.delete(BBKeyPattern.of("/*"));
 		blackBoard.incr(testKey);
 		blackBoard.incr(BBKey.of(testKey, "/1"));
 		blackBoard.incr(BBKey.of(testKey, "/2"));
 		Assertions.assertEquals(1, blackBoard.keys(BBKeyPattern.of("/test")).size());
 		Assertions.assertEquals(2, blackBoard.keys(BBKeyPattern.ofRoot(testKey)).size());
-		Assertions.assertEquals(3, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(3, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		//--check the key pattern
-		blackBoard.delete(BBKeyPattern.of("*"));
+		blackBoard.delete(BBKeyPattern.of("/*"));
 		Assertions.assertEquals("/samplekey", BBKeyPattern.of("/samplekey").keyPattern());
 		Assertions.assertThrows(Exception.class,
 				() -> blackBoard.keys(BBKeyPattern.of(" sample")));
@@ -102,14 +102,14 @@ public abstract class AbstractBBBlackBoardTest {
 				() -> blackBoard.keys(BBKeyPattern.of("sample key")));
 		Assertions.assertThrows(Exception.class,
 				() -> blackBoard.keys(BBKeyPattern.of("samplekey/*/test")).isEmpty());
-		//--- keys and keys("*")
-		blackBoard.delete(BBKeyPattern.of("*"));
+		//--- keys and keys("/*")
+		blackBoard.delete(BBKeyPattern.of("/*"));
 		blackBoard.incr(testKey);
 		blackBoard.incr(BBKey.of(testKey, "/1"));
 		blackBoard.incr(BBKey.of(testKey, "/3"));
 		blackBoard.incr(BBKey.of(testKey, "/4"));
-		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("*")).size());
-		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("/*")).size());
+		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("/*")).size());
 	}
 
 	@Test
@@ -178,22 +178,22 @@ public abstract class AbstractBBBlackBoardTest {
 		final BlackBoard blackBoard = blackBoardManager.connect();
 		//---
 		final BBKey sampleKey = BBKey.of("/sample");
-		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		blackBoard.incr(BBKey.of(sampleKey, "/1"));
 		blackBoard.incr(BBKey.of(sampleKey, "/2"));
 		blackBoard.incr(BBKey.of(sampleKey, "/3"));
 		blackBoard.incr(BBKey.of(sampleKey, "/4"));
-		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(4, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		blackBoard.delete(BBKeyPattern.of("/sample/1"));
-		Assertions.assertEquals(3, blackBoard.keys(BBKeyPattern.of("*")).size());
-		blackBoard.delete(BBKeyPattern.of("*"));
-		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("*")).size());
+		Assertions.assertEquals(3, blackBoard.keys(BBKeyPattern.of("/*")).size());
+		blackBoard.delete(BBKeyPattern.of("/*"));
+		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/*")).size());
 		blackBoard.incr(BBKey.of("/sample/1"));
 		blackBoard.incr(BBKey.of("/sample/2"));
 		blackBoard.incr(BBKey.of("/sample/3"));
 		blackBoard.incr(BBKey.of("/sample/4"));
-		blackBoard.delete(BBKeyPattern.of("*"));
-		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("*")).size());
+		blackBoard.delete(BBKeyPattern.of("/*"));
+		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/*")).size());
 	}
 
 	@Test
@@ -226,7 +226,7 @@ public abstract class AbstractBBBlackBoardTest {
 		Assertions.assertEquals(null, blackBoard.getString(sampleKey));
 		blackBoard.putString(sampleKey, "test");
 		Assertions.assertEquals("test", blackBoard.getString(sampleKey));
-		blackBoard.delete(BBKeyPattern.of("*"));
+		blackBoard.delete(BBKeyPattern.of("/*"));
 		blackBoard.append(sampleKey, "hello");
 		blackBoard.append(sampleKey, " ");
 		blackBoard.append(sampleKey, "world");

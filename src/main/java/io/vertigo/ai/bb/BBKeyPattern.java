@@ -4,7 +4,7 @@ import io.vertigo.core.lang.Assertion;
 
 public final class BBKeyPattern {
 
-	public static String KEY_PATTERN_REGEX = "(" + BBKey.KEY_REGEX + "[\\*]?)|[\\*]";
+	public static String KEY_PATTERN_REGEX = "(" + BBKey.KEY_REGEX + "/?\\*?)|/\\*";
 
 	private final String keyPattern;
 

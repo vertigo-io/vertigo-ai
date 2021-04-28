@@ -85,7 +85,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 				cur = scanResult.getCursor();
 			} while (!cur.equals(ScanParams.SCAN_POINTER_START));
 
-			if ("*".equals(keyPattern.keyPattern())) {// also remove the types in this case
+			if ("/*".equals(keyPattern.keyPattern())) {// also remove the types in this case
 				jedis.del("types");
 			}
 		}

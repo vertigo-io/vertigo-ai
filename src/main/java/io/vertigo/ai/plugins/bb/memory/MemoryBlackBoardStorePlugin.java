@@ -47,7 +47,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		Assertion.check().isNotNull(keyPattern);
 		final var keyPatternString = keyPattern.keyPattern();
 		//---
-		if ("*".equals(keyPatternString)) {
+		if ("/*".equals(keyPatternString)) {
 			return keys();
 		}
 		if (keyPatternString.endsWith("*")) {
@@ -70,7 +70,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	public void delete(final BBKeyPattern keyPattern) {
 		Assertion.check().isNotNull(keyPattern);
 		final var keyPatternString = keyPattern.keyPattern();
-		if ("*".equals(keyPatternString)) {
+		if ("/*".equals(keyPatternString)) {
 			values.clear();
 			keys.clear();
 			lists.clear();
