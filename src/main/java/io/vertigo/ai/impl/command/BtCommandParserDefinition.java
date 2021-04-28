@@ -24,7 +24,7 @@ public class BtCommandParserDefinition extends AbstractDefinition {
 	private final CommandEvaluator commandEvaluator;
 
 	BtCommandParserDefinition(final CommandType commandType, final String commandName, final CommandEvaluator commandEvaluator) {
-		super("BtCP" + StringUtil.first2UpperCase(commandName) + "$h" + commandEvaluator.hashCode()); // adds the hashcode to have for now a simple mecanism to override a command parser
+		super("BtCP" + StringUtil.first2UpperCase(commandName.replace(":", "")) + "$h" + commandEvaluator.hashCode()); // adds the hashcode to have for now a simple mecanism to override a command parser
 		this.commandType = commandType;
 		this.commandName = commandName;
 		this.commandEvaluator = commandEvaluator;
