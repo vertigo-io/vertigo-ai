@@ -31,7 +31,7 @@ public final class BBKeyPattern {
 				.isNotBlank(prefix)
 				.isTrue(keyPattern.startsWith(prefix), "To outdent the keyPattern '{0}' it must starts with the provided prefix '{1}' ", keyPattern, prefix);
 		//---
-		return BBKeyPattern.of(keyPattern.substring(0, prefix.length() - 1));
+		return BBKeyPattern.of(keyPattern.substring(prefix.length()));
 	}
 
 	public static BBKeyPattern of(final String keyPattern) {

@@ -3,6 +3,7 @@ package io.vertigo.ai.impl.bb;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
@@ -38,7 +39,10 @@ final class BlackBoardImpl implements BlackBoard {
 	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		//---
 		return blackBoardStorePlugin
-				.keys(keyPattern.indent(rootKey.key()));
+				.keys(keyPattern.indent(rootKey.key()))
+				.stream()
+				.map(k -> BBKey.of(k.key().substring(rootKey.key().length())))
+				.collect(Collectors.toSet());
 	}
 
 	@Override
