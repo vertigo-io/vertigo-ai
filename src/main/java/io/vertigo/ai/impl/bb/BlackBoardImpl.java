@@ -12,12 +12,15 @@ import io.vertigo.core.lang.Assertion;
 
 final class BlackBoardImpl implements BlackBoard {
 	private final BlackBoardStorePlugin blackBoardStorePlugin;
+	private final BBKey rootKey;
 
-	BlackBoardImpl(final BlackBoardStorePlugin blackBoardStorePlugin) {
+	BlackBoardImpl(final BlackBoardStorePlugin blackBoardStorePlugin, final BBKey rootKey) {
 		Assertion.check()
-				.isNotNull(blackBoardStorePlugin);
+				.isNotNull(blackBoardStorePlugin)
+				.isNotNull(rootKey);
 		//---
 		this.blackBoardStorePlugin = blackBoardStorePlugin;
+		this.rootKey = rootKey;
 	}
 
 	//------------------------------------
@@ -28,28 +31,28 @@ final class BlackBoardImpl implements BlackBoard {
 		Assertion.check().isNotNull(key);
 		//---
 		return blackBoardStorePlugin
-				.exists(key);
+				.exists(rootKey.add(key));
 	}
 
 	@Override
 	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		//---
 		return blackBoardStorePlugin
-				.keys(keyPattern);
+				.keys(keyPattern.indent(rootKey.key()));
 	}
 
 	@Override
 	public void delete(final BBKeyPattern keyPattern) {
 		//---
 		blackBoardStorePlugin
-				.delete(keyPattern);
+				.delete(keyPattern.indent(rootKey.key()));
 	}
 
 	@Override
 	public Type getType(final BBKey key) {
 		Assertion.check().isNotNull(key);
 		//---
-		return blackBoardStorePlugin.getType(key);
+		return blackBoardStorePlugin.getType(rootKey.add(key));
 	}
 
 	//------------------------------------
@@ -57,12 +60,12 @@ final class BlackBoardImpl implements BlackBoard {
 	//------------------------------------
 	@Override
 	public String format(final String msg) {
-		return format(msg, blackBoardStorePlugin::get);
+		return format(msg, key -> blackBoardStorePlugin.get(rootKey.add(key)));
 	}
 
 	@Override
 	public BBKey eval(final BBKeyTemplate keyTemplate) {
-		return BBKey.of(format(keyTemplate.keyTemplate(), blackBoardStorePlugin::get));
+		return BBKey.of(format(keyTemplate.keyTemplate(), key -> blackBoardStorePlugin.get(rootKey.add(key))));
 	}
 
 	//--- KV String
@@ -71,7 +74,7 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.String);
 		//---
 		return blackBoardStorePlugin
-				.getString(key);
+				.getString(rootKey.add(key));
 	}
 
 	@Override
@@ -79,7 +82,7 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.String);
 		//---
 		blackBoardStorePlugin
-				.putString(key, value);
+				.putString(rootKey.add(key), value);
 	}
 
 	@Override
@@ -118,7 +121,7 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.Integer);
 		//---
 		return blackBoardStorePlugin
-				.getInteger(key);
+				.getInteger(rootKey.add(key));
 	}
 
 	@Override
@@ -126,14 +129,14 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.Integer);
 		//---
 		blackBoardStorePlugin
-				.putInteger(key, value);
+				.putInteger(rootKey.add(key), value);
 	}
 
 	@Override
 	public void incrBy(final BBKey key, final int value) {
 		checkKey(key, Type.Integer);
 		//---
-		blackBoardStorePlugin.incrBy(key, value);
+		blackBoardStorePlugin.incrBy(rootKey.add(key), value);
 	}
 
 	@Override
@@ -177,7 +180,7 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
-				.listSize(key);
+				.listSize(rootKey.add(key));
 	}
 
 	@Override
@@ -185,7 +188,7 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.List);
 		//---
 		blackBoardStorePlugin
-				.listPush(key, value);
+				.listPush(rootKey.add(key), value);
 	}
 
 	@Override
@@ -193,23 +196,23 @@ final class BlackBoardImpl implements BlackBoard {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
-				.listPop(key);
+				.listPop(rootKey.add(key));
 	}
 
 	@Override
 	public String listPeek(final BBKey key) {
-		checkKey(key, Type.List);
+		checkKey(rootKey.add(key), Type.List);
 		//---
 		return blackBoardStorePlugin
-				.listPeek(key);
+				.listPeek(rootKey.add(key));
 	}
 
 	@Override
 	public String listGet(final BBKey key, final int idx) {
-		checkKey(key, Type.List);
+		checkKey(rootKey.add(key), Type.List);
 		//---
 		return blackBoardStorePlugin
-				.listGet(key, idx);
+				.listGet(rootKey.add(key), idx);
 	}
 
 	//------------------------------------

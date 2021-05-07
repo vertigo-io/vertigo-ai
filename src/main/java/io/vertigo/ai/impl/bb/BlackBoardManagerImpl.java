@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.core.lang.Assertion;
@@ -31,11 +32,11 @@ public final class BlackBoardManagerImpl implements BlackBoardManager {
 	}
 
 	@Override
-	public BlackBoard connect(final String storeName) {
+	public BlackBoard connect(final String storeName, final BBKey rootKey) {
 		Assertion.check()
 				.isNotBlank(storeName, "A storeName is mandatory to connect with a blackboard");
 		//---
-		return new BlackBoardImpl(getPlugin(storeName));
+		return new BlackBoardImpl(getPlugin(storeName), rootKey);
 	}
 
 	//------------------------------------

@@ -36,7 +36,7 @@ public abstract class AbstractBBBlackBoardTest {
 	}
 
 	private void clean() {
-		final var blackBoard = blackBoardManager.connect();
+		final var blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		blackBoard.delete(BBKeyPattern.of("/*"));
 	}
 
@@ -62,7 +62,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testExists() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		final BBKey sampleKey = BBKey.of("/samplekey");
 		//---
 		Assertions.assertFalse(blackBoard.exists(sampleKey));
@@ -72,7 +72,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testKeys() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final var testKey = BBKey.of("/test");
 		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/test")).size());
@@ -114,7 +114,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testGetPut() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey sampleKey = BBKey.of("/sample/key");
 		Assertions.assertEquals(null, blackBoard.getString(sampleKey));
@@ -126,7 +126,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testFormat() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		Assertions.assertEquals("", blackBoard.format(""));
 		Assertions.assertEquals("hello", blackBoard.format("hello"));
@@ -136,7 +136,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testEvalKeyTemplate() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		blackBoard.putString(BBKey.of("/sample/key"), "test");
 		Assertions.assertEquals("/u/test", blackBoard.format("/u/{{/sample/key}}"));
@@ -144,7 +144,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testInc() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey key = BBKey.of("/key");
 		Assertions.assertEquals(null, blackBoard.getInteger(key));
@@ -158,7 +158,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testDec() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey key = BBKey.of("/key");
 		Assertions.assertEquals(null, blackBoard.getInteger(key));
@@ -175,7 +175,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testRemove() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey sampleKey = BBKey.of("/sample");
 		Assertions.assertEquals(0, blackBoard.keys(BBKeyPattern.of("/*")).size());
@@ -198,7 +198,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testInteger() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey sampleKey = BBKey.of("/sample");
 		Assertions.assertEquals(null, blackBoard.getInteger(sampleKey));
@@ -220,7 +220,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testString() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey sampleKey = BBKey.of("/sample");
 		Assertions.assertEquals(null, blackBoard.getString(sampleKey));
@@ -235,7 +235,7 @@ public abstract class AbstractBBBlackBoardTest {
 
 	@Test
 	public void testList() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		final BBKey sampleKey = BBKey.of("/sample");
 		Assertions.assertEquals(0, blackBoard.listSize(sampleKey));

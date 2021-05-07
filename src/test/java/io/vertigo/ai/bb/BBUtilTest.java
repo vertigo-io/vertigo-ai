@@ -44,14 +44,14 @@ public class BBUtilTest {
 
 	@Test
 	public void testFormatter0() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		Assertions.assertEquals("hello world", blackBoard.format("hello world"));
 	}
 
 	@Test
 	public void testFormatter1() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		Assertions.assertEquals("hello world", blackBoard.format("hello world"));
 		blackBoard.putString(BBKey.of("/name"), "joe");
@@ -71,7 +71,7 @@ public class BBUtilTest {
 
 	@Test
 	public void testFormatter2() {
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		//---
 		blackBoard.putString(BBKey.of("/u/1/name"), "alan");
 		blackBoard.putString(BBKey.of("/u/2/name"), "ada");
