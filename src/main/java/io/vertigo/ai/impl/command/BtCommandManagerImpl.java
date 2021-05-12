@@ -139,7 +139,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 						.isTrue(curentArg.length() == 0 || isQuoted, "Quotes are only allowed around text or escaped inside quotes. '{0}'", args);
 
 				// Quote handling
-				if (curentArg.length() == 0) {
+				if (curentArg.length() == 0 && !(isQuoted && c == '"')) { // the second condition corresponds to an empty string parameter
 					isQuoted = true;
 				} else {
 					isQuoted = false;
