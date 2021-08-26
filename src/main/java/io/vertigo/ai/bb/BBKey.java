@@ -23,16 +23,13 @@ import io.vertigo.core.lang.Assertion;
  * 
  * @author pchretien
  */
-public final class BBKey {
+public record BBKey(String key) {
 	public static String KEY_REGEX = "(/[a-z0-9]+)+";
-	private final String key;
 
-	private BBKey(final String key) {
+	public BBKey{
 		Assertion.check()
 				.isNotBlank(key)
 				.isTrue(key.matches(KEY_REGEX), "the key '{0}' must contain only a-z 1-9 words separated with /", key);
-		//---
-		this.key = key;
 	}
 
 	public static BBKey of(final String key) {
@@ -45,10 +42,6 @@ public final class BBKey {
 				.isNotBlank(key);
 		//---
 		return BBKey.of(rootKey.key() + key);
-	}
-
-	public String key() {
-		return key;
 	}
 
 	public BBKey add(final BBKey otherKey) {
@@ -107,14 +100,4 @@ public final class BBKey {
 	//		//---
 	//		return BBKey.of(key.substring(0, prefix.length() - 1));
 	//	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		return obj instanceof BBKey && key.equals(((BBKey) obj).key);
-	}
-
-	@Override
-	public int hashCode() {
-		return key.hashCode();
-	}
 }
