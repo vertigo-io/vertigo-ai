@@ -18,7 +18,7 @@ import io.vertigo.core.util.StringUtil;
  * @author skerdudou, mlaroche
  */
 @DefinitionPrefix("BtCP")
-public class BtCommandParserDefinition extends AbstractDefinition {
+public class BtCommandParserDefinition extends AbstractDefinition<BtCommandParserDefinition> {
 	private final String commandName;
 	private final CommandType commandType;
 	private final CommandEvaluator commandEvaluator;
