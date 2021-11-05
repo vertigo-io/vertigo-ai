@@ -2,6 +2,7 @@ package io.vertigo.ai.command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import io.vertigo.ai.AiFeatures;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.NodeConfig;
@@ -169,6 +171,40 @@ public class BtCommandManagerTest {
 		final BTStatus status = eval(bt);
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
+	}
+
+	@Test
+	public void testResolverdArgsWithQuotes() {
+		final String bt = "begin sequence \"test \\\"quoted\\\" text\" \"test \\\\ and \\\"\"\n" +
+				"end sequence arg1 \"\" arg\\3";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+		final BTNode rootNode = nodeProducer.apply(Collections.emptyList());
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+
+		final String[][] args = getArgsArrays(nodeProducer);
+		Assertions.assertEquals("test \"quoted\" text", args[0][0]);
+		Assertions.assertEquals("test \\ and \"", args[0][1]);
+		Assertions.assertEquals("arg1", args[1][0]);
+		Assertions.assertEquals("", args[1][1]);
+		Assertions.assertEquals("arg\\3", args[1][2]);
+	}
+
+	private String[][] getArgsArrays(final Function<List<Object>, BTNode> nodeProducer) {
+		final Field field = nodeProducer.getClass().getDeclaredFields()[1];
+		field.setAccessible(true);
+		try {
+			final List<BtCommand> commands = (List<BtCommand>) field.get(nodeProducer); // begin sequence and end sequence
+			final String[][] ret = new String[commands.size()][];
+			for (var i = 0; i < commands.size(); i++) {
+				ret[i] = commands.get(i).getArgs().toArray(new String[commands.get(i).getArgs().size()]);
+			}
+			return ret;
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Introspection error.");
+		}
 	}
 
 	@Test
