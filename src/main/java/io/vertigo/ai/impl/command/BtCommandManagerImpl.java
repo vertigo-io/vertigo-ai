@@ -28,7 +28,8 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 /**
  * Implementation of the BtCommandManager.
  * It uses BtCommandParserDefinitions to get the necessary code to actually convert a line of text into an instance of BTNode.
- * A BtCommandParserDefinition is created via the static building methods provided in the BtCommandParserDefinition class and then registered in the app DefinitionSpace via a DefinitionProvider.
+ * A BtCommandParserDefinition is created via the static building methods provided in the BtCommandParserDefinition class and then registered in the app DefinitionSpace via a
+ * DefinitionProvider.
  * Multiple definitions can be provided for the same command name. The last registered will be the used one.
  *
  * @author skerdudou, mlaroche
@@ -139,7 +140,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 						.isTrue(curentArg.length() == 0 || isQuoted, "Quotes are only allowed around text or escaped inside quotes. '{0}'", args);
 
 				// Quote handling
-				if (curentArg.length() == 0 && !(isQuoted && c == '"')) { // the second condition corresponds to an empty string parameter
+				if (!isQuoted) {
 					isQuoted = true;
 				} else {
 					isQuoted = false;
@@ -150,7 +151,7 @@ public class BtCommandManagerImpl implements BtCommandManager, SimpleDefinitionP
 			} else {
 				isEscaping = isQuoted && !isEscaping && c == '\\';
 
-				if ((isQuoted && !isEscaping) || !Character.isWhitespace(c)) {
+				if ((isQuoted && !isEscaping) || (!isQuoted && !Character.isWhitespace(c))) {
 					curentArg.append(c);
 				}
 
