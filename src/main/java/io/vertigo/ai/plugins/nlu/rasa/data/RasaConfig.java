@@ -11,6 +11,10 @@ public final class RasaConfig {
 	public static final class Pipeline {
 
 		public String name;
+		public String analyzer;
+		public int min_ngram;
+		public int max_ngram;
+		public int epochs;
 
 	}
 
