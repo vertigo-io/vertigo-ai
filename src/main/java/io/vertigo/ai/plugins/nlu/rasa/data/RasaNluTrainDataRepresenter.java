@@ -51,6 +51,11 @@ public class RasaNluTrainDataRepresenter extends Representer {
 						createTrainingSetence(rasaIntentNlu.examples), n.getStartMark(), n.getEndMark(), ScalarStyle.LITERAL));
 			}
 		}
+		if (javaBean instanceof RasaConfig.Pipeline) {
+			if (propertyValue == null || (propertyValue instanceof Integer && (Integer) propertyValue == 0)) {
+				return null;
+			}
+		}
 		return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
 	}
 
