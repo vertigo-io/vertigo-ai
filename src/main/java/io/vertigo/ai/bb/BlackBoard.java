@@ -69,6 +69,14 @@ public interface BlackBoard {
 	String format(final String msg);
 
 	/**
+	 * Formats a URL into a proper link
+	 *
+	 * @param url the utl
+	 * @return the formatted link
+	 */
+	String formatLink(final String url);
+
+	/**
 	 * Evaluate a keyTemplate including {{keys}} with mustaches
 	 *
 	 * @param keyTemplate the keyTemplate

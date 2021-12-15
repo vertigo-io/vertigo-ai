@@ -1,5 +1,6 @@
 package io.vertigo.ai.impl.bb;
 
+import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -65,6 +66,23 @@ final class BlackBoardImpl implements BlackBoard {
 	@Override
 	public String format(final String msg) {
 		return format(msg, key -> blackBoardStorePlugin.get(rootKey.add(key)));
+	}
+
+	@Override
+	public String formatLink(final String url) {
+		Assertion.check().isNotNull(url);
+		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
+		return "<a href='" + url + "' target='_blank' >" + url + "</a>";
+	}
+
+	private boolean isValidURL(String url) {
+		try {
+			URL validUrl = new URL(url);
+			validUrl.toURI();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
