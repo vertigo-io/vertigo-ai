@@ -1,15 +1,15 @@
 package io.vertigo.ai.impl.bb;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BBKeyTemplate;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.core.lang.Assertion;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 final class BlackBoardImpl implements BlackBoard {
 	private final BlackBoardStorePlugin blackBoardStorePlugin;
@@ -116,6 +116,14 @@ final class BlackBoardImpl implements BlackBoard {
 		return value == null
 				? compare == null
 				: value.startsWith(compare);
+	}
+
+	@Override
+	public boolean contains(BBKey key, String compare) {
+		final String value = getString(key); // getString includes type checking
+		return value == null
+				? compare == null
+				: value.contains(compare);
 	}
 
 	//--- KV Integer
