@@ -62,4 +62,9 @@ public class NluManagerImpl implements NluManager {
 	public boolean isReady(final String engineName) {
 		return getEngineByName(engineName).isReady();
 	}
+
+	@Override
+	public boolean isAlive(final String engineName) {
+		return getEngineByName(engineName).isAlive();
+	}
 }

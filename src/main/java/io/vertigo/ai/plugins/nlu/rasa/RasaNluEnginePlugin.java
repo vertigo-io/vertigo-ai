@@ -1,5 +1,11 @@
 package io.vertigo.ai.plugins.nlu.rasa;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,17 +23,11 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluIntent;
-import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.ai.nlu.NluResult;
+import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaConfig;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaNluTrainDataRepresenter;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaParsingResponse;
@@ -171,7 +171,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 				throw new VSystemException("Error while sending request to '{0}'. Expected HTTP code '{1}' but was '{2}'.", request.uri().toString(), successStatutCode, response.statusCode());
 			}
 			return response;
-		} catch (IOException | InterruptedException e) {
+		} catch (final IOException | InterruptedException e) {
 			throw new VSystemException(e, "Error while sending request to '{0}'", request.uri().toString());
 		}
 	}
@@ -186,5 +186,19 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	@Override
 	public boolean isReady() {
 		return ready;
+	}
+
+	@Override
+	public boolean isAlive() {
+		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl))
+				.header("Content-Type", "application/json")
+				.GET()
+				.build();
+		try {
+			final HttpResponse<String> response = sendRequest(request, BodyHandlers.ofString(), 200);
+			return response.statusCode() == 200;
+		} catch (final VSystemException vSystemException) {
+			return false;
+		}
 	}
 }
