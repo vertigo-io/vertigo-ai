@@ -15,6 +15,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,6 +50,9 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	private final String name;
 	private final String rasaUrl;
 
+	//time in seconds
+	private final int rasaRequestTimeout;
+
 	private final RasaConfig rasaConfig;
 
 	private boolean ready;
@@ -56,12 +60,15 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	@Inject
 	public RasaNluEnginePlugin(
 			@ParamValue("rasaUrl") final String rasaUrl,
+			@ParamValue("rasaRequestTimeout") final Optional<Integer> rasaRequestTimeout,
 			@ParamValue("configFile") final Optional<String> configFileOpt,
 			@ParamValue("pluginName") final Optional<String> pluginNameOpt,
 			final ResourceManager resourceManager) {
+
 		Assertion.check().isNotBlank(rasaUrl);
 
 		this.rasaUrl = rasaUrl;
+		this.rasaRequestTimeout = rasaRequestTimeout.orElse(30);
 		name = pluginNameOpt.orElse(NluManagerImpl.DEFAULT_ENGINE_NAME);
 
 		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
@@ -98,6 +105,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 				.dump(rasaTrainingData);
 
 		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL + RASA_TRAIN))
+				.timeout(Duration.ofSeconds(rasaRequestTimeout))
 				.header("Content-Type", "application/x-yaml")
 				.POST(BodyPublishers.ofString(trainingDataAsYaml))
 				.build();
@@ -114,6 +122,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 		//send request
 		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL))
+				.timeout(Duration.ofSeconds(rasaRequestTimeout))
 				.header("Content-Type", "application/json")
 				.PUT(BodyPublishers.ofString(json))
 				.build();
