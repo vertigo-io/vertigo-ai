@@ -34,6 +34,13 @@ public interface NluEnginePlugin extends Plugin {
 	boolean isReady();
 
 	/**
+	 * Checks if Nlu engine is alive
+	 *
+	 * @return true if the engine is alive
+	 */
+	boolean isAlive();
+
+	/**
 	 * Returns the Plugin name. Default to "main".
 	 *
 	 * @return the name of the plugin

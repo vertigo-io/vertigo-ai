@@ -38,4 +38,12 @@ public interface NluManager extends Manager {
 	 * @return true if the engine is ready
 	 */
 	boolean isReady(String engineName);
+
+	/**
+	 * Checks if the specified engine is alive
+	 *
+	 * @param engineName name of the engine
+	 * @return true if the engine is ready
+	 */
+	boolean isAlive(String engineName);
 }
