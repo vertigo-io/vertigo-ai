@@ -15,9 +15,9 @@ import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.core.param.ParamValue;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.resps.ScanResult;
 
 public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
@@ -156,7 +156,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 	@Override
 	public int listSize(final BBKey key) {
 		try (final Jedis jedis = redisConnector.getClient()) {
-			return jedis.llen(key.key()).intValue();
+			return Long.valueOf(jedis.llen(key.key())).intValue();
 		}
 	}
 
