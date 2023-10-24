@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.DumperOptions.ScalarStyle;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -21,7 +22,7 @@ import io.vertigo.ai.plugins.nlu.rasa.data.RasaTrainingData.RasaIntentNlu;
 public class RasaNluTrainDataRepresenter extends Representer {
 
 	public RasaNluTrainDataRepresenter() {
-		super();
+		super(new DumperOptions());
 		//---
 		addClassTag(RasaTrainingData.class, Tag.MAP);
 		//---
