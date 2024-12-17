@@ -121,6 +121,15 @@ public interface BlackBoard {
 	 */
 	boolean startsWith(final BBKey key, final String compare);
 
+	/**
+	 * Returns true if the value associated to the key contains the compare string
+	 *
+	 * @param key the key
+	 * @param compare the value to compare
+	 * @return true if the value associated to the key contains the compare string
+	 */
+	boolean contains(final BBKey key, final String compare);
+
 	//--- KV Integer
 	/**
 	 * Returns the value or null if the key does not exist

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 import org.yaml.snakeyaml.DumperOptions.ScalarStyle;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -21,7 +22,7 @@ import io.vertigo.ai.plugins.nlu.rasa.data.RasaTrainingData.RasaIntentNlu;
 public class RasaNluTrainDataRepresenter extends Representer {
 
 	public RasaNluTrainDataRepresenter() {
-		super();
+		super(new DumperOptions());
 		//---
 		addClassTag(RasaTrainingData.class, Tag.MAP);
 		//---
@@ -49,6 +50,11 @@ public class RasaNluTrainDataRepresenter extends Representer {
 
 				return new NodeTuple(standard.getKeyNode(), new ScalarNode(Tag.STR,
 						createTrainingSetence(rasaIntentNlu.examples), n.getStartMark(), n.getEndMark(), ScalarStyle.LITERAL));
+			}
+		}
+		if (javaBean instanceof RasaConfig.Pipeline) {
+			if (propertyValue == null || (propertyValue instanceof Integer && (Integer) propertyValue == 0)) {
+				return null;
 			}
 		}
 		return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);

@@ -52,9 +52,13 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 		}
 		if (keyPatternString.endsWith("*")) {
 			final var prefix = keyPatternString.replaceAll("\\*", "");
-			return keys.keySet().stream()
-					.filter(s -> s.key().startsWith(prefix))
-					.collect(Collectors.toSet());
+			// Cf Collections.synchronizedMap Javadoc
+			Set<BBKey> keySet = keys();
+			synchronized (keys) {
+				return keySet.stream()
+						.filter(it -> it.key().startsWith(prefix))
+						.collect(Collectors.toSet());
+			}
 		}
 		final var key = BBKey.of(keyPatternString);
 		return keys.containsKey(key)
