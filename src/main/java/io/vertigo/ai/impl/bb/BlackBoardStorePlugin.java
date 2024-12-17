@@ -3,8 +3,8 @@ package io.vertigo.ai.impl.bb;
 import java.util.Set;
 
 import io.vertigo.ai.bb.BBKey;
-import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.ai.bb.BBKeyPattern;
+import io.vertigo.ai.bb.BlackBoard.Type;
 import io.vertigo.core.node.component.Plugin;
 
 public interface BlackBoardStorePlugin extends Plugin {
@@ -31,7 +31,6 @@ public interface BlackBoardStorePlugin extends Plugin {
 
 	/**
 	 * Deletes all the keys matching the pattern
-	 *
 	 * The magic pattern * remove all the keys
 	 *
 	 * @param keyPattern the pattern
@@ -51,6 +50,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	//------------------------------------
 	/**
 	 * Returns the value or null if the key does not exist
+	 *
 	 * @param key the key
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
@@ -59,6 +59,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	//--- KV String
 	/**
 	 * Returns the value or null if the key does not exist
+	 *
 	 * @param key the key
 	 * @return the value mapped with the key or null if the key does not exist
 	 */
@@ -95,7 +96,7 @@ public interface BlackBoardStorePlugin extends Plugin {
 	 * @param key the key
 	 * @return the size of the list
 	 */
-	int listSize(final BBKey key);
+	long listSize(final BBKey key);
 
 	/**
 	 * Pushes a value at the top of the list

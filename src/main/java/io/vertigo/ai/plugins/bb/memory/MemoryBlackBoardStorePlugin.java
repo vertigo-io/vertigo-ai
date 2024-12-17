@@ -182,7 +182,7 @@ public final class MemoryBlackBoardStorePlugin implements BlackBoardStorePlugin 
 	}
 
 	@Override
-	public int listSize(final BBKey key) {
+	public long listSize(final BBKey key) {
 		return getListOrEmpty(key)
 				.size();
 	}

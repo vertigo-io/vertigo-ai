@@ -7,8 +7,8 @@ import java.util.Set;
  * Some basic operations are supported
  * The blackboard can be volatile or persistent
  * The blackboard can be shared or not
- *
  * Keys must follow a rule (see the regex)
+ *
  * @author pchretien
  */
 public interface BlackBoard {
@@ -42,7 +42,6 @@ public interface BlackBoard {
 
 	/**
 	 * Deletes all the keys matching the pattern
-	 *
 	 * The magic pattern * remove all the keys
 	 *
 	 * @param keyPattern the pattern
@@ -185,7 +184,7 @@ public interface BlackBoard {
 	 * @param key the key
 	 * @return the size of the list
 	 */
-	int listSize(final BBKey key);
+	long listSize(final BBKey key);
 
 	/**
 	 * Pushes a value at the top of the list

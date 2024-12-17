@@ -14,8 +14,8 @@ import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.impl.bb.BlackBoardStorePlugin;
 import io.vertigo.connectors.redis.RedisConnector;
 import io.vertigo.core.param.ParamValue;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Transaction;
+import redis.clients.jedis.AbstractTransaction;
+import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.resps.ScanResult;
 
@@ -40,7 +40,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public boolean exists(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			return jedis.exists(key.key());
 		}
 	}
@@ -48,7 +48,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 	@Override
 	public Set<BBKey> keys(final BBKeyPattern keyPattern) {
 		final Set<BBKey> result = new HashSet<>();
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			final ScanParams scanParams = new ScanParams().count(1000).match(keyPattern.keyPattern());
 			String cur = ScanParams.SCAN_POINTER_START;
 			do {
@@ -69,14 +69,14 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public void delete(final BBKeyPattern keyPattern) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			final ScanParams scanParams = new ScanParams().count(1000).match(keyPattern.keyPattern());
 			String cur = ScanParams.SCAN_POINTER_START;
 			do {
 				final ScanResult<String> scanResult = jedis.scan(cur, scanParams);
 				// work with result
 				scanResult.getResult().forEach(key -> {
-					try (final Transaction tx = jedis.multi()) {
+					try (final AbstractTransaction tx = jedis.multi()) {
 						tx.del(key);
 						tx.hdel("types", key); // if it was a list, there was no type but whatever
 						tx.exec();
@@ -94,7 +94,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public Type getType(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			final var storedType = jedis.hget("types", key.key());
 			return storedType != null ? Type.valueOf(storedType) : null;
 		}
@@ -102,7 +102,7 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public String get(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			return jedis.get(key.key());
 		}
 
@@ -115,8 +115,8 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public void putString(final BBKey key, final String value) {
-		try (final Jedis jedis = redisConnector.getClient()) {
-			try (final Transaction tx = jedis.multi()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
+			try (final AbstractTransaction tx = jedis.multi()) {
 				tx.hset("types", key.key(), Type.String.name());
 				tx.set(key.key(), value);
 				tx.exec();
@@ -132,8 +132,8 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public void putInteger(final BBKey key, final Integer value) {
-		try (final Jedis jedis = redisConnector.getClient()) {
-			try (final Transaction tx = jedis.multi()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
+			try (final AbstractTransaction tx = jedis.multi()) {
 				tx.hset("types", key.key(), Type.Integer.name());
 				tx.set(key.key(), String.valueOf(value));
 				tx.exec();
@@ -144,8 +144,8 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 
 	@Override
 	public void incrBy(final BBKey key, final int value) {
-		try (final Jedis jedis = redisConnector.getClient()) {
-			try (final Transaction tx = jedis.multi()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
+			try (final AbstractTransaction tx = jedis.multi()) {
 				tx.hset("types", key.key(), Type.Integer.name()); // ensure type is set
 				tx.incrBy(key.key(), value);
 				tx.exec();
@@ -154,36 +154,36 @@ public class RedisBlackBoardStorePlugin implements BlackBoardStorePlugin {
 	}
 
 	@Override
-	public int listSize(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
-			return Long.valueOf(jedis.llen(key.key())).intValue();
+	public long listSize(final BBKey key) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
+			return jedis.llen(key.key());
 		}
 	}
 
 	@Override
 	public void listPush(final BBKey key, final String value) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			jedis.rpush(key.key(), value);
 		}
 	}
 
 	@Override
 	public String listPop(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			return jedis.rpop(key.key());
 		}
 	}
 
 	@Override
 	public String listPeek(final BBKey key) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			return jedis.lindex(key.key(), -1); // last is 0
 		}
 	}
 
 	@Override
 	public String listGet(final BBKey key, final int idx) {
-		try (final Jedis jedis = redisConnector.getClient()) {
+		try (final UnifiedJedis jedis = redisConnector.getClient()) {
 			return jedis.lindex(key.key(), idx);
 		}
 	}

@@ -188,7 +188,7 @@ final class BlackBoardImpl implements BlackBoard {
 	//- All methods are prefixed with list
 	//------------------------------------
 	@Override
-	public int listSize(final BBKey key) {
+	public long listSize(final BBKey key) {
 		checkKey(key, Type.List);
 		//---
 		return blackBoardStorePlugin
