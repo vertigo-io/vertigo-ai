@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -26,8 +27,8 @@ import com.google.gson.JsonObject;
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluIntent;
-import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.ai.nlu.NluResult;
+import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaConfig;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaNluTrainDataRepresenter;
 import io.vertigo.ai.plugins.nlu.rasa.data.RasaParsingResponse;
@@ -67,7 +68,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
 		Assertion.check().isNotBlank(configFileName);
 
-		rasaConfig = new Yaml(new Constructor(RasaConfig.class)).load(FileUtil.read(resourceManager.resolve(configFileName)));
+		rasaConfig = new Yaml(new Constructor(RasaConfig.class, new LoaderOptions())).load(FileUtil.read(resourceManager.resolve(configFileName)));
 
 		ready = false;
 	}
@@ -94,7 +95,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 						.collect(Collectors.toList()));
 
 		//train
-		final String trainingDataAsYaml = new Yaml(new Constructor(RasaTrainingData.class), new RasaNluTrainDataRepresenter())
+		final String trainingDataAsYaml = new Yaml(new Constructor(RasaTrainingData.class, new LoaderOptions()), new RasaNluTrainDataRepresenter())
 				.dump(rasaTrainingData);
 
 		final HttpRequest request = HttpRequest.newBuilder(URI.create(rasaUrl + RASA_MODEL + RASA_TRAIN))
