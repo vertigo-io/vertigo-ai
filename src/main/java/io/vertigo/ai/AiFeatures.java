@@ -6,7 +6,9 @@ import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.command.BtCommandManagerImpl;
+import io.vertigo.ai.impl.llm.LlmManagerImpl;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
+import io.vertigo.ai.llm.LlmManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
 import io.vertigo.ai.plugins.bb.redis.RedisBlackBoardStorePlugin;
@@ -93,6 +95,18 @@ public class AiFeatures extends Features<AiFeatures> {
 	public AiFeatures withRasaNLU(final Param... params) {
 		getModuleConfigBuilder()
 				.addPlugin(RasaNluEnginePlugin.class, params);
+		return this;
+	}
+
+	/**
+	 * Activates LLM.
+	 *
+	 * @return these features
+	 */
+	@Feature("llm")
+	public AiFeatures withLlm() {
+		getModuleConfigBuilder()
+				.addComponent(LlmManager.class, LlmManagerImpl.class);
 		return this;
 	}
 

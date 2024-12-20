@@ -4,13 +4,12 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>4.2.0</version>
+		<version>4.3.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-ai</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-ai</name>
-	<version>4.2.0</version>
 
 	<dependencies>
 		<dependency>
@@ -24,6 +23,12 @@
 			<version>${vertigo.version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-datastore</artifactId>
+			<version>${vertigo.version}</version>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-redis-connector</artifactId>
