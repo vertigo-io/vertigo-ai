@@ -55,18 +55,4 @@ public class LlmManagerImpl implements LlmManager {
 		return promptOnFiles(prompt, files);
 	}
 
-	@Override
-	public String describe(final VFile file) {
-		final var prompt = new VPrompt(StandardPrompts.DESCRIBE_PROMPT, null);
-		final VFile[] files = { file };
-		return promptOnFiles(prompt, files);
-	}
-
-	@Override
-	public String describe(final VFile file, final VPersona persona) {
-		final var prompt = new VPrompt(StandardPrompts.DESCRIBE_PROMPT, persona);
-		final VFile[] files = { file };
-		return promptOnFiles(prompt, files);
-	}
-
 }

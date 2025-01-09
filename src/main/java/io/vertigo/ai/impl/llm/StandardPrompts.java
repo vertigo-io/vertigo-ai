@@ -6,7 +6,6 @@ public final class StandardPrompts {
 		// constants
 	}
 
-	public static final String DESCRIBE_PROMPT = "Décrit moi sans détail et en 50 mots max le contenu";
-	public static final String SUMMARY_PROMPT = "Résume le contenu";
+	public static final String SUMMARY_PROMPT = "Décrit moi sans détail et en 60 mots max le contenu";
 
 }

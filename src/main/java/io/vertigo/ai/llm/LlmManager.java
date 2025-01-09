@@ -49,21 +49,4 @@ public interface LlmManager extends Manager {
 	 */
 	String summarize(VFile file, VPersona persona);
 
-	/**
-	 * Describe a file.
-	 *
-	 * @param file the file to describe
-	 * @return the described file
-	 */
-	String describe(VFile file);
-
-	/**
-	 * Describe a file.
-	 *
-	 * @param file the file to describe
-	 * @param persona the persona to use
-	 * @return the described file
-	 */
-	String describe(VFile file, VPersona persona);
-
 }
