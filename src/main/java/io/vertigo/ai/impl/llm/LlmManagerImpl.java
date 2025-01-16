@@ -43,14 +43,14 @@ public class LlmManagerImpl implements LlmManager {
 
 	@Override
 	public String summarize(final VFile file) {
-		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, null);
+		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, null, null);
 		final VFile[] files = { file };
 		return promptOnFiles(prompt, files);
 	}
 
 	@Override
 	public String summarize(final VFile file, final VPersona persona) {
-		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, persona);
+		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, null, persona);
 		final VFile[] files = { file };
 		return promptOnFiles(prompt, files);
 	}
