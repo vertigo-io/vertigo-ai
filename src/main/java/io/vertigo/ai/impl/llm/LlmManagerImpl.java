@@ -32,24 +32,24 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public String promptOnFiles(final VPrompt prompt, final VFile... files) {
+	public VLlmResult promptOnFiles(final VPrompt prompt, final VFile... files) {
 		return llmPlugin.promptOnFiles(prompt, Arrays.stream(files));
 	}
 
 	@Override
-	public String promptOnFiles(final VPrompt prompt, final Collection<VFile> files) {
+	public VLlmResult promptOnFiles(final VPrompt prompt, final Collection<VFile> files) {
 		return llmPlugin.promptOnFiles(prompt, files.stream());
 	}
 
 	@Override
-	public String summarize(final VFile file) {
+	public VLlmResult summarize(final VFile file) {
 		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, null, null);
 		final VFile[] files = { file };
 		return promptOnFiles(prompt, files);
 	}
 
 	@Override
-	public String summarize(final VFile file, final VPersona persona) {
+	public VLlmResult summarize(final VFile file, final VPersona persona) {
 		final var prompt = new VPrompt(StandardPrompts.SUMMARY_PROMPT, null, persona);
 		final VFile[] files = { file };
 		return promptOnFiles(prompt, files);

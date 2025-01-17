@@ -2,6 +2,7 @@ package io.vertigo.ai.llm;
 
 import java.util.Collection;
 
+import io.vertigo.ai.impl.llm.VLlmResult;
 import io.vertigo.ai.impl.llm.VPrompt;
 import io.vertigo.ai.llm.model.VPersona;
 import io.vertigo.core.node.component.Manager;
@@ -21,7 +22,7 @@ public interface LlmManager extends Manager {
 	 * @param files the files to use
 	 * @return the LLM response
 	 */
-	String promptOnFiles(VPrompt prompt, VFile... files);
+	VLlmResult promptOnFiles(VPrompt prompt, VFile... files);
 
 	/**
 	 * Ask the LLM something about a file.
@@ -30,7 +31,7 @@ public interface LlmManager extends Manager {
 	 * @param files the files to use
 	 * @return the LLM response
 	 */
-	String promptOnFiles(VPrompt prompt, Collection<VFile> files);
+	VLlmResult promptOnFiles(VPrompt prompt, Collection<VFile> files);
 
 	/**
 	 * Summarize a file.
@@ -38,7 +39,7 @@ public interface LlmManager extends Manager {
 	 * @param file the file to summarize
 	 * @return the summarized file
 	 */
-	String summarize(VFile file);
+	VLlmResult summarize(VFile file);
 
 	/**
 	 * Summarize a file.
@@ -47,6 +48,6 @@ public interface LlmManager extends Manager {
 	 * @param persona the persona to use
 	 * @return the summarized file
 	 */
-	String summarize(VFile file, VPersona persona);
+	VLlmResult summarize(VFile file, VPersona persona);
 
 }
