@@ -1,4 +1,4 @@
-package io.vertigo.ai.impl.llm;
+package io.vertigo.ai.llm.model;
 
 import java.util.List;
 

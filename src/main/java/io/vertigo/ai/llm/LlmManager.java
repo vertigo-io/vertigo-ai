@@ -2,9 +2,9 @@ package io.vertigo.ai.llm;
 
 import java.util.Collection;
 
-import io.vertigo.ai.impl.llm.VLlmResult;
-import io.vertigo.ai.impl.llm.VPrompt;
-import io.vertigo.ai.llm.model.VPersona;
+import io.vertigo.ai.llm.model.LlmChat;
+import io.vertigo.ai.llm.model.VLlmResult;
+import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.datastore.filestore.model.VFile;
 
@@ -34,20 +34,26 @@ public interface LlmManager extends Manager {
 	VLlmResult promptOnFiles(VPrompt prompt, Collection<VFile> files);
 
 	/**
-	 * Summarize a file.
+	 * Create a new chat.
 	 *
-	 * @param file the file to summarize
-	 * @return the summarized file
+	 * @return the new chat
 	 */
-	VLlmResult summarize(VFile file);
+	LlmChat initChat();
 
 	/**
-	 * Summarize a file.
+	 * Create a new chat.
 	 *
-	 * @param file the file to summarize
-	 * @param persona the persona to use
-	 * @return the summarized file
+	 * @param files the files to use in the context of the chat
+	 * @return the new chat
 	 */
-	VLlmResult summarize(VFile file, VPersona persona);
+	LlmChat initChat(final Collection<VFile> files);
+
+	/**
+	 * Get a chat by its id.
+	 *
+	 * @param id the id of the chat
+	 * @return the chat
+	 */
+	LlmChat getChat(final Long id);
 
 }
