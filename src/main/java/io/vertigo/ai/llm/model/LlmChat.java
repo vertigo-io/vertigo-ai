@@ -3,21 +3,29 @@ package io.vertigo.ai.llm.model;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.vertigo.datastore.filestore.model.VFile;
 
 public abstract class LlmChat {
+	private static final Random RANDOM = new Random();
 
 	protected final Long id;
 	protected Instant lastUse;
 	protected final List<VChatMessage> messages;
 	protected final List<VFile> files;
+	protected final VPromptContext context;
 
-	protected LlmChat(final Long id, final List<VFile> files) {
-		this.id = id;
+	protected LlmChat(final List<VFile> files) {
+		this(files, null);
+	}
+
+	protected LlmChat(final List<VFile> files, final VPromptContext context) {
+		id = RANDOM.nextLong(); // To improve security, we can add the sessionId to the key if present
 		lastUse = Instant.now();
 		messages = new ArrayList<>();
 		this.files = files;
+		this.context = context == null ? new VPromptContext() : context;
 	}
 
 	public final Long getId() {
@@ -36,11 +44,15 @@ public abstract class LlmChat {
 		return messages;
 	}
 
-	public final VLlmResult chat(final VPrompt prompt) {
-		lastUse = Instant.now();
-		return doChat(prompt);
+	public final VPromptContext getContext() {
+		return context;
 	}
 
-	protected abstract VLlmResult doChat(final VPrompt prompt);
+	public final VLlmResult chat(final String instructions) {
+		lastUse = Instant.now();
+		return doChat(instructions);
+	}
+
+	protected abstract VLlmResult doChat(final String instructions);
 
 }

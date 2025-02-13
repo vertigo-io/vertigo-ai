@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -16,6 +15,7 @@ import io.vertigo.ai.llm.LlmPlugin;
 import io.vertigo.ai.llm.model.LlmChat;
 import io.vertigo.ai.llm.model.VLlmResult;
 import io.vertigo.ai.llm.model.VPrompt;
+import io.vertigo.ai.llm.model.VPromptContext;
 import io.vertigo.core.daemon.definitions.DaemonDefinition;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.definition.Definition;
@@ -29,7 +29,6 @@ import io.vertigo.datastore.filestore.model.VFile;
  * @author skerdudou
  */
 public class LlmManagerImpl implements LlmManager {
-	private static final Random RANDOM = new Random();
 	private static final Map<Long, LlmChat> CHATS = new HashMap<>();
 
 	private final LlmPlugin llmPlugin;
@@ -58,16 +57,14 @@ public class LlmManagerImpl implements LlmManager {
 
 	@Override
 	public LlmChat initChat() {
-		return initChat(Collections.emptyList());
+		return initChat(Collections.emptyList(), new VPromptContext());
 	}
 
 	@Override
-	public LlmChat initChat(final Collection<VFile> files) {
-		// To improve security, we can add the sessionId to the key if present
-		final var newId = RANDOM.nextLong();
-		final var newChat = llmPlugin.newChat(newId, files.stream());
+	public LlmChat initChat(final Collection<VFile> files, final VPromptContext context) {
+		final var newChat = llmPlugin.newChat(files.stream(), context);
 
-		CHATS.put(newId, newChat);
+		CHATS.put(newChat.getId(), newChat);
 
 		return newChat;
 	}

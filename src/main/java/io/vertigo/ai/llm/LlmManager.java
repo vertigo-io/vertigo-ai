@@ -5,6 +5,7 @@ import java.util.Collection;
 import io.vertigo.ai.llm.model.LlmChat;
 import io.vertigo.ai.llm.model.VLlmResult;
 import io.vertigo.ai.llm.model.VPrompt;
+import io.vertigo.ai.llm.model.VPromptContext;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.datastore.filestore.model.VFile;
 
@@ -44,9 +45,10 @@ public interface LlmManager extends Manager {
 	 * Create a new chat.
 	 *
 	 * @param files the files to use in the context of the chat
+	 * @param context the context to use (Persona, ...)
 	 * @return the new chat
 	 */
-	LlmChat initChat(final Collection<VFile> files);
+	LlmChat initChat(final Collection<VFile> files, VPromptContext context);
 
 	/**
 	 * Get a chat by its id.
