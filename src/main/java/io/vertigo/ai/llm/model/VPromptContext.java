@@ -1,8 +1,8 @@
 package io.vertigo.ai.llm.model;
 
-// voir pour le format de sortie
 public class VPromptContext {
 	private String constraints;
+	private String format;
 	private VPersona persona;
 
 	/**
@@ -17,6 +17,20 @@ public class VPromptContext {
 	 */
 	public void setConstraints(final String constraints) {
 		this.constraints = constraints;
+	}
+
+	/**
+	 * @return the format
+	 */
+	public String getFormat() {
+		return format;
+	}
+
+	/**
+	 * @param format the format to set
+	 */
+	public void setFormat(final String format) {
+		this.format = format;
 	}
 
 	/**
