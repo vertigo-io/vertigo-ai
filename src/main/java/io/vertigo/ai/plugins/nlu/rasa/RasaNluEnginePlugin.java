@@ -1,13 +1,5 @@
 package io.vertigo.ai.plugins.nlu.rasa;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.inspector.TagInspector;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -25,6 +17,14 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
@@ -76,8 +76,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
 		Assertion.check().isNotBlank(configFileName);
 		LoaderOptions loaderoptions = new LoaderOptions();
-		TagInspector taginspector =
-				tag -> tag.getClassName().equals(RasaConfig.class.getName());
+		TagInspector taginspector = tag -> tag.getClassName().equals(RasaConfig.class.getName());
 		loaderoptions.setTagInspector(taginspector);
 		rasaConfig = new Yaml(new Constructor(RasaConfig.class, loaderoptions)).load(FileUtil.read(resourceManager.resolve(configFileName)));
 
@@ -106,8 +105,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 						.collect(Collectors.toList()));
 
 		LoaderOptions loaderoptions = new LoaderOptions();
-		TagInspector taginspector =
-				tag -> tag.getClassName().equals(RasaTrainingData.class.getName());
+		TagInspector taginspector = tag -> tag.getClassName().equals(RasaTrainingData.class.getName());
 		loaderoptions.setTagInspector(taginspector);
 		//train
 		final String trainingDataAsYaml = new Yaml(new Constructor(RasaTrainingData.class, loaderoptions), new RasaNluTrainDataRepresenter())
