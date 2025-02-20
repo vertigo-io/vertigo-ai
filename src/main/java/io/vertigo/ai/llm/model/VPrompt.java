@@ -1,6 +1,5 @@
 package io.vertigo.ai.llm.model;
 
-import io.vertigo.core.analytics.health.HealthMeasureBuilder;
 import io.vertigo.core.lang.Assertion;
 
 // voir pour le format de sortie
