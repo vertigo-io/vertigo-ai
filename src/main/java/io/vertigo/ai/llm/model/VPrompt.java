@@ -32,9 +32,10 @@ public class VPrompt {
 
 	/**
 	 * Creates the builder.
+	 *
 	 * @return the builder
 	 */
-	public static VPromptBuilder builder(String instructions) {
+	public static VPromptBuilder builder(final String instructions) {
 		return new VPromptBuilder(instructions);
 	}
 }

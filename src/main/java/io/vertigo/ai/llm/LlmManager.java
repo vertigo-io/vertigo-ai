@@ -23,7 +23,7 @@ public interface LlmManager extends Manager {
 	 * @param files the files to use
 	 * @return the LLM response
 	 */
-	VLlmResult promptOnFiles(VPrompt prompt, VFile... files);
+	VLlmResult askOnFiles(VPrompt prompt, VFile... files);
 
 	/**
 	 * Ask the LLM something about a file.
@@ -32,7 +32,16 @@ public interface LlmManager extends Manager {
 	 * @param files the files to use
 	 * @return the LLM response
 	 */
-	VLlmResult promptOnFiles(VPrompt prompt, Collection<VFile> files);
+	VLlmResult askOnFiles(VPrompt prompt, Collection<VFile> files);
+
+	/**
+	 * Ask the LLM something.
+	 *
+	 * @param prompt the prompt to use
+	 * @param clazz the class of the response
+	 * @return the LLM response, reported in the class structure
+	 */
+	<T extends Object> T ask(VPrompt prompt, Class<T> clazz);
 
 	/**
 	 * Create a new chat.

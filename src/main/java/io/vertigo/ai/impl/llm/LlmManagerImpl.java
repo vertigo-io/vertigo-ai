@@ -46,13 +46,18 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public VLlmResult promptOnFiles(final VPrompt prompt, final VFile... files) {
-		return llmPlugin.promptOnFiles(prompt, Arrays.stream(files));
+	public VLlmResult askOnFiles(final VPrompt prompt, final VFile... files) {
+		return llmPlugin.askOnFiles(prompt, Arrays.stream(files));
 	}
 
 	@Override
-	public VLlmResult promptOnFiles(final VPrompt prompt, final Collection<VFile> files) {
-		return llmPlugin.promptOnFiles(prompt, files.stream());
+	public VLlmResult askOnFiles(final VPrompt prompt, final Collection<VFile> files) {
+		return llmPlugin.askOnFiles(prompt, files.stream());
+	}
+
+	@Override
+	public <T> T ask(final VPrompt prompt, final Class<T> clazz) {
+		return llmPlugin.ask(prompt, clazz);
 	}
 
 	@Override

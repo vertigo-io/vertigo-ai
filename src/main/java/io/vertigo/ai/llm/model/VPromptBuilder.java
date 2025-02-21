@@ -10,8 +10,8 @@ public final class VPromptBuilder implements Builder<VPrompt> {
 	VPromptBuilder(final String instructions) {
 		Assertion.check().isNotBlank(instructions);
 		//---
-		this.myInstructions = instructions;
-		this.myContext = new VPromptContext();
+		myInstructions = instructions;
+		myContext = new VPromptContext();
 	}
 
 	public VPromptBuilder withPersona(final VPersona persona) {
@@ -24,6 +24,7 @@ public final class VPromptBuilder implements Builder<VPrompt> {
 		return this;
 	}
 
+	@Override
 	public VPrompt build() {
 		return new VPrompt(myInstructions, myContext);
 	}
