@@ -28,13 +28,18 @@ public class FacetPromptUtil {
 	 */
 	public static VPrompt createFacetPrompt(final String asking, final FacetedQueryResult<?, ?> facetValues, final Optional<String> additionalInstructions) {
 		final var actualFacets = toJson(facetValues);
-		final var instructions = new StringBuilder("We have a faceted research with the following facets and values: `\n")
-				.append(actualFacets).append("\n`\n")
+		final var instructions = new StringBuilder()
 				.append("The user is asking for: `").append(asking.replace("`", "'")).append("`\n")
-				.append("Select according facets, user may ask in a different language but select the facet anyway.\n")
-				.append("Do not invent any facet code, only use existing ones that are described.\n")
-				.append("For a facets, if all values are corresponding, return null for this facet instead of selecting all facets.\n")
-				.append("Put in the String 'criteria' the minimum possible input to reflect user request that is not present in existing facets, for example the request 'last year users' will select 'last year' in the time facet, 'users' for the type facet and set null to the 'criteria' while 'Juan that arrived 1 year and an half ago' will select the range '1 to 2 years' in the time facet, 'users' for the type facet and set 'Juan' in the 'criteria'. Double check that the criteria does not duplicate facet value even if it is a traduction of another language or the terms are not exactly the sames but refers to the same intent.\n");
+				.append("With the following facets definition : `\n")
+				.append(actualFacets).append("\n`\n")
+				.append("""
+						For each facet value, determine if the user is explicitly asking for this. If yes, select this facet value. If 'isMultiSelectable' is false, select at most one facet value. Beware if the user is asking in a different language.
+						Do not select any facet value if none strictly correspond to the user asking.
+						Do not invent any facet value, use only the ones that are listed in the definition.
+						If the facet is a range facet and the user is asking for someting inside a range, select the range that includes the user request.
+						For a facets, if all values are corresponding, return null for this facet instead of selecting all facets.
+						Put in the String 'criteria' the minimum possible input to reflect user request that is not present in existing facets, for example the request 'last year users' will select 'last year' in the time facet, 'users' for the type facet and set null to the 'criteria' while 'Juan that arrived 1 year and an half ago' will select the range '1 to 2 years' in the time facet, 'users' for the type facet and set 'Juan' in the 'criteria'.
+						""");
 		additionalInstructions.ifPresent(instructions::append);
 
 		return VPrompt.builder(instructions.toString()).build();
@@ -56,13 +61,14 @@ public class FacetPromptUtil {
 				if (entry.getValue() > 0) {
 					final JsonObject jsonFacetValuesElement = new JsonObject();
 					jsonFacetValuesElement.addProperty("code", entry.getKey().code());
-					jsonFacetValuesElement.addProperty("count", entry.getValue());
+					//jsonFacetValuesElement.addProperty("count", entry.getValue()); // not usefull for LLM
 					jsonFacetValuesElement.addProperty("label", entry.getKey().label().getDisplay());
 					jsonFacetValues.add(jsonFacetValuesElement);
 				}
 			}
 			final JsonObject jsonFacetElement = new JsonObject();
 			jsonFacetElement.addProperty("code", facet.getDefinition().getName());
+			jsonFacetElement.addProperty("isMultiSelectable", facet.getDefinition().isMultiSelectable());
 			jsonFacetElement.addProperty("label", facet.getDefinition().getLabel().getDisplay());
 			jsonFacetElement.add("values", jsonFacetValues);
 			jsonFacet.add(jsonFacetElement);
