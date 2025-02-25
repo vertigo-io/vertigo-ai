@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import io.vertigo.ai.impl.llm.LlmManagerImpl;
+import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.node.Node;
 import io.vertigo.datastore.filestore.model.VFile;
 
 public abstract class LlmChat {
@@ -16,6 +19,8 @@ public abstract class LlmChat {
 	protected final List<VFile> files;
 	protected final VPromptContext context;
 
+	private final AnalyticsManager analyticsManager;
+
 	protected LlmChat(final List<VFile> files) {
 		this(files, null);
 	}
@@ -26,6 +31,8 @@ public abstract class LlmChat {
 		messages = new ArrayList<>();
 		this.files = files;
 		this.context = context == null ? new VPromptContext() : context;
+
+		analyticsManager = Node.getNode().getComponentSpace().resolve(AnalyticsManager.class);
 	}
 
 	public final Long getId() {
@@ -49,8 +56,12 @@ public abstract class LlmChat {
 	}
 
 	public final VLlmResult chat(final String instructions) {
-		lastUse = Instant.now();
-		return doChat(instructions);
+		return analyticsManager.traceWithReturn(LlmManagerImpl.LLM_CATEGORY, "chat", tracer -> {
+			tracer.setMetadata("chatId", id.toString());
+
+			lastUse = Instant.now();
+			return doChat(instructions);
+		});
 	}
 
 	protected abstract VLlmResult doChat(final String instructions);

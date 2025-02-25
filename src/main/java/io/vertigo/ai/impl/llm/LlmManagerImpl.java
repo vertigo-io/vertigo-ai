@@ -16,6 +16,7 @@ import io.vertigo.ai.llm.model.LlmChat;
 import io.vertigo.ai.llm.model.VLlmResult;
 import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
+import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.daemon.definitions.DaemonDefinition;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.definition.Definition;
@@ -29,9 +30,14 @@ import io.vertigo.datastore.filestore.model.VFile;
  * @author skerdudou
  */
 public class LlmManagerImpl implements LlmManager {
+	public static final String LLM_CATEGORY = "llm";
+
 	private static final Map<Long, LlmChat> CHATS = new HashMap<>();
 
 	private final LlmPlugin llmPlugin;
+
+	@Inject
+	private AnalyticsManager analyticsManager;
 
 	/**
 	 * Constructor.
@@ -47,17 +53,20 @@ public class LlmManagerImpl implements LlmManager {
 
 	@Override
 	public VLlmResult askOnFiles(final VPrompt prompt, final VFile... files) {
-		return llmPlugin.askOnFiles(prompt, Arrays.stream(files));
+		return analyticsManager.traceWithReturn(LLM_CATEGORY, "askFiles",
+				tracer -> llmPlugin.askOnFiles(prompt, Arrays.stream(files)));
 	}
 
 	@Override
 	public VLlmResult askOnFiles(final VPrompt prompt, final Collection<VFile> files) {
-		return llmPlugin.askOnFiles(prompt, files.stream());
+		return analyticsManager.traceWithReturn(LLM_CATEGORY, "askFiles",
+				tracer -> llmPlugin.askOnFiles(prompt, files.stream()));
 	}
 
 	@Override
 	public <T> T ask(final VPrompt prompt, final Class<T> clazz) {
-		return llmPlugin.ask(prompt, clazz);
+		return analyticsManager.traceWithReturn(LLM_CATEGORY, "ask",
+				tracer -> llmPlugin.ask(prompt, clazz));
 	}
 
 	@Override
@@ -67,11 +76,13 @@ public class LlmManagerImpl implements LlmManager {
 
 	@Override
 	public LlmChat initChat(final Collection<VFile> files, final VPromptContext context) {
-		final var newChat = llmPlugin.newChat(files.stream(), context);
-
-		CHATS.put(newChat.getId(), newChat);
-
-		return newChat;
+		return analyticsManager.traceWithReturn(LLM_CATEGORY, "newChat",
+				tracer -> {
+					final var newChat = llmPlugin.newChat(files.stream(), context);
+					tracer.setMetadata("chatId", newChat.getId().toString());
+					CHATS.put(newChat.getId(), newChat);
+					return newChat;
+				});
 	}
 
 	@Override
