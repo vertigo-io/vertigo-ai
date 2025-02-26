@@ -6,7 +6,7 @@ import java.util.List;
  * Result of a Llm query.
  * Resutl can be in text, markdown or html format.
  */
-public interface VLlmResult {
+public interface VLlmMessage {
 
 	/**
 	 * Get the result in text format, without any markdown or html.

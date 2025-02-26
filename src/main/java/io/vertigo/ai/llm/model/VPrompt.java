@@ -3,7 +3,7 @@ package io.vertigo.ai.llm.model;
 import io.vertigo.core.lang.Assertion;
 
 // voir pour le format de sortie
-public class VPrompt {
+public final class VPrompt {
 	private final String instructions;
 	private final VPromptContext context;
 

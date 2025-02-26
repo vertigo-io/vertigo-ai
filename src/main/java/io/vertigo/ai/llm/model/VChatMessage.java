@@ -1,4 +1,6 @@
 package io.vertigo.ai.llm.model;
 
-public record VChatMessage(VLlmResult message, boolean fromUser) {
+import java.time.Instant;
+
+public record VChatMessage(VLlmMessage message, Instant date, boolean fromUser) {
 }

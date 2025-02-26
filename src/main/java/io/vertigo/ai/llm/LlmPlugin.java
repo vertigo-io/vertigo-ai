@@ -3,7 +3,7 @@ package io.vertigo.ai.llm;
 import java.util.stream.Stream;
 
 import io.vertigo.ai.llm.model.LlmChat;
-import io.vertigo.ai.llm.model.VLlmResult;
+import io.vertigo.ai.llm.model.VLlmMessage;
 import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
 import io.vertigo.core.node.component.Plugin;
@@ -18,7 +18,7 @@ public interface LlmPlugin extends Plugin {
 	 * @param files the files to use
 	 * @return the LLM response
 	 */
-	VLlmResult askOnFiles(VPrompt prompt, Stream<VFile> files);
+	VLlmMessage askOnFiles(VPrompt prompt, Stream<VFile> files);
 
 	/**
 	 * Ask the LLM something.

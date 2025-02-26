@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.llm.LlmManager;
 import io.vertigo.ai.llm.LlmPlugin;
 import io.vertigo.ai.llm.model.LlmChat;
-import io.vertigo.ai.llm.model.VLlmResult;
+import io.vertigo.ai.llm.model.VLlmMessage;
 import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
 import io.vertigo.core.analytics.AnalyticsManager;
@@ -52,13 +52,13 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public VLlmResult askOnFiles(final VPrompt prompt, final VFile... files) {
+	public VLlmMessage askOnFiles(final VPrompt prompt, final VFile... files) {
 		return analyticsManager.traceWithReturn(LLM_CATEGORY, "askFiles",
 				tracer -> llmPlugin.askOnFiles(prompt, Arrays.stream(files)));
 	}
 
 	@Override
-	public VLlmResult askOnFiles(final VPrompt prompt, final Collection<VFile> files) {
+	public VLlmMessage askOnFiles(final VPrompt prompt, final Collection<VFile> files) {
 		return analyticsManager.traceWithReturn(LLM_CATEGORY, "askFiles",
 				tracer -> llmPlugin.askOnFiles(prompt, files.stream()));
 	}
