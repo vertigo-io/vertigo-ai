@@ -1,6 +1,7 @@
 package io.vertigo.ai.llm;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import io.vertigo.ai.llm.model.LlmChat;
 import io.vertigo.ai.llm.model.VLlmMessage;
@@ -65,6 +66,6 @@ public interface LlmManager extends Manager {
 	 * @param id the id of the chat
 	 * @return the chat
 	 */
-	LlmChat getChat(final Long id);
+	LlmChat getChat(final UUID id);
 
 }

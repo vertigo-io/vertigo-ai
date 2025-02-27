@@ -16,6 +16,7 @@ public final class VLlmMessageStreamConfigBuilder<R> implements Builder<VLlmMess
 	private Consumer<R> partialMessageHandler = VLlmMessageStreamConfigBuilder::noop;
 	private Consumer<R> messageHandler = VLlmMessageStreamConfigBuilder::noop;
 	private Consumer<Throwable> errorHandler = VLlmMessageStreamConfigBuilder::noop;
+	private int throttleMs = 100;
 
 	public VLlmMessageStreamConfigBuilder<R> withTokenHandler(final Consumer<String> newTokenHandler) {
 		tokenHandler = newTokenHandler;
@@ -37,9 +38,14 @@ public final class VLlmMessageStreamConfigBuilder<R> implements Builder<VLlmMess
 		return this;
 	}
 
+	public VLlmMessageStreamConfigBuilder<R> withThrottleMs(final int newThrottleMs) {
+		throttleMs = newThrottleMs;
+		return this;
+	}
+
 	@Override
 	public VLlmMessageStreamConfig<R> build() {
-		return new VLlmMessageStreamConfig<>(tokenHandler, partialMessageHandler, messageHandler, errorHandler);
+		return new VLlmMessageStreamConfig<>(tokenHandler, partialMessageHandler, messageHandler, errorHandler, throttleMs);
 	}
 
 }

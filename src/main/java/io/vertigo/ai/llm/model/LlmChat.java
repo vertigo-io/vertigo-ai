@@ -3,7 +3,7 @@ package io.vertigo.ai.llm.model;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 import io.vertigo.ai.impl.llm.LlmManagerImpl;
 import io.vertigo.core.analytics.AnalyticsManager;
@@ -16,9 +16,8 @@ import io.vertigo.datastore.filestore.model.VFile;
  * A chat session.
  */
 public abstract class LlmChat {
-	private static final Random RANDOM = new Random();
 
-	protected final Long id;
+	protected final UUID id;
 	protected Instant lastUse;
 	protected final List<VChatMessage> messages;
 	protected final List<VFile> files;
@@ -31,7 +30,7 @@ public abstract class LlmChat {
 	}
 
 	protected LlmChat(final List<VFile> files, final VPromptContext context) {
-		id = RANDOM.nextLong(); // To improve security, we can add the sessionId to the key if present
+		id = UUID.randomUUID();
 		lastUse = Instant.now();
 		messages = new ArrayList<>();
 		this.files = files;
@@ -43,7 +42,7 @@ public abstract class LlmChat {
 	/**
 	 * @return the chat id
 	 */
-	public final Long getId() {
+	public final UUID getId() {
 		return id;
 	}
 
@@ -106,29 +105,28 @@ public abstract class LlmChat {
 				.isNotNull(streamConfig)
 				.isNotNull(instructions);
 		//---
-		final long start = System.currentTimeMillis();
-		final var now = Instant.now();
-		lastUse = now;
+		final var beginStream = Instant.now();
+		lastUse = beginStream;
 		doChatStream(instructions, new VLlmMessageStreamConfig<>(
 				streamConfig.tokenHandler(),
-				r -> streamConfig.partialMessageHandler().accept(new VChatMessage(r, now, false)),
+				r -> streamConfig.partialMessageHandler().accept(new VChatMessage(r, beginStream, false)),
 				r -> {
-					// TODO analytics not working
-					analyticsManager.addSpan(TraceSpan.builder(LlmManagerImpl.LLM_CATEGORY, "chat", Instant.ofEpochMilli(start), Instant.now())
-							.withMetadata("chatId", id.toString())
-							.withMeasure("success", 100)
-							.build());
-					streamConfig.messageHandler().accept(new VChatMessage(r, now, false));
+					analyticsManager.addSpan(
+							TraceSpan
+									.builder(LlmManagerImpl.LLM_CATEGORY, "chatStream", beginStream, Instant.now())
+									.withMetadata("chatId", id.toString())
+									.markAsSucceeded()
+									.build());
+					streamConfig.messageHandler().accept(new VChatMessage(r, beginStream, false));
 				},
 				e -> {
-					// TODO analytics not working
-					analyticsManager.addSpan(TraceSpan.builder(LlmManagerImpl.LLM_CATEGORY, "chat", Instant.ofEpochMilli(start), Instant.now())
+					analyticsManager.addSpan(TraceSpan.builder(LlmManagerImpl.LLM_CATEGORY, "chatStream", beginStream, Instant.now())
 							.withMetadata("chatId", id.toString())
-							.withMeasure("success", 0)
-							.withTag("exception", e.getClass().getName())
+							.markAsFailed(e)
 							.build());
 					streamConfig.errorHandler().accept(e);
-				}));
+				},
+				streamConfig.throttleMs()));
 	}
 
 	protected abstract VLlmMessage doChat(final String instructions);

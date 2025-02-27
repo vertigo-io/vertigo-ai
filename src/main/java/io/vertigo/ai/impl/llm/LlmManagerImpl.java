@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -32,7 +33,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 public class LlmManagerImpl implements LlmManager {
 	public static final String LLM_CATEGORY = "llm";
 
-	private static final Map<Long, LlmChat> CHATS = new HashMap<>();
+	private static final Map<UUID, LlmChat> CHATS = new HashMap<>();
 
 	private final LlmPlugin llmPlugin;
 
@@ -86,7 +87,7 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public LlmChat getChat(final Long id) {
+	public LlmChat getChat(final UUID id) {
 		return CHATS.get(id);
 	}
 
