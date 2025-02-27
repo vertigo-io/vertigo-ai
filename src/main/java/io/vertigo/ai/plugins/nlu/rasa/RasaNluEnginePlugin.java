@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -41,6 +40,7 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 import io.vertigo.core.util.FileUtil;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class RasaNluEnginePlugin implements NluEnginePlugin {
 
@@ -75,8 +75,8 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
 		Assertion.check().isNotBlank(configFileName);
-		LoaderOptions loaderoptions = new LoaderOptions();
-		TagInspector taginspector = tag -> tag.getClassName().equals(RasaConfig.class.getName());
+		final LoaderOptions loaderoptions = new LoaderOptions();
+		final TagInspector taginspector = tag -> tag.getClassName().equals(RasaConfig.class.getName());
 		loaderoptions.setTagInspector(taginspector);
 		rasaConfig = new Yaml(new Constructor(RasaConfig.class, loaderoptions)).load(FileUtil.read(resourceManager.resolve(configFileName)));
 
@@ -104,8 +104,8 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 						.map(entry -> new RasaIntentNlu(entry.getKey().getCode(), entry.getValue()))
 						.collect(Collectors.toList()));
 
-		LoaderOptions loaderoptions = new LoaderOptions();
-		TagInspector taginspector = tag -> tag.getClassName().equals(RasaTrainingData.class.getName());
+		final LoaderOptions loaderoptions = new LoaderOptions();
+		final TagInspector taginspector = tag -> tag.getClassName().equals(RasaTrainingData.class.getName());
 		loaderoptions.setTagInspector(taginspector);
 		//train
 		final String trainingDataAsYaml = new Yaml(new Constructor(RasaTrainingData.class, loaderoptions), new RasaNluTrainDataRepresenter())

@@ -10,6 +10,18 @@
 	<artifactId>vertigo-ai</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-ai</name>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.vertigo</groupId>
+				<artifactId>vertigo-vega</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -48,11 +60,9 @@
 			<optional>true</optional>
 		</dependency>
 		
-		
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
