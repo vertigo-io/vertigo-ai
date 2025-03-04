@@ -19,6 +19,11 @@ public final class VPromptBuilder implements Builder<VPrompt> {
 		return this;
 	}
 
+	public VPromptBuilder withUserPersona(final VPersona persona) {
+		myContext.setUserPersona(persona);
+		return this;
+	}
+
 	public VPromptBuilder withConstraints(final String constraints) {
 		myContext.setConstraints(constraints);
 		return this;

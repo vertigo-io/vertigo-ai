@@ -4,6 +4,7 @@ public class VPromptContext {
 	private String constraints;
 	private String format;
 	private VPersona persona;
+	private VPersona userPersona;
 
 	/**
 	 * @return the constraints
@@ -45,6 +46,20 @@ public class VPromptContext {
 	 */
 	public void setPersona(final VPersona persona) {
 		this.persona = persona;
+	}
+
+	/**
+	 * @return the userPersona
+	 */
+	public VPersona getUserPersona() {
+		return userPersona;
+	}
+
+	/**
+	 * @param userPersona the userPersona to set
+	 */
+	public void setUserPersona(final VPersona userPersona) {
+		this.userPersona = userPersona;
 	}
 
 }

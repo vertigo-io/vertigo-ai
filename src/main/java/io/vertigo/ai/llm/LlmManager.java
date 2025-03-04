@@ -1,14 +1,12 @@
 package io.vertigo.ai.llm;
 
-import java.util.Collection;
 import java.util.UUID;
 
-import io.vertigo.ai.llm.model.LlmChat;
 import io.vertigo.ai.llm.model.VLlmMessage;
 import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
+import io.vertigo.ai.llm.model.rag.VLlmDocumentSource;
 import io.vertigo.core.node.component.Manager;
-import io.vertigo.datastore.filestore.model.VFile;
 
 /**
  * Manager for Large Language Models usage.
@@ -18,22 +16,35 @@ import io.vertigo.datastore.filestore.model.VFile;
 public interface LlmManager extends Manager {
 
 	/**
-	 * Ask the LLM something about a file.
+	 * Get the persisted document source.
 	 *
-	 * @param prompt the prompt to use
-	 * @param files the files to use
-	 * @return the LLM response
+	 * @return the document source
 	 */
-	VLlmMessage askOnFiles(VPrompt prompt, VFile... files);
+	VLlmDocumentSource getPersistedDocumentSource();
+
+	/**
+	 * Get the temporary document source.
+	 *
+	 * @return the document source
+	 */
+	VLlmDocumentSource getTemporaryDocumentSource();
 
 	/**
 	 * Ask the LLM something about a file.
 	 *
 	 * @param prompt the prompt to use
-	 * @param files the files to use
+	 * @param documentSource the files to use
 	 * @return the LLM response
 	 */
-	VLlmMessage askOnFiles(VPrompt prompt, Collection<VFile> files);
+	VLlmMessage askOnFiles(VPrompt prompt, VLlmDocumentSource documentSource);
+
+	/**
+	 * Ask the LLM something.
+	 *
+	 * @param prompt the prompt to use
+	 * @return the LLM response
+	 */
+	VLlmMessage ask(VPrompt prompt);
 
 	/**
 	 * Ask the LLM something.
@@ -54,11 +65,11 @@ public interface LlmManager extends Manager {
 	/**
 	 * Create a new chat.
 	 *
-	 * @param files the files to use in the context of the chat
+	 * @param documentSource the files to use in the context of the chat
 	 * @param context the context to use (Persona, ...)
 	 * @return the new chat
 	 */
-	LlmChat initChat(final Collection<VFile> files, VPromptContext context);
+	LlmChat initChat(final VLlmDocumentSource documentSource, VPromptContext context);
 
 	/**
 	 * Get a chat by its id.
