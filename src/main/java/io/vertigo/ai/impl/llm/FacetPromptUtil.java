@@ -33,12 +33,14 @@ public class FacetPromptUtil {
 				.append("With the following facets definition : `\n")
 				.append(actualFacets).append("\n`\n")
 				.append("""
-						For each facet value, determine if the user is explicitly asking for this. If yes, select this facet value. If 'isMultiSelectable' is false, select at most one facet value. Beware if the user is asking in a different language.
-						Do not select any facet value if none strictly correspond to the user asking.
-						Do not invent any facet value, use only the ones that are listed in the definition.
-						If the facet is a range facet and the user is asking for someting inside a range, select the range that includes the user request.
-						For a facets, if all values are corresponding, return null for this facet instead of selecting all facets.
-						Put in the String 'criteria' the minimum possible input to reflect user request that is not present in existing facets, for example the request 'last year users' will select 'last year' in the time facet, 'users' for the type facet and set null to the 'criteria' while 'Juan that arrived 1 year and an half ago' will select the range '1 to 2 years' in the time facet, 'users' for the type facet and set 'Juan' in the 'criteria'.
+						Instructions :
+						- Detect the language of both the user's request and the facet definitions to ensure correct matching.
+						- For each facet value, determine if the user is explicitly asking for this. If yes, select this facet value. If 'isMultiSelectable' is false, select at most one facet value.
+						- Do not select any facet value if none strictly correspond to the user asking.
+						- Do not invent any facet value, use only the ones that are listed in the definition.
+						- If the facet is a range facet and the user is asking for someting inside a range, select the range that includes the user request.
+						- For a facets, if all values are corresponding, return null for this facet instead of selecting all facets.
+						- Put in the String 'criteria' the minimum possible input to reflect user request that is not present in existing facets, for example the request 'last year users' will select 'last year' in the time facet, 'users' for the type facet and set null to the 'criteria' while 'Juan that arrived 1 year and an half ago' will select the range '1 to 2 years' in the time facet, 'users' for the type facet and set 'Juan' in the 'criteria'.
 						""");
 		additionalInstructions.ifPresent(instructions::append);
 
