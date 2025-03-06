@@ -1,5 +1,7 @@
 package io.vertigo.ai.llm;
 
+import java.util.Map;
+
 import io.vertigo.ai.llm.model.VLlmMessage;
 import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
@@ -13,9 +15,10 @@ public interface LlmPlugin extends Plugin {
 	 *
 	 * @param prompt the prompt to use
 	 * @param documentSource the files to use
+	 * @param metadataFilter filter on metadata
 	 * @return the LLM response
 	 */
-	VLlmMessage askOnFiles(VPrompt prompt, VLlmDocumentSource documentSource);
+	VLlmMessage askOnFiles(VPrompt prompt, VLlmDocumentSource documentSource, final Map<String, Object> metadataFilter);
 
 	/**
 	 * Ask the LLM something.
@@ -24,7 +27,7 @@ public interface LlmPlugin extends Plugin {
 	 * @return the LLM response
 	 */
 	default VLlmMessage ask(final VPrompt prompt) {
-		return askOnFiles(prompt, null);
+		return askOnFiles(prompt, null, null);
 	}
 
 	/**
@@ -40,10 +43,11 @@ public interface LlmPlugin extends Plugin {
 	 * Create a new chat.
 	 *
 	 * @param documentSource the files to use
+	 * @param metadataFilter filter on document metadata
 	 * @param context the context to use
 	 * @return the new chat
 	 */
-	LlmChat newChat(VLlmDocumentSource documentSource, VPromptContext context);
+	LlmChat newChat(VLlmDocumentSource documentSource, Map<String, Object> metadataFilter, VPromptContext context);
 
 	/**
 	 * Get the persisted document source.

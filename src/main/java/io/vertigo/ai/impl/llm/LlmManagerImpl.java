@@ -61,9 +61,9 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public VLlmMessage askOnFiles(final VPrompt prompt, final VLlmDocumentSource documentSource) {
+	public VLlmMessage askOnFiles(final VPrompt prompt, final VLlmDocumentSource documentSource, final Map<String, Object> metadataFilter) {
 		return analyticsManager.traceWithReturn(LLM_CATEGORY, "askFiles",
-				tracer -> llmPlugin.askOnFiles(prompt, documentSource));
+				tracer -> llmPlugin.askOnFiles(prompt, documentSource, metadataFilter));
 	}
 
 	@Override
@@ -79,19 +79,14 @@ public class LlmManagerImpl implements LlmManager {
 	}
 
 	@Override
-	public LlmChat initChat() {
-		return initChat(null, new VPromptContext());
-	}
-
-	@Override
-	public LlmChat initChat(final VLlmDocumentSource documentSource, final VPromptContext context) {
+	public LlmChat initChatOnFiles(final VPromptContext context, final VLlmDocumentSource documentSource, final Map<String, Object> metadataFilter) {
 		Assertion.check()
 				.isNotNull(documentSource)
 				.isNotNull(context);
 		//---
 		return analyticsManager.traceWithReturn(LLM_CATEGORY, "newChat",
 				tracer -> {
-					final var newChat = llmPlugin.newChat(documentSource, context);
+					final var newChat = llmPlugin.newChat(documentSource, metadataFilter, context);
 					tracer.setMetadata("chatId", newChat.getId().toString());
 					CHATS.put(newChat.getId(), newChat);
 					return newChat;
