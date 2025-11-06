@@ -4,13 +4,12 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>4.3.2</version>
+		<version>4.3.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-ai</artifactId>
 	<packaging>jar</packaging>
 	<name>vertigo-ai</name>
-	<version>4.3.2-SNAPSHOT</version>
 	
 	<dependencyManagement>
 		<dependencies>
