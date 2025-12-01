@@ -1,9 +1,7 @@
 package io.vertigo.ai;
 
-import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.command.BtCommandManager;
-import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.command.BtCommandManagerImpl;
 import io.vertigo.ai.impl.llm.LlmManagerImpl;
@@ -11,12 +9,14 @@ import io.vertigo.ai.impl.llm.LlmManagerImpl.LlmChatDaemon;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.llm.LlmManager;
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
-import io.vertigo.ai.plugins.bb.redis.RedisBlackBoardStorePlugin;
 import io.vertigo.ai.plugins.nlu.rasa.RasaNluEnginePlugin;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.Features;
 import io.vertigo.core.param.Param;
+import io.vertigo.datamodel.bb.BlackBoardManager;
+import io.vertigo.datamodel.impl.bb.BlackBoardManagerImpl;
+import io.vertigo.datamodel.plugins.bb.memory.MemoryBlackBoardStorePlugin;
+import io.vertigo.datamodel.plugins.bb.redis.RedisBlackBoardStorePlugin;
 
 public class AiFeatures extends Features<AiFeatures> {
 
