@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.ai.llm.LlmChat;
 import io.vertigo.ai.llm.LlmManager;
