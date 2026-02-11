@@ -1,9 +1,7 @@
 package io.vertigo.ai.impl.llm;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,11 +15,8 @@ import io.vertigo.ai.llm.model.VPrompt;
 import io.vertigo.ai.llm.model.VPromptContext;
 import io.vertigo.ai.llm.model.rag.VLlmDocumentSource;
 import io.vertigo.core.analytics.AnalyticsManager;
-import io.vertigo.core.daemon.definitions.DaemonDefinition;
+import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.node.definition.Definition;
-import io.vertigo.core.node.definition.DefinitionSpace;
-import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 
 /**
  * Manager for Large Language Models usage.
@@ -98,17 +93,9 @@ public class LlmManagerImpl implements LlmManager {
 		return CHATS.get(id);
 	}
 
-	public static final class LlmChatDaemon implements SimpleDefinitionProvider {
-
-		@Override
-		public List<? extends Definition> provideDefinitions(final DefinitionSpace definitionSpace) {
-			final int purgePeriod = 5 * 60; // 5 minutes
-
-			return Collections.singletonList(new DaemonDefinition("DmnLlmPurgeChats", () -> () -> {
-				final var oldestInstant = Instant.now().minusSeconds(20L * 60L); // 20 minutes of inactivity
-				CHATS.entrySet().removeIf(entry -> entry.getValue().getLastUse().isBefore(oldestInstant));
-			}, purgePeriod));
-		}
-
+	@DaemonScheduled(name = "DmnLlmPurgeChats", periodInSeconds = 5 * 60, analytics = false)
+	public void cleanOldChats() {
+		final var oldestInstant = Instant.now().minusSeconds(20L * 60L); // 20 minutes of inactivity
+		CHATS.entrySet().removeIf(entry -> entry.getValue().getLastUse().isBefore(oldestInstant));
 	}
 }
