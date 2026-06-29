@@ -5,7 +5,6 @@ import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
 import io.vertigo.ai.impl.command.BtCommandManagerImpl;
 import io.vertigo.ai.impl.llm.LlmManagerImpl;
-import io.vertigo.ai.impl.llm.LlmManagerImpl.LlmChatDaemon;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.llm.LlmManager;
 import io.vertigo.ai.nlu.NluManager;
@@ -107,8 +106,7 @@ public class AiFeatures extends Features<AiFeatures> {
 	@Feature("llm")
 	public AiFeatures withLlm() {
 		getModuleConfigBuilder()
-				.addComponent(LlmManager.class, LlmManagerImpl.class)
-				.addDefinitionProvider(LlmChatDaemon.class);
+				.addComponent(LlmManager.class, LlmManagerImpl.class);
 		return this;
 	}
 
