@@ -15,6 +15,7 @@ public class RedisBBBlackBoardTest extends AbstractBBBlackBoardTest {
 						.withJedis(
 								Param.of("host", "docker-vertigo.part.klee.lan.net"),
 								Param.of("port", 6379),
+								Param.of("ssl", "false"),
 								Param.of("database", 0))
 						.build())
 				.addModule(
